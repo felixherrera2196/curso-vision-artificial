@@ -1,15 +1,18 @@
 # Tutorial instalación de Python
 
+**Video de apoyo:** [cómo instalar Python en YouTube](https://www.youtube.com/watch?v=cROteyMVtXk).
+
 Esta guía explica cómo instalar **Python en Windows 11**, comprobar su instalación e instalar **OpenCV** y **Ultralytics** con pip para el curso de OpenCV y YOLO. No necesitas experiencia en tecnología. Mantén la computadora conectada a Internet durante los pasos.
 
 ## 1. Descargar el instalador de Python
 
 1. Abre tu navegador, por ejemplo Microsoft Edge o Google Chrome.
-2. Haz clic en la barra de direcciones de la parte superior, escribe **https://www.python.org/downloads/windows/** y presiona **Enter**.
-3. Busca la sección **Stable Releases**, que contiene versiones estables. Si el profesor indicó una versión, busca esa; de lo contrario, elige una versión estable que ofrezca **Windows installer (64-bit)**.
-4. Haz clic en **Windows installer (64-bit)** para una computadora Intel o AMD. Si tu equipo utiliza un procesador ARM, elige **Windows installer (ARM64)** de esa versión. Puedes comprobarlo en **Inicio → Configuración → Sistema → Información → Tipo de sistema**.
-5. Para seguir esta guía, elige el **instalador de Windows con extensión `.exe`**. No elijas **Python Install Manager**, **embeddable package** ni versiones de prueba de la sección **Pre-releases**.
-6. Espera a que termine la descarga. El archivo tendrá un nombre parecido a `python-3.xx.x-amd64.exe` y quedará normalmente en **Descargas**. Los números dependen de la versión elegida.
+2. Haz clic en la barra de direcciones de la parte superior, escribe **https://www.python.org/** y presiona **Enter**.
+3. En el menú superior, haz clic en **Downloads / Descargas** para abrir **https://www.python.org/downloads/**.
+4. Busca el texto **“Or get the standalone installer for Python…”**, que significa “O descarga el instalador independiente de Python…”. Haz clic en el enlace con el número de la **versión estable más reciente**. El número cambia cuando se publica una nueva versión. **No hagas clic en el botón “Download Python install manager”** que aparece arriba de ese enlace.
+5. En la página de esa versión, baja hasta la sección **Files / Archivos** y haz clic en **Windows installer (64-bit)** para una computadora Intel o AMD. Si tu equipo utiliza un procesador ARM, elige **Windows installer (ARM64)**. Puedes comprobarlo en **Inicio → Configuración → Sistema → Información → Tipo de sistema**.
+6. El archivo debe ser el **instalador independiente con extensión `.exe`**. No elijas **embeddable package**, archivos de código fuente ni versiones de prueba de la sección **Pre-releases**.
+7. Espera a que termine la descarga. El archivo tendrá un nombre parecido a `python-3.xx.x-amd64.exe` y quedará normalmente en **Descargas**. Los números dependen de la versión más reciente que descargaste.
 
 Python es gratuito. Utiliza el sitio oficial indicado arriba.
 

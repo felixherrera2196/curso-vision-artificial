@@ -1,5 +1,7 @@
 # Tutorial de instalación de VSCode
 
+**Video de apoyo:** [cómo instalar VS Code en YouTube](https://www.youtube.com/watch?v=6aw2zyeSzZ8).
+
 Esta guía explica cómo instalar **Visual Studio Code (VS Code) en Windows 11**, paso a paso. No necesitas experiencia en tecnología. Necesitas conexión a Internet para descargarlo.
 
 ## 1. Descargar el instalador
