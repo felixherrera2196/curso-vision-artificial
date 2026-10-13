@@ -1,3 +1,4 @@
+
 # Visión artificial: de OpenCV a Deep Learning con YOLO
 
 Curso de Felix Alejandro Herrera Atilano. Estas notas desarrollan los **18 temas**, en el orden del PDF **«Temario - Felix Herrera.pdf»**, con un archivo Markdown por tema.
@@ -65,3 +66,4 @@ Para documentar tu práctica, explica el objetivo de cada aplicación, cómo se 
 ## Verificación realizada y límites
 
 Se comprobó la correspondencia de los 18 capítulos con el temario, la resolución de los enlaces locales y la sintaxis de Python de los códigos incorporados. La captura real no se ejecutó en este entorno remoto; debe probarse con la cámara y la interfaz gráfica del equipo del participante. Tampoco se ha ejecutado entrenamiento, porque todavía no se han proporcionado esos ejemplos ni el dataset concreto.
+
