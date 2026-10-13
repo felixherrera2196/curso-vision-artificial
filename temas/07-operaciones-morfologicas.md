@@ -55,14 +55,14 @@ El cierre no reconstruye la identidad de un objeto: solo actúa según proximida
 
 El recorrido habitual será fotograma, conversión de color, máscara, morfología y contornos. Mantén visible la máscara original y la procesada mientras ajustas parámetros. Si solo observas el resultado final, será más difícil descubrir qué operación eliminó información.
 
-En OpenCV, `erode`, `dilate` y `morphologyEx` permiten realizar estas operaciones. `getStructuringElement` ayuda a definir kernels con formas comunes. Se explicarán los argumentos concretos cuando recibamos el ejemplo original.
+En OpenCV, `erode`, `dilate` y `morphologyEx` permiten realizar estas operaciones. `getStructuringElement` ayuda a definir kernels con formas comunes. Al aplicarlas, identifica siempre la máscara de entrada, la forma del kernel y el número de iteraciones.
 
 ## Actividad de comprensión
 
 Busca tres defectos distintos: puntos fuera del objeto, huecos dentro del objeto y dos objetos muy cercanos. Propón una operación para los dos primeros y explica por qué debes tener cuidado con el tercero. Compara antes y después, incluyendo objetos pequeños.
 
-## Código original
+## Preparación de la práctica
 
-Pendiente de recibir. Se documentarán la máscara de entrada, el kernel, el orden de operaciones y el efecto de cada parámetro.
+Utiliza como entrada la máscara final del [filtro de rojo del tema 05](05-filtros-color.md). Conserva una vista de la máscara sin procesar y compara el efecto de apertura y cierre. Anota el kernel elegido y comprueba que no desaparezcan objetos pequeños ni se unan figuras diferentes.
 
 [Anterior](06-modelos-color.md) · [Índice](../README.md) · [Siguiente: Contornos](08-contornos.md)

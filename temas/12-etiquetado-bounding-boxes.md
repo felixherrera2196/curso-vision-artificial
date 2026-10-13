@@ -41,7 +41,7 @@ Considera una imagen de 800 píxeles de ancho y 600 de alto. Una caja va desde x
 - El ancho normalizado es 200 / 800 = 0,25.
 - El alto normalizado es 300 / 600 = 0,5.
 
-Este es un ejemplo numérico didáctico de la explicación, no un código recuperado de la conversación. El identificador de clase depende del mapa de clases del proyecto.
+Utiliza este ejemplo numérico para comprobar que entiendes la normalización antes de revisar las anotaciones de tu dataset. El identificador de clase depende del mapa de clases del proyecto.
 
 ## 5. Identificadores de clase
 
@@ -65,8 +65,8 @@ Una anotación mal convertida puede tener números dentro de 0 y 1 y aun así se
 
 Convierte una caja de esquinas a centro y tamaño, primero en píxeles y después normalizada. Explica qué cambiaría al reducir la imagen a la mitad conservando proporciones: los valores en píxeles cambian, pero los valores relativos permanecen iguales si la transformación es uniforme y coherente.
 
-## Código del curso
+## Antes de exportar las etiquetas
 
-Pendiente de recibir cualquier ejemplo de anotación o conversión utilizado en la conversación. Se mantendrá separado de este ejemplo numérico explicativo.
+Visualiza las cajas sobre varias imágenes y comprueba que sus clases coincidan con el mapa del proyecto. Repite la conversión numérica de esta sección con una caja de tu dataset. No avances al entrenamiento si las posiciones o las clases son incoherentes.
 
 [Anterior](11-que-es-un-dataset.md) · [Índice](../README.md) · [Siguiente: Roboflow](13-que-es-roboflow.md)

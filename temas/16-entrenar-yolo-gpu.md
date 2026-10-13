@@ -21,7 +21,7 @@ El archivo de datos describe las clases nuevas y las rutas. El archivo de pesos 
 | `device` | Dispositivo de cómputo. | Debe corresponder a un recurso disponible. |
 | `project` y `name` | Organización de resultados. | Ayudan a identificar la ejecución y sus archivos. |
 
-Los nombres, tipos y opciones exactas dependen de la versión instalada. Se explicarán los argumentos del código original cuando lo recibamos. Esta tabla describe conceptos habituales de Ultralytics, no un comando transcrito de la conversación.
+Los nombres, tipos y opciones exactas dependen de la versión instalada. Consulta la documentación de tu versión para confirmar los argumentos admitidos y registra los valores que utilices en tu experimento.
 
 ## 3. Elegir un primer experimento
 
@@ -67,8 +67,8 @@ No optimices reiteradamente sobre el conjunto de prueba. Usa validación para de
 
 Compara dos modelos hipotéticos: uno detecta casi todos los objetos pero genera muchas falsas alarmas; el otro detecta pocos, aunque suele acertar. Relaciona cada caso con precision y recall y explica cuál preferirías según una tarea concreta.
 
-## Código original
+## Registro del experimento
 
-Pendiente de recibir las celdas de carga y entrenamiento. Se explicarán modelo inicial, argumentos, registro de resultados y archivos producidos.
+Anota el modelo inicial, la versión del dataset y los valores de los parámetros antes de entrenar. Al terminar, conserva la carpeta de resultados, revisa métricas por clase y registra qué pesos seleccionaste. Utiliza imágenes nuevas para examinar errores que los promedios pueden ocultar.
 
 [Anterior](15-colab-gpu-ultralytics.md) · [Índice](../README.md) · [Siguiente: Descargar modelo](17-descargar-yolo-uso-local.md)

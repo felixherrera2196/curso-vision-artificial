@@ -51,7 +51,7 @@ Además, Ultralytics puede aplicar transformaciones durante el entrenamiento. Re
 
 El SDK puede necesitar una clave de API para acceder a recursos autorizados. Esa clave identifica acceso, no es una clase del dataset ni un parámetro del modelo. Usa una credencial propia con el alcance necesario y evita pegarla en documentación pública.
 
-Cuando nos pases el ejemplo de descarga, sustituye cualquier clave real por un marcador. Los valores de workspace, proyecto y versión sí deben quedar explicados para que cada participante pueda reemplazarlos por los de su proyecto.
+Si compartes tu notebook o lo subes a GitHub, sustituye la clave real por un marcador o utiliza un mecanismo de secretos. En tu propia ejecución, configura los identificadores de workspace, proyecto y versión correspondientes al dataset que vas a utilizar.
 
 ## 7. Qué conservar para reproducir el trabajo
 
@@ -61,8 +61,8 @@ Registra proyecto, versión, clases, formato exportado, cantidad de imágenes po
 
 Explica la diferencia entre cambiar una anotación del proyecto y descargar una versión ya generada. Describe por qué necesitas generar o seleccionar una versión coherente después de corregir datos y verificar qué versión usa realmente el notebook.
 
-## Ejemplo original
+## Preparación para la descarga
 
-Pendiente de recibir los ejemplos de Roboflow. Se documentará el flujo que utilicen, sin asumir nombres de proyecto ni credenciales.
+Localiza el workspace, el proyecto y la versión que vas a utilizar. Comprueba que la tarea sea detección de objetos y revisa sus clases. En el [tema 14](14-descargar-dataset-roboflow.md) verificarás los archivos exportados antes de entrenar.
 
 [Anterior](12-etiquetado-bounding-boxes.md) · [Índice](../README.md) · [Siguiente: Descargar dataset](14-descargar-dataset-roboflow.md)

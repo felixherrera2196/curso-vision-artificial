@@ -14,7 +14,7 @@ No basta con que el archivo termine de descargarse. Debe ser la tarea correcta, 
 
 Para entrenar un detector YOLO con Ultralytics, utiliza el formato de detección que sea compatible con la versión y el ejemplo del curso. En las exportaciones habituales, las imágenes y etiquetas se organizan por divisiones y existe un archivo como `data.yaml` que describe rutas y clases.
 
-La denominación de la opción de exportación puede cambiar entre versiones de la plataforma. Cuando recibamos tu código, se documentará exactamente el identificador utilizado y se comprobará su relación con el entrenamiento. No se sustituirá silenciosamente por otro formato.
+La denominación de la opción de exportación puede cambiar entre versiones de la plataforma. Comprueba el identificador del formato que aparece en las instrucciones de exportación de tu proyecto y verifica que sea compatible con la versión de Ultralytics utilizada para entrenar.
 
 ## 3. Descarga manual y mediante SDK
 
@@ -58,8 +58,8 @@ Los archivos de la sesión de Colab son temporales. Si necesitas conservar exact
 
 Explica por qué un YAML existente puede fallar después de mover las carpetas. Identifica qué información necesitas para repetir la misma descarga y cómo comprobarías que el mapa de clases coincide con los archivos de etiquetas.
 
-## Código original y explicación
+## Antes de continuar
 
-Pendiente de recibir el ejemplo de Roboflow. Se explicarán inicialización, proyecto, versión, descarga, formato y ruta obtenida. No incluyas claves reales al enviarlo.
+Anota la ruta de descarga y localiza el archivo de configuración del dataset. Revisa sus clases y abre imágenes anotadas de entrenamiento y validación. Conserva el identificador de la versión para poder repetir la descarga en otra sesión de Colab.
 
 [Anterior](13-que-es-roboflow.md) · [Índice](../README.md) · [Siguiente: Colab](15-colab-gpu-ultralytics.md)

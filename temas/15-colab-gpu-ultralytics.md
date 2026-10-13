@@ -58,8 +58,8 @@ Las rutas y variables definidas en un paso se usan en los siguientes. Mantener e
 
 Explica qué perderías al reiniciar la sesión: variables, archivos temporales y bibliotecas instaladas durante la sesión pueden requerir preparación nuevamente. Distingue esos recursos del notebook guardado y de los archivos que ya conservaste en almacenamiento persistente.
 
-## Código original
+## Comprobación del entorno
 
-Pendiente de recibir las celdas de preparación. Se explicarán por separado los comandos del notebook, las llamadas de Python y las comprobaciones de GPU.
+Antes de iniciar el entrenamiento, confirma la disponibilidad de GPU, la versión de Ultralytics y la ruta del dataset. Ejecuta las celdas en orden desde una sesión limpia y comprueba que las variables y archivos requeridos existan. Decide también dónde guardarás los pesos al terminar.
 
 [Anterior](14-descargar-dataset-roboflow.md) · [Índice](../README.md) · [Siguiente: Entrenamiento](16-entrenar-yolo-gpu.md)

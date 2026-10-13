@@ -1,69 +1,70 @@
-
 # Visión artificial: de OpenCV a Deep Learning con YOLO
 
-Curso de Felix Alejandro Herrera Atilano. Estas notas desarrollan los **18 temas**, en el orden del PDF **«Temario - Felix Herrera.pdf»**, con un archivo Markdown por tema.
+Bienvenido al curso-taller de visión artificial. En esta guía aprenderás a trabajar con imágenes y video en Python, seleccionar colores y analizar figuras con OpenCV, y comprender el proceso de entrenamiento y uso de un detector de objetos con YOLO.
 
-El material está pensado para estudiantes que comienzan en visión artificial y tienen conocimientos básicos de Python. Incluye fundamentos, procedimientos, límites de los métodos, errores frecuentes y actividades de comprensión. Su lectura detallada puede requerir más tiempo que las cuatro horas del taller presencial: sirve también como material de consulta y repaso.
+**Instructor:** M. C. Felix Alejandro Herrera Atilano.
 
-## Estado del material y procedencia de los códigos
+El material sigue los **18 temas del curso**, con un archivo Markdown por tema. Puedes consultarlo antes de clase, seguirlo durante las explicaciones del instructor y utilizarlo para repasar o realizar las actividades en tu equipo.
 
-La explicación conceptual de los 18 temas está redactada. La integración de ejemplos está **en proceso**: el capítulo 04 contiene el código de cámara proporcionado por el usuario, y el capítulo 05 incluye primero un filtro directo en BGR creado a petición del usuario y después sus códigos originales en HSV con uno y dos intervalos, con una explicación de la circularidad del tono y la unión de máscaras mediante OR. Los códigos recibidos se conservan sin modificar y se explican por bloques. Los demás ejemplos se incorporarán conforme el usuario los comparta.
+## Qué necesitas para comenzar
 
-El enlace indicado como fuente es [la conversación compartida de ChatGPT](https://chatgpt.com/share/6ace9421-a6a0-83e8-a2fe-1e69ed3e6a18), titulada «Sugerencia de curso YOLO». La consulta disponible no mostró sus mensajes ni sus bloques de código. Por eso no se atribuyen ejemplos nuevos a esa conversación. Las adaptaciones solicitadas por el usuario se identifican como tales. El usuario está proporcionando los códigos directamente, uno por uno.
+- Conocimientos básicos de Python: variables, condiciones, ciclos e importación de bibliotecas.
+- Una computadora con cámara web y conexión a internet.
+- Python y VS Code instalados para las prácticas locales.
+- Una cuenta de Google para utilizar Colab durante la preparación y el entrenamiento.
+- Acceso a un proyecto de Roboflow cuando trabajes con el dataset.
 
-El PDF se utiliza como fuente del temario y del objetivo docente. Las explicaciones amplían esos temas; no se presentan como una transcripción del PDF. El contenido de los documentos se trata como material de referencia, separado de las instrucciones del usuario.
+Si necesitas preparar tu equipo, comienza por los tutoriales de [instalación de Python](Tutorial%20instalaci%C3%B3n%20de%20Python/Tutorial%20instalaci%C3%B3n%20de%20Python.md) e [instalación de VS Code](Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode/Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode.md). Después revisa el tema 03 para comprender qué bibliotecas utiliza el curso y cómo comprobar tu entorno.
 
-## Cómo utilizar estas notas
+## Cómo seguir la guía
 
-1. Revisa la instalación de Python y del editor antes de las prácticas.
-2. Sigue los temas en el orden del índice, aunque puedes regresar a una explicación cuando la necesites.
-3. Distingue las actividades conceptuales de los ejemplos ejecutables: algunos capítulos todavía no tienen código.
-4. Ejecuta las prácticas de cámara en una computadora local con webcam y escritorio gráfico.
-5. Utiliza Colab para preparar y entrenar; descarga después los pesos para la aplicación local.
-6. Registra datos, versiones, parámetros y resultados para que tu experimento pueda repetirse.
+1. Abre los capítulos desde el índice y avanza en orden. Cada uno explica qué aprenderás y termina con actividades o comprobaciones.
+2. Relaciona las explicaciones con la práctica de clase. Identifica qué datos recibe cada operación y qué resultado produce.
+3. Para ejecutar un ejemplo, copia su bloque de código en un archivo `.py`, guárdalo con el nombre sugerido y ejecútalo con el intérprete de tu proyecto.
+4. Realiza las prácticas de cámara en tu computadora. Colab es un entorno remoto y no accede a la webcam mediante el mismo procedimiento local.
+5. Guarda tus observaciones: parámetros, condiciones de iluminación, resultados y situaciones en las que el método falla.
+6. Para YOLO, conserva también la versión del dataset, la configuración de entrenamiento y los pesos seleccionados.
 
-## Índice: primera parte, OpenCV
+Los capítulos **04 y 05** incluyen programas completos para captura de cámara y filtrado de color. Los demás capítulos ofrecen fundamentos, procedimientos y actividades para acompañar las prácticas del taller; no todos contienen un programa completo.
 
-| Tema del PDF | Archivo | Ejemplo original |
+El taller presencial tiene una duración de cuatro horas. La guía amplía las explicaciones para que puedas consultar los detalles después de clase y repetir las actividades a tu ritmo.
+
+## Primera parte: imágenes y OpenCV
+
+Comenzarás con imágenes como arreglos numéricos y después utilizarás una cámara. A partir de sus fotogramas construirás máscaras de color y estudiarás cómo limpiar regiones, obtener contornos y describir figuras.
+
+| Tema | Guía | Qué aprenderás |
 | --- | --- | --- |
-| Introducción a la Visión Artificial y el Procesamiento de Imágenes. | [01. Introducción](temas/01-introduccion-vision-artificial.md) | Tema conceptual. |
-| ¿Qué es una Imagen? | [02. Imagen digital](temas/02-que-es-una-imagen.md) | Pendiente, si existe en la conversación. |
-| Instalación de Python y bibliotecas a utilizar (OpenCV y Roboflow). | [03. Instalación](temas/03-instalacion-python-bibliotecas.md) | Pendiente de comandos originales. |
-| Obtener video de una cámara con Python | [04. Captura de cámara](temas/04-video-camara-python.md) | Incorporado y explicado. |
-| Filtros de color | [05. Filtros de color](temas/05-filtros-color.md) | BGR didáctico y HSV original con uno y dos intervalos, explicados y comparados. |
-| Modelos de color | [06. Modelos de color](temas/06-modelos-color.md) | Pendiente. |
-| Operaciones morfológicas | [07. Morfología](temas/07-operaciones-morfologicas.md) | Pendiente. |
-| Contornos | [08. Contornos](temas/08-contornos.md) | Pendiente. |
-| Detectar figuras | [09. Figuras geométricas](temas/09-detectar-figuras.md) | Pendiente. |
+| 01 | [Introducción a la Visión Artificial y el Procesamiento de Imágenes](temas/01-introduccion-vision-artificial.md) | Definir una tarea y reconocer las etapas de una aplicación. |
+| 02 | [¿Qué es una Imagen?](temas/02-que-es-una-imagen.md) | Interpretar píxeles, canales, dimensiones y coordenadas. |
+| 03 | [Instalación de Python y bibliotecas a utilizar](temas/03-instalacion-python-bibliotecas.md) | Preparar y comprobar el entorno de trabajo. |
+| 04 | [Obtener video de una cámara con Python](temas/04-video-camara-python.md) | Capturar fotogramas, mostrarlos y liberar la cámara. |
+| 05 | [Filtros de color](temas/05-filtros-color.md) | Comparar BGR directo, HSV con un intervalo y HSV con dos intervalos de rojo. |
+| 06 | [Modelos de color](temas/06-modelos-color.md) | Distinguir BGR, RGB, grises y HSV. |
+| 07 | [Operaciones morfológicas](temas/07-operaciones-morfologicas.md) | Comprender erosión, dilatación, apertura y cierre. |
+| 08 | [Contornos](temas/08-contornos.md) | Analizar fronteras, áreas, perímetros y centros. |
+| 09 | [Detectar figuras](temas/09-detectar-figuras.md) | Proponer clases geométricas y reconocer los límites de las reglas. |
 
-## Índice: segunda parte, datos y YOLO
+## Segunda parte: datos, entrenamiento y YOLO
 
-| Tema del PDF | Archivo | Ejemplo original |
+Después estudiarás cómo preparar imágenes etiquetadas, utilizar un dataset y entrenar un detector. El recorrido termina con la descarga de los pesos y su uso local sobre video de cámara.
+
+| Tema | Guía | Qué aprenderás |
 | --- | --- | --- |
-| Introducción a Deep Learning | [10. Deep Learning](temas/10-introduccion-deep-learning.md) | Tema conceptual. |
-| ¿Qué es un dataset? | [11. Dataset](temas/11-que-es-un-dataset.md) | Tema conceptual. |
-| Etiquetado y bounding boxes | [12. Anotaciones y cajas](temas/12-etiquetado-bounding-boxes.md) | Pendiente, si hay código original. |
-| ¿Qué es Roboflow? | [13. Roboflow](temas/13-que-es-roboflow.md) | Pendiente, si hay ejemplo original. |
-| Descargar un dataset de Roboflow | [14. Descarga de datos](temas/14-descargar-dataset-roboflow.md) | Pendiente. |
-| Google Colab + GPU + Ultralytics | [15. Preparación de Colab](temas/15-colab-gpu-ultralytics.md) | Pendiente. |
-| Entrenar modelo YOLO usando GPU | [16. Entrenamiento](temas/16-entrenar-yolo-gpu.md) | Pendiente. |
-| Descargar YOLO entrenado para uso local | [17. Traslado del modelo](temas/17-descargar-yolo-uso-local.md) | Pendiente. |
-| Detectar objeto con cámara web usando YOLO | [18. Detección por webcam](temas/18-detectar-objeto-webcam-yolo.md) | Pendiente. |
+| 10 | [Introducción a Deep Learning](temas/10-introduccion-deep-learning.md) | Distinguir aprendizaje, entrenamiento e inferencia. |
+| 11 | [¿Qué es un dataset?](temas/11-que-es-un-dataset.md) | Organizar datos representativos y separar entrenamiento, validación y prueba. |
+| 12 | [Etiquetado y bounding boxes](temas/12-etiquetado-bounding-boxes.md) | Anotar objetos e interpretar cajas y coordenadas normalizadas. |
+| 13 | [¿Qué es Roboflow?](temas/13-que-es-roboflow.md) | Relacionar proyectos, anotaciones y versiones. |
+| 14 | [Descargar un dataset de Roboflow](temas/14-descargar-dataset-roboflow.md) | Verificar formato, rutas y configuración de los datos. |
+| 15 | [Google Colab + GPU + Ultralytics](temas/15-colab-gpu-ultralytics.md) | Preparar el entorno remoto y comprobar la GPU. |
+| 16 | [Entrenar modelo YOLO usando GPU](temas/16-entrenar-yolo-gpu.md) | Comprender parámetros, métricas y selección de pesos. |
+| 17 | [Descargar YOLO entrenado para uso local](temas/17-descargar-yolo-uso-local.md) | Trasladar el modelo y comprobar su carga en tu equipo. |
+| 18 | [Detectar objeto con cámara web usando YOLO](temas/18-detectar-objeto-webcam-yolo.md) | Integrar captura, predicción y visualización. |
 
-## Tutoriales de instalación existentes
+## Actividad integradora
 
-- [Instalación de Python](Tutorial%20instalaci%C3%B3n%20de%20Python/Tutorial%20instalaci%C3%B3n%20de%20Python.md).
-- [Instalación de VS Code](Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode/Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode.md).
+Durante el taller desarrollarás aplicaciones de Python para detectar colores y formas con OpenCV y utilizar un detector YOLO entrenado sobre video de cámara. Consulta las secciones correspondientes mientras completas cada etapa con el instructor.
 
-Estos tutoriales ya estaban en el proyecto. No se modificaron ni se presentan como códigos recuperados de la conversación.
+Para documentar tus resultados, describe el objetivo, los datos utilizados, los parámetros elegidos y las condiciones de prueba. Incluye aciertos y errores: una detección que funciona con un fondo limpio puede fallar al cambiar la luz, la distancia o el entorno.
 
-## Actividad práctica del temario
-
-El recorrido termina en dos resultados: una aplicación de OpenCV para detectar colores y formas mediante una webcam, y un detector YOLO entrenado que se usa localmente sobre video de cámara.
-
-Para documentar tu práctica, explica el objetivo de cada aplicación, cómo se preparan los datos, qué parámetros utilizas, cómo se sale del programa y en qué condiciones funciona o falla. En YOLO conserva también la versión del dataset, el archivo de pesos seleccionado y las métricas de evaluación.
-
-## Verificación realizada y límites
-
-Se comprobó la correspondencia de los 18 capítulos con el temario, la resolución de los enlaces locales y la sintaxis de Python de los códigos incorporados. La captura real no se ejecutó en este entorno remoto; debe probarse con la cámara y la interfaz gráfica del equipo del participante. Tampoco se ha ejecutado entrenamiento, porque todavía no se han proporcionado esos ejemplos ni el dataset concreto.
-
+Antes de pasar de una etapa a la siguiente, comprueba su resultado por separado: primero captura de cámara, después máscara y contornos; en YOLO, primero datos y entrenamiento, después carga local y finalmente video. Este orden te ayudará a localizar los problemas.

@@ -48,7 +48,7 @@ El temario se centra en **detección**. No basta con etiquetar una imagen como �
 
 ## 6. Qué aporta YOLO
 
-YOLO es una familia de detectores que realiza predicciones de localización y clase en un flujo diseñado para ser eficiente. Los detalles de arquitectura y pérdidas cambian entre versiones. En este curso usaremos una versión compatible con Ultralytics y con los ejemplos que proporciones; no se asumirá una arquitectura concreta hasta conocer el código.
+YOLO es una familia de detectores que realiza predicciones de localización y clase en un flujo diseñado para ser eficiente. Los detalles de arquitectura y pérdidas cambian entre versiones. Al realizar la práctica, utiliza un modelo compatible con la versión de Ultralytics de tu entorno y registra su nombre para poder repetir el experimento.
 
 Para un taller breve suele ser útil partir de pesos **preentrenados** y ajustarlos a las clases nuevas. Es una forma de transferencia de aprendizaje: se aprovecha una representación obtenida con otros datos. Esto no elimina la necesidad de un dataset adecuado ni hace que el detector conozca automáticamente las clases de tu proyecto.
 
