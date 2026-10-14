@@ -40,7 +40,7 @@ El valor adecuado depende del costo de ambos tipos de error. Para una demostraci
 
 Los detectores pueden producir varias candidatas relacionadas con una misma instancia. En los flujos que utilizan supresión de detecciones superpuestas, un criterio basado en IoU ayuda a decidir cuáles conservar. Los detalles cambian entre modelos y configuraciones; no hay que asumir que todas las versiones usan el mismo posprocesamiento.
 
-El umbral de confianza y el criterio de superposición no son equivalentes. El primero filtra puntuaciones; el segundo participa en el tratamiento de cajas relacionadas. Al recibir el ejemplo, explicaremos únicamente los parámetros que realmente utilice.
+El umbral de confianza y el criterio de superposición no son equivalentes. El primero filtra puntuaciones; el segundo participa en el tratamiento de cajas relacionadas. Antes de ajustar estos parámetros, identifica cuáles admite el modelo que utilizas y qué efecto tiene cada uno sobre las detecciones.
 
 ## 6. Coordenadas y color
 
@@ -66,8 +66,8 @@ Verifica también la salida: la tecla elegida debe terminar el ciclo, la cámara
 
 Realiza dos aplicaciones: una selección por color y forma con OpenCV y una detección aprendida con YOLO. Para cada una describe clases o criterios, datos requeridos, condiciones de prueba, aciertos y fallos. Explica en qué escena prefieres cada enfoque usando lo observado.
 
-## Código original y explicación
+## Comprobación de la aplicación
 
-Pendiente de recibir el ejemplo de inferencia por cámara. Se documentarán carga de pesos, captura, llamada al modelo, resultados, dibujo, umbrales y limpieza, distinguiendo el código original de cualquier mejora propuesta.
+Verifica por separado la captura de cámara y la carga del detector. Al integrarlos, comprueba que las predicciones se actualicen, que el programa siga funcionando sin detecciones y que ESC libere la cámara. Registra velocidad, falsas alarmas y objetos omitidos en las condiciones de uso de tu práctica.
 
 [Anterior](17-descargar-yolo-uso-local.md) · [Índice del curso](../README.md)

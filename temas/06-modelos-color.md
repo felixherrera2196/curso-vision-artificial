@@ -56,8 +56,8 @@ Por eso un filtro de color suele restringir también S y V. Separar componentes 
 
 Observa una escena con un objeto rojo, uno verde y uno blanco. Explica cuál información se conserva en HSV y cuál se pierde en escala de grises. Después describe por qué sería incorrecto usar un límite H de 300 en la conversión HSV de 8 bits habitual de OpenCV.
 
-## Código del curso
+## Relaciona los modelos con el código
 
-Pendiente de incorporar desde la conversación. Se explicará cada conversión de color, sus rangos y el formato de la imagen que recibe.
+Vuelve a los [tres filtros del tema 05](05-filtros-color.md). Identifica qué programa utiliza BGR directamente y cuáles convierten a HSV. Explica qué significa cada componente de sus límites y por qué el fotograma original puede seguir mostrándose después de la conversión.
 
 [Anterior](05-filtros-color.md) · [Índice](../README.md) · [Siguiente: Morfología](07-operaciones-morfologicas.md)

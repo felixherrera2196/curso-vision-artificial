@@ -20,7 +20,7 @@ Instalar VS Code no instala necesariamente Python. Del mismo modo, crear una cue
 
 ## 2. Preparación de Python y VS Code
 
-El repositorio ya incluye un [tutorial de instalación de Python](../Tutorial%20instalaci%C3%B3n%20de%20Python/Tutorial%20instalaci%C3%B3n%20de%20Python.md) y un [tutorial de instalación de VS Code](../Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode/Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode.md). Son material existente del proyecto, independiente de los códigos de la conversación que se integrarán después.
+El repositorio ya incluye un [tutorial de instalación de Python](../Tutorial%20instalaci%C3%B3n%20de%20Python/Tutorial%20instalaci%C3%B3n%20de%20Python.md) y un [tutorial de instalación de VS Code](../Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode/Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode.md). Sigue ambos tutoriales para preparar tu equipo antes de comenzar las prácticas de cámara.
 
 Utiliza una versión de Python compatible con los paquetes que vas a instalar. Elegir una versión recién publicada sin revisar compatibilidad puede causar fallos porque algunas bibliotecas todavía no ofrecen archivos preparados para ella. En computadoras del laboratorio conviene conservar la configuración que haya validado el instructor.
 
@@ -65,8 +65,8 @@ La cámara web del equipo se utilizará en el programa local. Abrir el dispositi
 - **Ventana no disponible:** comprueba la variante de OpenCV y si estás en un escritorio local.
 - **Cámara ocupada:** cierra aplicaciones que estén usando el dispositivo y revisa permisos.
 
-## Código y comandos del curso
+## Antes de continuar
 
-Pendientes de recuperar de la conversación compartida. Se documentarán con el entorno en el que se ejecutan y se explicará el propósito de cada comando; no se atribuirán comandos nuevos a esa fuente.
+Completa los tutoriales de instalación y selecciona el intérprete correcto en VS Code. Después ejecuta la [práctica de cámara del tema 04](04-video-camara-python.md): abrir una ventana con video y cerrarla con ESC será tu comprobación del entorno local.
 
 [Anterior](02-que-es-una-imagen.md) · [Índice](../README.md) · [Siguiente: Cámara](04-video-camara-python.md)

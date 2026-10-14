@@ -2,7 +2,7 @@
 
 ## Qué aprenderás
 
-Aprenderás a seleccionar píxeles por color y a interpretar una máscara binaria. Primero aplicarás un filtro directamente al fotograma de la cámara, **sin convertir su modelo de color**. Después ejecutarás el ejemplo en HSV con un intervalo y, finalmente, el de dos intervalos proporcionados por Felix. Compararás las tres prácticas para entender qué aporta cada cambio.
+Aprenderás a seleccionar píxeles por color y a interpretar una máscara binaria. Primero aplicarás un filtro directamente al fotograma de la cámara, **sin convertir su modelo de color**. Después ejecutarás el ejemplo en HSV con un intervalo y, finalmente, el de dos intervalos. Compararás las tres prácticas para entender qué aporta cada cambio.
 
 OpenCV entrega normalmente el fotograma en **BGR**, no en RGB. Por eso el primer ejemplo trabaja directamente en BGR. El segundo convierte de **BGR a HSV**; ninguno necesita una conversión intermedia a RGB.
 
@@ -32,7 +32,7 @@ Estos valores son **didácticos y necesitan calibración**. No representan todos
 
 ### 2.2. Código completo sin conversión de color
 
-Este ejemplo es una **adaptación didáctica creada a petición de Felix** a partir de la estructura de su código HSV. No es un código recuperado del enlace compartido. Puedes guardarlo como `filtro_rojo_bgr.py` y ejecutarlo localmente con OpenCV y NumPy instalados.
+En esta primera práctica seleccionarás píxeles rojos directamente por sus intensidades BGR. Puedes guardarlo como `filtro_rojo_bgr.py` y ejecutarlo localmente con OpenCV y NumPy instalados.
 
 ```python
 # Importamos OpenCV
@@ -106,7 +106,7 @@ cv2.destroyAllWindows()
 
 ### 2.3. Explicación por bloques
 
-**Importaciones.** `cv2` proporciona captura, comparación y ventanas. `numpy`, abreviado como `np`, permite construir los arreglos con los límites. `np.array` convierte la lista de tres valores en un arreglo. En esta adaptación, `dtype=np.uint8` hace explícito el tipo de entero de 8 bits sin signo utilizado para los límites de 0 a 255.
+**Importaciones.** `cv2` proporciona captura, comparación y ventanas. `numpy`, abreviado como `np`, permite construir los arreglos con los límites. `np.array` convierte la lista de tres valores en un arreglo. En este ejemplo, `dtype=np.uint8` hace explícito el tipo de entero de 8 bits sin signo utilizado para los límites de 0 a 255.
 
 **Captura.** La apertura, `isOpened`, la lectura con `ret` y `frame`, y la salida con ESC funcionan como en el [capítulo 04](04-video-camara-python.md). `frame` contiene el fotograma actual; aquí lo usamos sin llamar a `cvtColor`.
 
@@ -118,7 +118,7 @@ cv2.destroyAllWindows()
 
 **Salida y limpieza.** Selecciona una ventana de OpenCV y pulsa ESC. El ciclo termina, se libera la cámara y se cierran las ventanas. Ejecuta un ejemplo a la vez para evitar que dos programas intenten usar la misma cámara.
 
-Los límites se construyen dentro del ciclo para mantener la estructura del ejemplo recibido. Como son constantes, podrían definirse antes del ciclo en otra versión; eso no cambia el criterio de selección.
+Los límites se construyen dentro del ciclo, junto al paso que los utiliza. Como son constantes, podrían definirse antes del ciclo en otra versión; eso no cambia el criterio de selección.
 
 ### 2.4. Qué dificultad queremos observar
 
@@ -136,9 +136,9 @@ HSV organiza la información mediante **H: tono**, **S: saturación** y **V: val
 
 En la conversión habitual de OpenCV para imágenes de 8 bits, H está entre **0 y 179**, y S y V están entre **0 y 255**. No uses límites de tono de 0 a 360 en este ejemplo. El [capítulo 06](06-modelos-color.md) explica esos componentes con más detalle.
 
-### 3.2. Código original proporcionado por Felix
+### 3.2. Código: filtro de rojo con un intervalo HSV
 
-El siguiente código se conserva tal como fue enviado. Puedes guardarlo como `filtro_rojo_hsv.py`. Cierra primero el programa BGR con ESC y después ejecuta este.
+En esta segunda práctica convertirás cada fotograma a HSV antes de crear la máscara. Puedes guardarlo como `filtro_rojo_hsv.py`. Cierra primero el programa BGR con ESC y después ejecuta este.
 
 ```python
 # Importamos OpenCV
@@ -237,7 +237,7 @@ En esta segunda práctica, los mismos nombres de variables tienen una interpreta
 | S: saturación | 100 | 255 | Excluir colores demasiado poco saturados, cercanos al gris. |
 | V: valor | 100 | 255 | Excluir zonas demasiado oscuras para este filtro. |
 
-`np.array([0, 100, 100])` y `np.array([10, 255, 255])` crean los límites. El ejemplo original no indica un `dtype` explícito; NumPy utiliza su tipo entero predeterminado para estas listas. Se mantiene ese detalle sin modificar la fuente. Lo importante para la comparación es que los valores correspondan a los canales y rangos de esta conversión.
+`np.array([0, 100, 100])` y `np.array([10, 255, 255])` crean los límites. Este ejemplo no indica un `dtype` explícito; NumPy utiliza su tipo entero predeterminado para estas listas. Lo importante para la comparación es que los valores correspondan a los canales y rangos de esta conversión.
 
 El mínimo de S ayuda a evitar zonas poco coloreadas cuyo tono no es una pista fiable. El mínimo de V elimina regiones oscuras, pero también puede excluir partes reales del objeto en sombra. Estos valores necesitan calibración igual que los de BGR.
 
@@ -295,9 +295,9 @@ La solución es representar esa región circular como la unión de **dos interva
 
 Los dos rangos usan los mismos mínimos de saturación y valor para mantener el mismo criterio de color suficientemente saturado y visible. Los números son puntos de partida: cubrir ambos extremos **no garantiza detectar todo objeto que una persona considere rojo**. Un objeto oscuro todavía puede quedar fuera por V y un reflejo poco saturado por S.
 
-### 5.3. Código original de dos intervalos proporcionado por Felix
+### 5.3. Código: filtro de rojo con dos intervalos HSV
 
-Este tercer ejemplo se conserva tal como fue enviado. Puedes guardarlo como `filtro_rojo_hsv_dos_intervalos.py`. Cierra el programa anterior con ESC antes de ejecutarlo, para que la cámara quede disponible.
+En esta tercera práctica crearás dos máscaras y las unirás para seleccionar ambos extremos del tono rojo. Puedes guardarlo como `filtro_rojo_hsv_dos_intervalos.py`. Cierra el programa anterior con ESC antes de ejecutarlo, para que la cámara quede disponible.
 
 ```python
 # Importamos OpenCV
@@ -510,11 +510,11 @@ La máscara es útil para las siguientes etapas: limpiar ruido con operaciones m
 
 **La máscara BGR queda negra:** revisa el orden B, G, R, el mínimo de R y las intensidades reales del objeto. **HSV no selecciona un rojo visible:** revisa el extremo alto de H y los mínimos de S y V. **Se selecciona demasiado fondo:** estrecha los intervalos después de observar qué valores producen el problema. **El objeto sale fragmentado:** puede haber sombras, reflejos o límites demasiado estrechos. **Hay puntos dispersos:** algunas regiones del fondo cumplen los rangos; el siguiente tema práctico explicará cómo limpiar la máscara.
 
-La comprobación de lectura y la limpieza del programa mantienen las limitaciones del ejemplo de cámara: están previstas las salidas por ESC y por lectura fallida, pero no se garantiza la limpieza ante toda excepción. Esa mejora puede documentarse aparte sin alterar los códigos originales.
+La comprobación de lectura y la limpieza del programa mantienen las limitaciones del ejemplo de cámara: están previstas las salidas por ESC y por lectura fallida, pero no se garantiza la limpieza ante toda excepción. Como ejercicio adicional, puedes reorganizar la limpieza con `try` y `finally`.
 
 ## 9. Comprobación y preguntas de repaso
 
-Se verificó la sintaxis de los tres bloques Python. La captura y las máscaras deben probarse localmente: este entorno de documentación no dispone de OpenCV ni de una webcam con interfaz gráfica para ejecutarlas.
+Ejecuta los tres programas, uno a la vez, en tu computadora con OpenCV, NumPy y una cámara disponible. Comprueba que cada ventana se actualice y que ESC termine el programa. Después responde las siguientes preguntas usando lo observado.
 
 - ¿Por qué el primer intervalo está escrito en BGR y no en RGB?
 - ¿Qué significa el tercer valor del límite inferior en cada programa?

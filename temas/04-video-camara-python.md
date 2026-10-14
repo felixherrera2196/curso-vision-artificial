@@ -27,9 +27,9 @@ La captura no debe abrirse nuevamente en cada iteración. Hacerlo añade trabajo
 
 En un programa local, `imshow` permite mostrar un fotograma en una ventana. Las funciones de espera de teclado, como `waitKey`, también permiten que OpenCV procese eventos de esa ventana. Si el programa no atiende los eventos, la interfaz puede aparentar que se bloqueó.
 
-La espera debe ser breve para seguir avanzando por el video. Su valor no establece por sí solo los fotogramas por segundo: también cuenta el tiempo de lectura, el procesamiento y la visualización. La tecla elegida para salir debe explicarse al usuario y verificarse dentro del ciclo.
+La espera debe ser breve para seguir avanzando por el video. Su valor no establece por sí solo los fotogramas por segundo: también cuenta el tiempo de lectura, el procesamiento y la visualización. Al crear tu aplicación, indica qué tecla permite salir y comprueba su pulsación dentro del ciclo.
 
-Conviene que el programa pueda liberar recursos aunque haya una excepción. La lógica de limpieza suele organizarse de forma que se ejecute al terminar normalmente o al producirse un fallo. Cuando se incorpore el código original, revisaremos si ya incluye ese manejo o si necesita una corrección señalada explícitamente.
+Conviene que el programa pueda liberar recursos aunque haya una excepción. La lógica de limpieza suele organizarse de forma que se ejecute al terminar normalmente o al producirse un fallo. El ejemplo de esta guía libera los recursos al salir por ESC o por un fallo de lectura; para asegurar la limpieza también ante excepciones, puedes utilizar una estructura `try` y `finally`.
 
 ## 4. Liberar los recursos
 
@@ -57,9 +57,9 @@ Después prueba con la cámara desconectada o con un índice incorrecto. La apli
 - **Video con retraso:** evalúa costo por fotograma y posible acumulación de imágenes.
 - **Fallo en Colab:** recuerda que el kernel remoto no tiene acceso directo a la cámara local.
 
-## 7. Código original proporcionado por Felix
+## 7. Práctica: mostrar el video de la cámara
 
-Este ejemplo fue pegado por el usuario como el primer código del curso. Se conserva sin modificar. Guárdalo en un archivo con extensión `.py`, por ejemplo `camara_web.py`, y ejecútalo localmente desde el entorno preparado en el tema 03. No nombres el archivo `cv2.py`, porque ese nombre puede interferir con la importación de OpenCV.
+En esta práctica abrirás la cámara, mostrarás los fotogramas y terminarás la ejecución con ESC. Guarda el siguiente código en un archivo con extensión `.py`, por ejemplo `camara_web.py`, y ejecútalo localmente desde el entorno preparado en el tema 03. No nombres el archivo `cv2.py`, porque ese nombre puede interferir con la importación de OpenCV.
 
 ```python
 # Importamos OpenCV
@@ -118,7 +118,7 @@ La línea se ejecuta una sola vez. Si hay varias cámaras, puede ser necesario c
 
 `cap.isOpened()` produce una respuesta de verdadero o falso sobre la apertura. `not` invierte esa respuesta, de modo que el bloque del `if` se ejecuta cuando la fuente **no** se pudo abrir. El programa imprime un mensaje y termina mediante `exit()`.
 
-El ejemplo usa `exit()` como salida sencilla. Es un auxiliar habitualmente disponible en Python; en un programa de producción suele preferirse una salida explícita con `sys.exit()` o una estructura de función. No se ha cambiado el código original. Esta observación explica una posible mejora, no una condición necesaria para seguir el taller.
+El ejemplo usa `exit()` como salida sencilla. Es un auxiliar habitualmente disponible en Python; en un programa de producción suele preferirse una salida explícita con `sys.exit()` o una estructura de función. Durante esta práctica, concéntrate en comprender la comprobación de apertura y el flujo de salida.
 
 ### Repetir la lectura
 
@@ -152,7 +152,7 @@ En este punto todavía no se ha aplicado un filtro ni un detector: se muestra lo
 
 `cap.release()` deja disponible la cámara y `cv2.destroyAllWindows()` cierra las ventanas creadas por OpenCV. Ambas se ejecutan después de las salidas normales del ciclo.
 
-Si una excepción ocurre antes de llegar a esas líneas, el código no asegura que la limpieza se ejecute. Una futura versión más robusta puede utilizar `try` y `finally`; esa sería una adaptación explícita, separada de la transcripción original.
+Si una excepción ocurre antes de llegar a esas líneas, el código no asegura que la limpieza se ejecute. Como ejercicio de mejora, puedes utilizar `try` y `finally` para asegurar la liberación de recursos también cuando se produce una excepción.
 
 ## 9. Resultado esperado y comprobación
 
@@ -160,6 +160,6 @@ Al ejecutar el archivo, aparece la ventana «Camara web» con video que cambia c
 
 Después vuelve a ejecutar el programa. Si la cámara abre nuevamente, la liberación funcionó en la salida normal. Si aparece alguno de los mensajes de fallo, utiliza el diagnóstico de la sección anterior y distingue si falló la apertura o la lectura.
 
-Este código se revisó sintácticamente, pero la captura real debe probarse en una computadora con cámara y escritorio gráfico. El entorno remoto de documentación no permite verificar ese hardware.
+Realiza esta comprobación en tu computadora con cámara y escritorio gráfico. Si la ventana no aparece o el dispositivo no se abre, revisa los permisos, la conexión y el entorno de Python antes de continuar.
 
 [Anterior](03-instalacion-python-bibliotecas.md) · [Índice](../README.md) · [Siguiente: Filtros de color](05-filtros-color.md)

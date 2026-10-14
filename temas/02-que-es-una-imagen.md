@@ -53,8 +53,8 @@ Si dibujas una caja calculada sobre una imagen reducida en la imagen original, d
 
 Para una imagen de 800 × 600 con tres canales, identifica ancho, alto, forma del arreglo y coordenadas de la esquina inferior derecha. Explica qué ocurriría al mostrarla con un orden de canales incorrecto y por qué una máscara de un solo canal no tiene la misma forma que la imagen de color.
 
-## Ejemplo de código del curso
+## Aplicación en la siguiente práctica
 
-Pendiente de incorporar desde la conversación compartida. Se explicarán la lectura de la imagen, su forma, sus canales y cualquier transformación presente en el ejemplo original.
+En el [tema 04](04-video-camara-python.md) capturarás fotogramas reales. Relaciona cada imagen de la cámara con los conceptos de esta sección: alto, ancho, canales BGR y coordenadas. Esta relación te ayudará a interpretar las máscaras del tema 05.
 
 [Anterior](01-introduccion-vision-artificial.md) · [Índice](../README.md) · [Siguiente: Instalación](03-instalacion-python-bibliotecas.md)

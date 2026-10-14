@@ -30,7 +30,7 @@ La aproximación de almacenamiento de puntos también es diferente de la recuper
 
 `arcLength` calcula la longitud de la secuencia, indicando si se trata como cerrada. El perímetro se expresa en unidades de píxel. Un borde ruidoso puede tener una longitud mayor que una frontera suave, aunque ambos correspondan al mismo objeto.
 
-Un filtro de área mínima ayuda a descartar ruido. El umbral depende de la resolución y de la distancia del objeto. Si el usuario aleja la figura, su área aparente disminuye y puede quedar descartada sin haber cambiado físicamente.
+Un filtro de área mínima ayuda a descartar ruido. El umbral depende de la resolución y de la distancia del objeto. Si alejas la figura de la cámara, su área aparente disminuye y puede quedar descartada sin haber cambiado físicamente.
 
 ## 5. Rectángulo y centro
 
@@ -50,8 +50,8 @@ Mientras desarrollas, dibuja los contornos sobre una copia del fotograma. Así c
 
 Coloca una figura sólida, una figura con agujero y dos figuras que se toquen. Predice los contornos con recuperación externa y con jerarquía completa. Después explica cómo el ruido del borde afectaría al perímetro y a la detección de vértices.
 
-## Código original
+## Preparación de la práctica
 
-Pendiente de recibir. Se explicarán modo de recuperación, almacenamiento de puntos, filtros, medidas y dibujo, según lo que utilice el ejemplo.
+Antes de buscar contornos, verifica que tienes una máscara de un canal con el objeto en blanco. Identifica qué fronteras necesitas recuperar, cómo descartarás ruido por área y qué medidas utilizarás. Dibuja los resultados sobre el fotograma para comprobar que las regiones calculadas corresponden a lo que quieres analizar.
 
 [Anterior](07-operaciones-morfologicas.md) · [Índice](../README.md) · [Siguiente: Detectar figuras](09-detectar-figuras.md)

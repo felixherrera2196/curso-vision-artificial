@@ -55,8 +55,8 @@ Mantén una opción «no determinada» cuando las medidas no apoyen una clase cl
 
 Usa triángulo, cuadrado, rectángulo y círculo sobre un fondo contrastante. Prueba cada uno de frente, rotado y parcialmente cubierto. Registra la figura real, los vértices calculados y la clase asignada. Busca al menos un caso donde el método falle y explica qué etapa lo causa.
 
-## Código original
+## Preparación de la práctica
 
-Pendiente de recibir. Las reglas y parámetros se explicarán a partir del ejemplo real, señalando simplificaciones y cualquier corrección necesaria.
+Organiza tus reglas antes de programar: escribe qué medidas utilizarás para cada figura y cuándo devolverás una clase no determinada. Usa figuras separadas y de frente para la primera prueba; después cambia orientación, distancia y oclusión para reconocer los límites del método.
 
 [Anterior](08-contornos.md) · [Índice](../README.md) · [Siguiente: Deep Learning](10-introduccion-deep-learning.md)

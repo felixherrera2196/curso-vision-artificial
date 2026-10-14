@@ -56,8 +56,8 @@ La ruta del archivo puede ser absoluta o relativa. Una ruta relativa se interpre
 
 Explica qué información guardarías junto a dos experimentos distintos cuyos archivos se llamen `best.pt`. Describe por qué una descarga correcta no demuestra todavía que el modelo detecte bien con la webcam.
 
-## Código original
+## Comprobación antes de usar la cámara
 
-Pendiente de recibir las celdas de descarga y la carga local. Se explicarán ruta de origen, conservación, transferencia y ruta utilizada por Python.
+Confirma que descargaste los pesos de la ejecución correcta y que el archivo puede cargarse en tu entorno local. Realiza una predicción sobre una imagen conocida y otra nueva. Comprueba las clases y las cajas antes de integrar la captura de video.
 
 [Anterior](16-entrenar-yolo-gpu.md) · [Índice](../README.md) · [Siguiente: YOLO y webcam](18-detectar-objeto-webcam-yolo.md)
