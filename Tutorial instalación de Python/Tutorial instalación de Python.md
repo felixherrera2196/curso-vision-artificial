@@ -23,7 +23,7 @@ Python es gratuito. Utiliza el sitio oficial indicado arriba.
 2. Haz clic en **Descargas** y busca el instalador de Python.
 3. Haz doble clic en ese archivo para abrirlo.
 4. En la primera pantalla, **marca la casilla `Add python.exe to PATH`**, que suele estar en la parte inferior. Este paso permite que Windows encuentre Python cuando escribas el comando de comprobación.
-5. Haz clic en **Install Now**. Significa “Instalar ahora”. Conserva las opciones predeterminadas, incluido el lanzador de Python si aparece; el instalador incluye pip, la herramienta para instalar bibliotecas. El lanzador permite seleccionar Python 3.12 con el comando `py -3.12`.
+5. Haz clic en **Install Now**. Significa “Instalar ahora”. Conserva las opciones predeterminadas; el instalador incluye pip, la herramienta para instalar bibliotecas.
 6. Si Windows pide autorización para realizar cambios, comprueba que sea el instalador oficial de Python y haz clic en **Sí**. Si solicita una contraseña que no tienes, pide ayuda a quien administra la computadora.
 7. Espera a que termine la instalación. No cierres la ventana mientras avanza la barra de progreso.
 8. Cuando aparezca **Setup was successful**, la instalación terminó correctamente. Haz clic en **Close / Cerrar**.
@@ -38,14 +38,16 @@ La consola es una ventana donde escribes instrucciones para la computadora. Usar
 4. Copia el siguiente comando, pégalo con **Ctrl + V** y presiona **Enter**. Copia solamente la línea dentro del recuadro:
 
    ```bat
-   py -3.12 --version
+   python --version
    ```
 
 5. Debe aparecer **`Python 3.12.10`** si instalaste la versión de esta guía, o **`Python 3.12.x`** si el instructor preparó otra actualización de la misma serie. **Esto confirma que Windows encuentra Python 3.12**. La `x` representa el número de actualización; no se escribe en el comando.
 
-Si dice que `py` no se reconoce, abre una consola nueva. Si sigue igual, abre nuevamente el instalador de Python 3.12.10, selecciona **Modify / Modificar** y comprueba que esté instalado el lanzador de Python, identificado como **Python Launcher** o **py launcher**. Aplica el cambio y vuelve a comprobar la versión. Si el mensaje indica que no se encuentra Python 3.12, revisa que hayas instalado esa serie.
+Si dice que `python` no se reconoce o abre Microsoft Store, cierra y vuelve a abrir la consola. Si sigue igual, abre nuevamente el instalador de Python 3.12.10, selecciona **Modify / Modificar**, pulsa **Next / Siguiente** y, en **Advanced Options**, marca **Add Python to environment variables**. Aplica el cambio, abre una consola nueva y repite `python --version`.
 
-Si también tienes otras versiones de Python, `python --version` puede mostrar una distinta. Por eso en los siguientes pasos utilizaremos **`py -3.12`** para instalar las bibliotecas en Python 3.12. En VS Code, abre **Python: Select Interpreter / Seleccionar intérprete** desde la paleta de comandos y selecciona el intérprete Python 3.12 con el que trabajarás.
+Si aparece una versión distinta de **3.12**, no instales todavía las bibliotecas: el comando `python` está seleccionando otra instalación. En **Inicio**, busca **Editar las variables de entorno de esta cuenta**, abre **Path → Editar** y coloca las entradas de Python 3.12 y su carpeta **Scripts** antes de las de otras versiones. No elimines las otras entradas. Si no identificas las rutas, pide ayuda al instructor. Abre una consola nueva y comprueba de nuevo `python --version`; debe indicar **3.12** antes de continuar.
+
+En VS Code, abre la paleta de comandos con **Ctrl + Shift + P**, busca **Python: Select Interpreter / Seleccionar intérprete** y selecciona Python 3.12. Esta selección configura el editor; comprueba también la versión en la terminal donde instalarás las bibliotecas.
 
 ## 4. Instalar OpenCV con pip
 
@@ -54,13 +56,13 @@ OpenCV es la biblioteca que se utilizará para trabajar con imágenes y video.
 1. En la misma ventana de **Símbolo del sistema**, copia este comando y presiona **Enter**:
 
    ```bat
-   py -3.12 -m pip install opencv-python
+   python -m pip install opencv-python
    ```
 
 2. Espera a que termine. Verás mensajes de descarga e instalación; no tienes que escribir nada mientras trabaja.
 3. Si termina sin errores, normalmente aparecerá **Successfully installed**, seguido de los nombres de los paquetes. Si aparece **Requirement already satisfied**, significa que ya está instalado.
 
-El paquete que debes instalar se llama **`opencv-python`**. La parte `py -3.12 -m pip` utiliza pip desde Python 3.12, aunque haya otras versiones instaladas.
+El paquete que debes instalar se llama **`opencv-python`**. La parte `python -m pip` utiliza pip desde el mismo intérprete que acabas de comprobar con `python --version`. Por eso es importante verificar que indique Python 3.12 antes de instalar.
 
 ## 5. Instalar Ultralytics con pip
 
@@ -69,10 +71,10 @@ Ultralytics es la biblioteca que se utilizará para trabajar con YOLO.
 1. Cuando termine la instalación anterior y vuelva a aparecer la línea donde puedes escribir, copia este comando y presiona **Enter**:
 
    ```bat
-   py -3.12 -m pip install ultralytics
+   python -m pip install ultralytics
    ```
 
 2. Espera a que termine. Puede tardar más porque descarga otras bibliotecas necesarias automáticamente.
 3. Si termina sin errores y muestra **Successfully installed** o **Requirement already satisfied**, la instalación está completa.
 
-**Listo:** Python 3.12 está instalado y verificado con `py -3.12 --version`, y has instalado OpenCV y Ultralytics con pip. Puedes cerrar la consola. Si alguna instalación termina con un mensaje de error, copia el mensaje completo y compártelo con el profesor para que te ayude.
+**Listo:** Python 3.12 está instalado y verificado con `python --version`, y has instalado OpenCV y Ultralytics con pip. Puedes cerrar la consola. Si alguna instalación termina con un mensaje de error, copia el mensaje completo y compártelo con el profesor para que te ayude.
