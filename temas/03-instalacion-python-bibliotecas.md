@@ -22,7 +22,7 @@ Instalar VS Code no instala necesariamente Python. Del mismo modo, crear una cue
 
 El repositorio ya incluye un [tutorial de instalación de Python](../Tutorial%20instalaci%C3%B3n%20de%20Python/Tutorial%20instalaci%C3%B3n%20de%20Python.md) y un [tutorial de instalación de VS Code](../Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode/Tutorial%20de%20instalaci%C3%B3n%20de%20VSCode.md). Sigue ambos tutoriales para preparar tu equipo antes de comenzar las prácticas de cámara.
 
-Utiliza una versión de Python compatible con los paquetes que vas a instalar. Elegir una versión recién publicada sin revisar compatibilidad puede causar fallos porque algunas bibliotecas todavía no ofrecen archivos preparados para ella. En computadoras del laboratorio conviene conservar la configuración que haya validado el instructor.
+Para las prácticas locales se recomienda **Python 3.12**, siguiendo el tutorial de instalación enlazado arriba. Utiliza una actualización de esa serie compatible con los paquetes que vas a instalar. Elegir una versión recién publicada sin revisar compatibilidad puede causar fallos porque algunas bibliotecas todavía no ofrecen archivos preparados para ella. En computadoras del laboratorio conviene conservar la configuración que haya validado el instructor.
 
 Después de instalar Python, abre una terminal nueva y verifica que el sistema encuentre el intérprete. Las terminales que estaban abiertas antes de la instalación pueden conservar una configuración anterior.
 
