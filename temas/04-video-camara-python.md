@@ -168,4 +168,10 @@ Después vuelve a ejecutar el programa. Si la cámara abre nuevamente, la libera
 
 Realiza esta comprobación en tu computadora con cámara y escritorio gráfico. Si la ventana no aparece o el dispositivo no se abre, revisa los permisos, la conexión y el entorno de Python antes de continuar.
 
+## Para dar el siguiente paso
+
+Ya conseguimos que la cámara muestre lo que tiene enfrente. **¿Cómo podemos hacer que el programa seleccione únicamente la hoja verde, en lugar de tratar toda la imagen por igual?**
+
+En el siguiente capítulo utilizaremos filtros de color para construir una máscara que señale las partes que nos interesan.
+
 [Anterior](03-instalacion-python-bibliotecas.md) · [Índice](../README.md) · [Siguiente: Filtros de color](05-filtros-color.md)
