@@ -4,6 +4,12 @@
 
 Comprenderás cómo pasar de una versión preparada en Roboflow a archivos utilizables por el entrenamiento. Aprenderás a comprobar la estructura, la configuración y las rutas antes de consumir tiempo de GPU.
 
+## La idea en palabras sencillas
+
+Descargar el dataset significa llevar las imágenes y sus etiquetas al lugar donde vas a entrenar. Si trabajas en Colab, ese lugar es una computadora remota. La descarga no aparece automáticamente en la carpeta Descargas de tu laptop.
+
+Además de las fotografías suele haber un archivo de configuración, como `data.yaml`. Puedes verlo como un índice: indica dónde buscar imágenes y cómo se llaman las clases. Antes de entrenar, abre algunas imágenes con sus cajas para comprobar que descargaste los datos correctos.
+
 ## 1. Qué se descarga
 
 La descarga debe corresponder a una **versión específica** y a un **formato de exportación** compatible con el detector. Según el formato, puede contener carpetas de imágenes, archivos de etiquetas y un archivo de configuración del dataset.
@@ -61,5 +67,20 @@ Explica por qué un YAML existente puede fallar después de mover las carpetas. 
 ## Antes de continuar
 
 Anota la ruta de descarga y localiza el archivo de configuración del dataset. Revisa sus clases y abre imágenes anotadas de entrenamiento y validación. Conserva el identificador de la versión para poder repetir la descarga en otra sesión de Colab.
+
+## Recorrido de descarga y comprobación
+
+1. Abre la versión del proyecto indicada para la práctica.
+2. Busca la opción de descargar o exportar el dataset.
+3. Selecciona un formato de **detección** compatible con la versión de YOLO que utilizarás.
+4. Elige el método de descarga de la práctica: archivo comprimido o instrucciones para el notebook.
+5. Si recibes un comprimido, extráelo. Si lo descargaste en tu laptop y entrenarás en Colab, aún necesitas llevar esos archivos a Colab; son lugares diferentes.
+6. Localiza el archivo de configuración, generalmente `data.yaml`, y revisa clases y rutas.
+7. Examina imágenes y anotaciones antes de iniciar el entrenamiento.
+
+**Qué debes poder señalar al terminar:** la carpeta con tus datos, la configuración que utilizará el entrenador y los nombres de las clases. Si no puedes encontrar esos tres elementos, detente y revisa la descarga.
+
+No copies literalmente las rutas del equipo de otra persona. Una ruta es una dirección de archivo: debe corresponder al lugar donde están tus datos en la sesión actual.
+
 
 [Anterior](13-que-es-roboflow.md) · [Índice](../README.md) · [Siguiente: Colab](15-colab-gpu-ultralytics.md)

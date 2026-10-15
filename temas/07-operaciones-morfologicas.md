@@ -2,7 +2,13 @@
 
 ## Qué aprenderás
 
-Aprenderás a interpretar erosión, dilatación, apertura y cierre sobre una máscara binaria. Comprenderás cómo el tamaño del elemento estructurante cambia el resultado y por qué limpiar una máscara puede mejorar, o perjudicar, la detección de formas.
+Practicarás erosión, dilatación y una secuencia de erosión seguida de dilatación sobre una máscara binaria. También conocerás, en el texto, los nombres de otras operaciones. Comprenderás cómo el tamaño del elemento estructurante cambia el resultado y por qué limpiar una máscara puede mejorar, o perjudicar, la detección de formas.
+
+## La idea en palabras sencillas
+
+Mira una máscara como una hoja negra con recortes blancos. Puede tener puntos blancos sueltos que sobran o agujeros negros dentro de una región blanca. Las operaciones de esta sección ayudan a modificar esos defectos pequeños.
+
+La erosión encoge lo blanco y la dilatación lo expande. Combinándolas en diferente orden obtenemos apertura y cierre. El kernel es la pequeña plantilla que determina qué vecinos se examinan. Estas operaciones no saben qué objeto buscas: también pueden borrar una parte importante. Por eso compararás siempre la máscara antes y después.
 
 ## 1. El problema que queremos resolver
 
@@ -32,13 +38,13 @@ La dilatación expande el primer plano. Una región puede ocupar píxeles cercan
 
 También agranda ruido y puede fusionar objetos distintos. Si dos figuras se tocan después de dilatar, el análisis de contornos podría interpretarlas como una sola región. Por eso no basta con que la imagen «se vea más sólida»: hay que comprobar que conserva los objetos separados.
 
-## 5. Apertura
+## 5. Otras operaciones: apertura
 
 La apertura aplica **erosión seguida de dilatación**, utilizando el elemento estructurante correspondiente. La primera operación elimina regiones pequeñas o detalles que no sobreviven al kernel; la segunda recupera parte del tamaño de las regiones restantes.
 
 No restaura todo lo que borró la erosión. Esa es precisamente su utilidad para quitar puntos aislados. Si un detalle real desaparece en la primera etapa, no se recupera automáticamente en la segunda.
 
-## 6. Cierre
+## 6. Otras operaciones: cierre
 
 El cierre aplica **dilatación seguida de erosión**. Se utiliza para cubrir huecos pequeños y discontinuidades del primer plano. Puede mejorar una máscara con vacíos producidos por reflejos o variaciones de color.
 
@@ -63,6 +69,277 @@ Busca tres defectos distintos: puntos fuera del objeto, huecos dentro del objeto
 
 ## Preparación de la práctica
 
-Utiliza como entrada la máscara final del [filtro de rojo del tema 05](05-filtros-color.md). Conserva una vista de la máscara sin procesar y compara el efecto de apertura y cierre. Anota el kernel elegido y comprueba que no desaparezcan objetos pequeños ni se unan figuras diferentes.
+Utiliza como entrada la máscara del [filtro verde HSV del tema 05](05-filtros-color.md), con un único intervalo. Conserva una vista de la máscara sin procesar. Practica primero cada operación por separado y después la secuencia indicada a continuación.
+
+## Ejercicio guiado sin programar
+
+Dibuja un rectángulo blanco grande sobre una hoja negra, varios puntos blancos pequeños fuera y un agujero negro pequeño dentro. Ese dibujo representa una máscara.
+
+1. Imagina que una goma reduce un poco todos los bordes blancos: es la erosión. Los puntos pequeños pueden desaparecer y el agujero crece.
+2. Ahora imagina que un marcador engrosa lo blanco: es la dilatación. Los puntos crecen y el agujero puede reducirse.
+3. Para quitar puntos, prueba mentalmente erosión seguida de dilatación: apertura. Los puntos eliminados no reaparecen solo por expandir lo que queda.
+4. Para cubrir un hueco pequeño, prueba dilatación seguida de erosión: cierre.
+
+Estas son analogías para entender la dirección del cambio. En el programa, el resultado exacto depende de la forma y tamaño del kernel y de cómo estén conectados los píxeles. Cuando observes una máscara real, busca primero el defecto que quieres corregir y después elige la operación.
+
+**Resultado que debes comprobar:** menos puntos o huecos, conservando la figura principal. Si dos objetos pasan a ser una sola mancha, la limpieza alteró información importante y necesitas reducir su efecto.
+
+
+## Orden de las prácticas del laboratorio
+
+Guarda los tres programas en archivos diferentes: `erosion_verde.py`, `dilatacion_verde.py` y `erosion_dilatacion_verde.py`. Cierra cada ejecución con ESC antes de abrir la siguiente. Utiliza la misma hoja verde y el mismo intervalo HSV del tema 05.
+
+## Práctica 1. Erosión sola
+
+### Qué vas a hacer
+
+Seleccionarás la hoja verde y reducirás las regiones blancas de su máscara. No se modifica la imagen de color ni se reduce el tamaño de toda la imagen: se cambian los píxeles que permanecen blancos.
+
+```python
+# Importamos las herramientas para la cámara y los arreglos
+import cv2
+import numpy as np
+
+# Abrimos la cámara principal
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+
+# Plantilla cuadrada de cinco filas y cinco columnas
+kernel = np.ones((5, 5), np.uint8)
+
+# Repetimos la captura y el procesamiento
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        print("No se pudo leer el video.")
+        break
+
+    # Convertimos el fotograma de BGR a HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Un único intervalo para el verde: H, S y V
+    lower_green = np.array([35, 80, 60], dtype=np.uint8)
+    upper_green = np.array([85, 255, 255], dtype=np.uint8)
+
+    # Seleccionamos el verde en una sola máscara
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Reducimos las regiones blancas
+    mask_eroded = cv2.erode(mask, kernel, iterations=1)
+
+    # Mostramos el video y la selección sin procesar
+    cv2.imshow("Camara web", frame)
+    cv2.imshow("Mascara original", mask)
+    cv2.imshow("Mascara con erosion", mask_eroded)
+
+    # ESC termina la ejecución
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
+
+# Dejamos disponible la cámara y cerramos las ventanas
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Explicación paso a paso
+
+1. Las importaciones y la captura son las mismas que en los temas anteriores. `ret` comprueba cada lectura; `frame` contiene su imagen.
+2. Antes del ciclo, `np.ones((5, 5), np.uint8)` crea una plantilla llamada `kernel`: cinco filas y cinco columnas con 25 posiciones activas. Los unos indican dónde examinar vecinos; no son el color del resultado.
+3. Dentro del ciclo se convierte a HSV y se crea **una máscara** con el intervalo verde. Si cambias los límites al calibrar, utiliza los mismos valores en los tres programas para comparar.
+4. `cv2.erode(mask, kernel, iterations=1)` aplica una pasada de erosión. `mask` es la entrada, `kernel` define el vecindario y `iterations` el número de pasadas.
+5. `mask_eroded` guarda el resultado sin reemplazar `mask`. Las ventanas permiten comparar ambas.
+6. ESC termina el ciclo. Después se libera la cámara y se cierran las ventanas.
+
+### Por qué se reduce lo blanco
+
+Imagina la plantilla centrada en una posición de la máscara. Con este kernel lleno de unos, el píxel de salida se conserva blanco si todos los vecinos examinados son blancos. Si hay uno negro, la salida será negra. Es equivalente a tomar el mínimo de los valores examinados: en una máscara de 0 y 255, un 0 basta para que el mínimo sea 0.
+
+Cerca del borde del objeto, la plantilla alcanza el fondo negro y esas posiciones dejan de ser blancas. Más adentro, donde la plantilla cabe completamente en blanco, la región permanece. Para observarlo sin complicaciones de borde, mantén la hoja lejos de los extremos de la imagen.
+
+Un cuadrado blanco sólido de 9 × 9 píxeles rodeado de negro, lejos del borde de la imagen, queda en 5 × 5 con este kernel de 5 × 5 centrado y una iteración. Un punto diminuto puede desaparecer. Una parte delgada de la hoja también puede perderse: la operación no distingue un defecto de un detalle importante.
+
+### Qué comprobar y qué cambiar
+
+La máscara procesada conserva su alto y ancho, pero la región de la hoja aparece algo más pequeña. Los puntos blancos pequeños pueden desaparecer y los huecos negros pueden agrandarse.
+
+Prueba un kernel de 3 × 3 manteniendo una iteración: la reducción suele ser menor. Después restaura 5 × 5 y prueba dos iteraciones: la reducción aumenta. Cambia solo un parámetro a la vez. Si la máscara original está negra, corrige primero el filtro: la erosión no puede recuperar una hoja que no se seleccionó.
+
+## Práctica 2. Dilatación sola
+
+### Qué vas a hacer
+
+Volverás a partir de la máscara verde original. Esta vez expandirás las regiones blancas. No tienes que ejecutar ni utilizar el resultado del programa de erosión: es una práctica independiente.
+
+```python
+# Importamos las herramientas para la cámara y los arreglos
+import cv2
+import numpy as np
+
+# Abrimos la cámara principal
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+
+# Plantilla cuadrada de cinco filas y cinco columnas
+kernel = np.ones((5, 5), np.uint8)
+
+# Repetimos la captura y el procesamiento
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        print("No se pudo leer el video.")
+        break
+
+    # Convertimos el fotograma de BGR a HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Un único intervalo para el verde: H, S y V
+    lower_green = np.array([35, 80, 60], dtype=np.uint8)
+    upper_green = np.array([85, 255, 255], dtype=np.uint8)
+
+    # Seleccionamos el verde en una sola máscara
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Expandimos las regiones blancas
+    mask_dilated = cv2.dilate(mask, kernel, iterations=1)
+
+    # Mostramos el video y la selección sin procesar
+    cv2.imshow("Camara web", frame)
+    cv2.imshow("Mascara original", mask)
+    cv2.imshow("Mascara con dilatacion", mask_dilated)
+
+    # ESC termina la ejecución
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
+
+# Dejamos disponible la cámara y cerramos las ventanas
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Explicación de la operación
+
+La captura, el filtro y el kernel permanecen iguales. La diferencia es `cv2.dilate(mask, kernel, iterations=1)`. La entrada sigue siendo `mask`; el resultado nuevo se guarda en `mask_dilated`.
+
+Con este kernel, basta que una de las posiciones examinadas sea blanca para que la posición de salida sea blanca. Es equivalente a tomar el máximo: un 255 entre los vecinos hace que el máximo sea 255. Por eso el blanco se extiende hacia posiciones que antes eran negras.
+
+Un cuadrado blanco sólido de 9 × 9 píxeles, rodeado de negro y lejos del borde de la imagen, pasa a 13 × 13 con este kernel centrado de 5 × 5 y una iteración. Un punto blanco aislado también crece: pasa a una región de 5 × 5. Esto explica por qué dilatar puede reforzar una región, pero también agrandar ruido.
+
+### Qué comprobar y qué cambiar
+
+La hoja debe ocupar más espacio blanco en la máscara procesada. Algunos huecos pequeños pueden reducirse. Dos hojas muy cercanas pueden quedar conectadas, aunque físicamente sean objetos distintos.
+
+Prueba 3 × 3 y luego vuelve a 5 × 5. También puedes probar dos iteraciones por separado. Si se unen objetos que querías mantener separados, el efecto es demasiado fuerte para esa escena. No interpretes «más blanco» como «mejor detección» automáticamente.
+
+## Práctica 3. Erosión seguida de dilatación
+
+### Qué vas a hacer
+
+Ahora sí conectarás dos operaciones: primero quitarás partes blancas pequeñas con erosión y después expandirás lo que sobrevivió. El objetivo es observar si desaparecen puntos sin dejar demasiado reducida la región principal de la hoja.
+
+```python
+# Importamos las herramientas para la cámara y los arreglos
+import cv2
+import numpy as np
+
+# Abrimos la cámara principal
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+
+# Plantilla cuadrada de cinco filas y cinco columnas
+kernel = np.ones((5, 5), np.uint8)
+
+# Repetimos la captura y el procesamiento
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        print("No se pudo leer el video.")
+        break
+
+    # Convertimos el fotograma de BGR a HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Un único intervalo para el verde: H, S y V
+    lower_green = np.array([35, 80, 60], dtype=np.uint8)
+    upper_green = np.array([85, 255, 255], dtype=np.uint8)
+
+    # Seleccionamos el verde en una sola máscara
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Primero erosionamos la máscara original
+    mask_eroded = cv2.erode(mask, kernel, iterations=1)
+
+    # Después dilatamos EL RESULTADO de la erosión
+    mask_clean = cv2.dilate(mask_eroded, kernel, iterations=1)
+
+    # Mostramos el video y la selección sin procesar
+    cv2.imshow("Camara web", frame)
+    cv2.imshow("Mascara original", mask)
+    cv2.imshow("Paso 1: erosion", mask_eroded)
+    cv2.imshow("Paso 2: erosion seguida de dilatacion", mask_clean)
+
+    # ESC termina la ejecución
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
+
+# Dejamos disponible la cámara y cerramos las ventanas
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### La línea que conecta ambos pasos
+
+El primer paso recibe la máscara original y produce `mask_eroded`. El segundo recibe **`mask_eroded`**, no `mask`. Ese cambio de entrada es la clave: la dilatación trabaja sobre el resultado de la erosión.
+
+Si ambas funciones recibieran siempre `mask`, habrías calculado dos resultados independientes. En este programa el recorrido es **máscara original → erosión → dilatación del resultado → máscara final**. `mask_clean` es solo el nombre que le damos a esa salida; no garantiza que la máscara esté limpia en cualquier escena.
+
+Las cuatro ventanas muestran la cámara, la máscara original, el paso erosionado y el resultado final. Observa las imágenes en ese orden. No se calcula ningún otro camino ni otra combinación en este programa.
+
+### Por qué el segundo paso no deshace exactamente el primero
+
+Imagina una región blanca grande y un punto blanco pequeño lejos de ella. La erosión puede borrar el punto por completo mientras conserva el interior de la región grande. La dilatación expande lo que quedó, pero no sabe dónde estaba el punto borrado. Si quedó suficientemente separado, no hay blanco allí desde el cual reconstruirlo.
+
+Por eso la región grande puede recuperar parte de su tamaño mientras el punto pequeño sigue ausente. También pueden perderse detalles legítimos, como una punta delgada. El resultado no tiene por qué ser una copia exacta de la máscara original.
+
+En morfología, esta secuencia con el mismo kernel se conoce como **apertura**. Basta reconocer ese nombre cuando lo encuentres; en la práctica nos centraremos en las dos instrucciones explícitas y en su resultado. El **cierre** invierte el orden y existen otras operaciones, descritas arriba como referencia. No necesitas añadirlas al código para completar esta clase.
+
+### Cómo realizar la prueba con hojas de color
+
+1. Coloca una hoja verde de frente, con el fondo de otro color.
+2. Comprueba primero que la máscara original selecciona la hoja. Si no lo hace, corrige luz o límites HSV antes de evaluar morfología.
+3. Busca puntos blancos pequeños que no correspondan a la hoja. Si no aparecen naturalmente, puedes colocar pequeños recortes verdes separados de la hoja grande; en esta prueba los consideraremos regiones que queremos eliminar.
+4. Observa si esos puntos o recortes desaparecen en la erosión y permanecen ausentes en la imagen final. Su tamaño en píxeles importa: un recorte grande puede sobrevivir al kernel.
+5. Comprueba que la hoja principal siga presente. Mira también sus esquinas y detalles.
+6. Prueba un kernel de 3 × 3 manteniendo una iteración en cada paso. Compara con 5 × 5 sin cambiar el filtro al mismo tiempo.
+7. Termina con ESC y conserva los tres archivos por separado.
+
+Una hoja uniforme puede producir ya una máscara bastante limpia. En ese caso los cambios serán principalmente de borde; no necesitas forzar un resultado espectacular. Explica qué observaste y si la limpieza era necesaria.
+
+## Recordatorios para las tres prácticas
+
+Cada fotograma genera una máscara nueva. Una iteración significa una pasada sobre esa máscara, no una acumulación indefinida entre los fotogramas del video. En el tercer programa se aplica una erosión y una dilatación a la máscara de cada fotograma.
+
+Si el objeto está ausente de la máscara original, ninguna de estas operaciones lo recuperará desde una imagen completamente negra. Si el objeto desaparece solo después de erosionar, prueba una plantilla menor o acerca la hoja para que ocupe más píxeles.
+
+Los programas contemplan salida por ESC y por lectura fallida. Como en las prácticas anteriores, una excepción imprevista requeriría una estructura de limpieza adicional, por ejemplo `try` y `finally`.
+
+## Comprueba que lo entendiste
+
+- ¿Qué cambia entre la máscara original y la erosionada?
+- ¿Por qué la dilatación puede agrandar puntos que no querías seleccionar?
+- ¿Qué variable recibe la dilatación en el tercer programa?
+- ¿Por qué una región borrada por erosión no tiene que reaparecer al dilatar?
+- ¿Por qué debes comprobar la selección verde antes de ajustar el kernel?
 
 [Anterior](06-modelos-color.md) · [Índice](../README.md) · [Siguiente: Contornos](08-contornos.md)

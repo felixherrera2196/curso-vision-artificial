@@ -4,6 +4,12 @@
 
 Comprenderás qué significa extraer información de una imagen, cómo se construye una aplicación de visión artificial y por qué el curso comienza con OpenCV antes de entrenar un detector con YOLO. No necesitas saber redes neuronales para empezar; sí conviene distinguir entre una imagen, una característica visual y una decisión.
 
+## La idea en palabras sencillas
+
+Imagina una mesa con una pelota roja. Para una persona, encontrarla parece inmediato. La computadora recibe una fotografía y necesita instrucciones para decidir qué partes corresponden a esa pelota. Esa es la pregunta que guiará el curso: ¿cómo pasamos de una imagen a una respuesta útil?
+
+Primero seleccionaremos colores y formas mediante reglas. Más adelante utilizaremos ejemplos para entrenar un detector. En ambas etapas observaremos el resultado y comprobaremos si coincide con la escena real. No necesitas conocer las matemáticas de una red neuronal para empezar con la cámara.
+
 ## 1. Qué es la visión artificial
 
 Una cámara entrega datos numéricos. Una persona ve una taza, reconoce su forma y comprende que puede tomarla. La computadora necesita un procedimiento que relacione esos datos con una interpretación: dónde está un objeto, qué clase de objeto es o cuántos objetos aparecen.

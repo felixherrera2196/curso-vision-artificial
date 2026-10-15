@@ -4,6 +4,12 @@
 
 Integrarás conceptualmente el ciclo de cámara con un modelo entrenado. Comprenderás qué significan las predicciones, cómo influyen los umbrales y qué comprobar para evaluar la aplicación final.
 
+## La idea en palabras sencillas
+
+La aplicación final combina dos cosas que ya conoces: recibir imágenes de la cámara y pedir predicciones al detector. En cada imagen, el modelo intenta localizar objetos y el programa dibuja sus cajas y nombres.
+
+La caja es una propuesta, no una garantía. Necesitarás observar cuándo acierta y cuándo se equivoca. Si no hay detecciones, el video debe seguir funcionando. Si salen muchas cajas para el mismo objeto en distintos momentos, no significa que hayan aparecido muchos objetos nuevos: cada fotograma es otra observación.
+
 ## 1. Unir dos componentes ya comprobados
 
 Antes de integrar, verifica que el programa del tema 04 capture video y que el modelo del tema 17 haga predicciones sobre imágenes. La aplicación final combina ambos: captura un fotograma, lo analiza con el detector y muestra el resultado.
@@ -69,5 +75,16 @@ Realiza dos aplicaciones: una selección por color y forma con OpenCV y una dete
 ## Comprobación de la aplicación
 
 Verifica por separado la captura de cámara y la carga del detector. Al integrarlos, comprueba que las predicciones se actualicen, que el programa siga funcionando sin detecciones y que ESC libere la cámara. Registra velocidad, falsas alarmas y objetos omitidos en las condiciones de uso de tu práctica.
+
+## Primera prueba de la aplicación final
+
+Coloca un solo objeto de una clase aprendida frente a la cámara, con buena luz y un fondo sencillo. Abre el programa y comprueba tres resultados por separado: hay video, el detector propone una caja y el nombre corresponde a la clase esperada.
+
+Después retira el objeto. El video debe continuar aunque ya no haya detecciones. Vuelve a colocarlo, cambia la distancia y agrega otra instancia. Observa si ambas se detectan y si aparecen cajas equivocadas en el fondo.
+
+Si no hay video, revisa la captura. Si hay video pero no cajas, revisa pesos, clases, condiciones de la escena y umbral de confianza. Si la imagen va muy lenta, mide el tiempo y revisa el tamaño del modelo y de la entrada. No vuelvas a entrenar antes de identificar cuál de estos problemas estás observando.
+
+Al terminar, pulsa ESC con la ventana seleccionada y vuelve a abrir el programa para confirmar que la cámara quedó libre.
+
 
 [Anterior](17-descargar-yolo-uso-local.md) · [Índice del curso](../README.md)

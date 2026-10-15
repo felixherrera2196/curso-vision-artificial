@@ -8,7 +8,7 @@ El material sigue los **18 temas del curso**, con un archivo Markdown por tema. 
 
 ## Qué necesitas para comenzar
 
-- Conocimientos básicos de Python: variables, condiciones, ciclos e importación de bibliotecas.
+- No necesitas experiencia previa en programación. Si comienzas desde cero, lee primero [Antes de empezar](temas/00-antes-de-empezar.md), donde se explica cómo abrir, ejecutar y leer los ejemplos.
 - Una computadora con cámara web y conexión a internet.
 - Python y VS Code instalados para las prácticas locales.
 - Una cuenta de Google para utilizar Colab durante la preparación y el entrenamiento.
@@ -18,14 +18,14 @@ Si necesitas preparar tu equipo, comienza por los tutoriales de [instalación de
 
 ## Cómo seguir la guía
 
-1. Abre los capítulos desde el índice y avanza en orden. Cada uno explica qué aprenderás y termina con actividades o comprobaciones.
+1. Si es tu primera experiencia programando, comienza por [Antes de empezar](temas/00-antes-de-empezar.md). Después abre los capítulos desde el índice y avanza en orden. Cada uno explica qué aprenderás y termina con actividades o comprobaciones.
 2. Relaciona las explicaciones con la práctica de clase. Identifica qué datos recibe cada operación y qué resultado produce.
 3. Para ejecutar un ejemplo, copia su bloque de código en un archivo `.py`, guárdalo con el nombre sugerido y ejecútalo con el intérprete de tu proyecto.
 4. Realiza las prácticas de cámara en tu computadora. Colab es un entorno remoto y no accede a la webcam mediante el mismo procedimiento local.
 5. Guarda tus observaciones: parámetros, condiciones de iluminación, resultados y situaciones en las que el método falla.
 6. Para YOLO, conserva también la versión del dataset, la configuración de entrenamiento y los pesos seleccionados.
 
-Los capítulos **04 y 05** incluyen programas completos para captura de cámara y filtrado de color. Los demás capítulos ofrecen fundamentos, procedimientos y actividades para acompañar las prácticas del taller; no todos contienen un programa completo.
+Los capítulos **04 y 05** incluyen programas completos para captura de cámara y filtrado de color. El capítulo **07** incluye tres programas separados: erosión, dilatación y erosión seguida de dilatación sobre una máscara verde de un solo intervalo. Los demás capítulos ofrecen fundamentos, procedimientos y actividades para acompañar las prácticas del taller; no todos contienen un programa completo.
 
 El taller presencial tiene una duración de cuatro horas. La guía amplía las explicaciones para que puedas consultar los detalles después de clase y repetir las actividades a tu ritmo.
 
@@ -39,9 +39,9 @@ Comenzarás con imágenes como arreglos numéricos y después utilizarás una c�
 | 02 | [¿Qué es una Imagen?](temas/02-que-es-una-imagen.md) | Interpretar píxeles, canales, dimensiones y coordenadas. |
 | 03 | [Instalación de Python y bibliotecas a utilizar](temas/03-instalacion-python-bibliotecas.md) | Preparar y comprobar el entorno de trabajo. |
 | 04 | [Obtener video de una cámara con Python](temas/04-video-camara-python.md) | Capturar fotogramas, mostrarlos y liberar la cámara. |
-| 05 | [Filtros de color](temas/05-filtros-color.md) | Comparar BGR directo, HSV con un intervalo y HSV con dos intervalos de rojo. |
+| 05 | [Filtros de color](temas/05-filtros-color.md) | Comparar BGR directo y HSV para seleccionar verde con un solo intervalo. |
 | 06 | [Modelos de color](temas/06-modelos-color.md) | Distinguir BGR, RGB, grises y HSV. |
-| 07 | [Operaciones morfológicas](temas/07-operaciones-morfologicas.md) | Comprender erosión, dilatación, apertura y cierre. |
+| 07 | [Operaciones morfológicas](temas/07-operaciones-morfologicas.md) | Practicar erosión, dilatación y erosión seguida de dilatación. |
 | 08 | [Contornos](temas/08-contornos.md) | Analizar fronteras, áreas, perímetros y centros. |
 | 09 | [Detectar figuras](temas/09-detectar-figuras.md) | Proponer clases geométricas y reconocer los límites de las reglas. |
 

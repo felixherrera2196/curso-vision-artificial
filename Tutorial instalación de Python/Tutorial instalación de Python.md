@@ -1,6 +1,8 @@
 # Tutorial instalación de Python 3.12
 
-**Video de apoyo:** [cómo instalar Python en YouTube](https://www.youtube.com/watch?v=cROteyMVtXk).
+**Video de apoyo:** [cómo instalar una versión anterior de Python con el instalador tradicional](https://youtu.be/TLe0yty_Mpw?si=iVMCgtdYCqa5I97T).
+
+**Importante:** el video utiliza **Python 3.11** como ejemplo. Para este curso sigue el mismo procedimiento con **Python 3.12**, utilizando el instalador **3.12.10** enlazado abajo. No necesitas instalar 3.11 para seguir el video.
 
 Esta guía explica cómo instalar **Python 3.12 en Windows 11**, comprobar su instalación e instalar **OpenCV** y **Ultralytics** con pip para el curso de OpenCV y YOLO. No necesitas experiencia en tecnología. Mantén la computadora conectada a Internet durante los pasos.
 
@@ -17,16 +19,25 @@ Esta guía explica cómo instalar **Python 3.12 en Windows 11**, comprobar su in
 
 Python es gratuito. Utiliza el sitio oficial indicado arriba.
 
-## 2. Instalar Python haciendo clic en el instalador
+## 2. Instalar Python con Customize installation
+
+Seguiremos la instalación tradicional: abrir el archivo `.exe`, elegir **Customize installation / Personalizar instalación** y revisar sus opciones. No utilizaremos el nuevo Python Install Manager.
 
 1. Abre el **Explorador de archivos**, el icono de carpeta de la barra de tareas. También puedes presionar **Windows + E**.
-2. Haz clic en **Descargas** y busca el instalador de Python.
-3. Haz doble clic en ese archivo para abrirlo.
-4. En la primera pantalla, **marca la casilla `Add python.exe to PATH`**, que suele estar en la parte inferior. Este paso permite que Windows encuentre Python cuando escribas el comando de comprobación.
-5. Haz clic en **Install Now**. Significa “Instalar ahora”. Conserva las opciones predeterminadas; el instalador incluye pip, la herramienta para instalar bibliotecas.
-6. Si Windows pide autorización para realizar cambios, comprueba que sea el instalador oficial de Python y haz clic en **Sí**. Si solicita una contraseña que no tienes, pide ayuda a quien administra la computadora.
-7. Espera a que termine la instalación. No cierres la ventana mientras avanza la barra de progreso.
-8. Cuando aparezca **Setup was successful**, la instalación terminó correctamente. Haz clic en **Close / Cerrar**.
+2. Entra a **Descargas** y busca `python-3.12.10-amd64.exe` si tu equipo es Intel o AMD de 64 bits.
+3. Haz doble clic en el archivo. Comprueba que la ventana corresponda a **Python 3.12.10**. Si aparecen opciones como **Modify**, **Repair** y **Uninstall**, esa versión ya está instalada: puedes pasar a la comprobación del apartado 3 o usar **Modify** para revisar sus componentes.
+4. En la primera pantalla de una instalación nueva, **marca `Add python.exe to PATH`**, normalmente en la parte inferior. Esto permite utilizar el comando `python` desde la consola.
+5. Haz clic en **Customize installation / Personalizar instalación**. Esta opción permite revisar los componentes y la configuración antes de instalar.
+6. En **Optional Features / Características opcionales**, mantén marcada **pip**. Es la herramienta que utilizarás para instalar OpenCV y Ultralytics. Puedes conservar las demás opciones predeterminadas, como la documentación, Tcl/Tk e IDLE y el lanzador si aparecen; no hace falta cambiar todo para seguir el curso.
+7. Pulsa **Next / Siguiente** para llegar a **Advanced Options / Opciones avanzadas**.
+8. Comprueba que esté marcada **Add Python to environment variables**. Es la opción que configura las variables de entorno para que Windows pueda encontrar Python. Si ya marcaste la casilla de PATH en la primera pantalla, verifica que aquí se conserve la configuración.
+9. Para tu computadora personal, puedes dejar **Install for all users / Instalar para todos los usuarios** sin marcar y conservar la ubicación propuesta. No necesitas instalar para todos los usuarios para realizar las prácticas. En una computadora del laboratorio, utiliza la configuración indicada por el instructor o la persona que administra el equipo.
+10. Conserva la carpeta de instalación propuesta, salvo que el instructor indique otra. No necesitas activar las opciones de descarga de símbolos o binarios de depuración para este curso.
+11. Haz clic en **Install / Instalar**. Si Windows solicita autorización, comprueba que sea el instalador oficial. Si pide una contraseña que no tienes, solicita ayuda a quien administra el equipo.
+12. Espera hasta que aparezca **Setup was successful**. No cierres la ventana mientras se realiza la instalación.
+13. Haz clic en **Close / Cerrar**. Abre una consola nueva para que pueda reconocer los cambios del PATH.
+
+**Qué debes recordar:** usa el `.exe` de Python 3.12.10, elige **Customize installation**, conserva **pip** y activa la opción que permite encontrar Python desde la consola. Aunque el video muestre 3.11, en tus ventanas y archivos debe aparecer 3.12.
 
 ## 3. Verificar la instalación desde la consola
 

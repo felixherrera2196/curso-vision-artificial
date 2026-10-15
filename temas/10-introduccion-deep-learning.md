@@ -4,6 +4,12 @@
 
 Comprenderás cómo un modelo aprende a partir de ejemplos, qué diferencia existe entre entrenamiento e inferencia y por qué los datos etiquetados son esenciales para entrenar un detector.
 
+## La idea en palabras sencillas
+
+Hasta ahora hemos escrito las reglas. Otra posibilidad es mostrar muchas fotografías con respuestas correctas y ajustar un modelo para que encuentre patrones que ayuden a predecir esas respuestas.
+
+Piensa en practicar con ejercicios resueltos y después intentar otros nuevos. La comparación ayuda a entender entrenamiento y evaluación, aunque un modelo no aprende ni comprende exactamente como una persona. En este curso aprenderá a proponer cajas y nombres de objetos. Entrenar es ajustar el modelo; usarlo sobre una imagen nueva es hacer una predicción, también llamada inferencia.
+
 ## 1. De reglas explícitas a parámetros aprendidos
 
 En las prácticas anteriores elegimos colores, tamaños de kernel y reglas geométricas. La aplicación seguía esas decisiones. Si cambiaba mucho la apariencia del objeto, debíamos adaptar las reglas.

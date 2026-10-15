@@ -4,6 +4,12 @@
 
 Comprenderás cómo organizar un conjunto de imágenes para detección, por qué separarlo en entrenamiento, validación y prueba, y qué características hacen que los ejemplos sean útiles para el uso final.
 
+## La idea en palabras sencillas
+
+Un dataset es la colección organizada de ejemplos del proyecto. Para detectar objetos, no basta con reunir fotografías: también hay que indicar qué objetos aparecen y dónde están.
+
+Si enseñas siempre el mismo vaso sobre la misma mesa, el modelo puede funcionar solo en situaciones muy parecidas. Necesitas diferentes vistas, fondos y condiciones reales. Separaremos imágenes para aprender y otras para comprobar lo aprendido. La idea central es sencilla: evaluar con imágenes nuevas ayuda a saber si el modelo puede funcionar fuera de sus ejemplos conocidos.
+
 ## 1. Dataset de detección
 
 Un **dataset** es un conjunto organizado de datos para una tarea. En detección de objetos incluye imágenes, anotaciones de clases y posiciones, y una organización que permite relacionar cada imagen con sus etiquetas.
@@ -57,5 +63,21 @@ El **aumento de datos** crea variaciones de entrenamiento, como ciertos cambios 
 ## Actividad de comprensión
 
 Diseña un dataset de dos clases para una cámara web. Describe las variaciones necesarias, cómo separarías las sesiones y qué escenas sin objetos incluirías. Explica por qué cien fotografías casi iguales no equivalen a cien situaciones distintas.
+
+## Preparar tu primera colección, paso a paso
+
+Como ejercicio, considera dos clases: «vaso» y «botella». Los nombres son un ejemplo; utiliza las clases indicadas para la práctica del taller.
+
+1. Escribe qué entra en cada clase y qué casos serían confusos.
+2. Toma fotografías de distintos objetos de cada clase, no solo del mismo objeto repetido.
+3. Cambia fondo, luz, orientación y distancia. Incluye algunas escenas con varios objetos.
+4. Descarta archivos dañados y revisa si hay muchas imágenes casi idénticas.
+5. Anota qué fotografías pertenecen a la misma sesión o grabación.
+6. Separa sesiones para entrenamiento, validación y prueba, evitando repartir fotografías prácticamente iguales entre ellas.
+7. Dibuja las cajas de todas las instancias que cumplen la política de anotación.
+8. Revisa que cada división permita evaluar las clases que necesitas.
+
+No hay una cantidad de imágenes que garantice el éxito. Antes de reunir cientos de fotografías parecidas, revisa qué condiciones de uso faltan. Si una clase no tiene suficientes ejemplos, regístralo en lugar de asumir que el entrenamiento lo resolverá.
+
 
 [Anterior](10-introduccion-deep-learning.md) · [Índice](../README.md) · [Siguiente: Etiquetado](12-etiquetado-bounding-boxes.md)

@@ -4,6 +4,12 @@
 
 Comprenderás qué representa un contorno, cómo se obtiene a partir de una máscara y qué medidas permiten describir una región. Estas herramientas son la base de la detección de figuras del siguiente tema.
 
+## La idea en palabras sencillas
+
+Si dibujas una figura y recorres su borde con un lápiz, estás siguiendo su contorno. El programa hace algo parecido sobre las regiones de una máscara y obtiene puntos que describen su frontera.
+
+Con esa frontera puede medir cuánto espacio encierra, cuánto mide el borde o dónde dibujar una caja. Antes de medir, necesitas una máscara razonable: si dos objetos aparecen unidos en blanco, el programa puede tratarlos como una sola región. El primer objetivo es observar que el borde dibujado coincide con la región que quieres estudiar.
+
 ## 1. De píxeles seleccionados a regiones
 
 Una máscara responde si cada posición pertenece al primer plano. Un **contorno** describe una frontera como una secuencia de puntos. Al encontrar contornos podemos pasar de miles de píxeles individuales a regiones que admiten medidas geométricas.
@@ -53,5 +59,18 @@ Coloca una figura sólida, una figura con agujero y dos figuras que se toquen. P
 ## Preparación de la práctica
 
 Antes de buscar contornos, verifica que tienes una máscara de un canal con el objeto en blanco. Identifica qué fronteras necesitas recuperar, cómo descartarás ruido por área y qué medidas utilizarás. Dibuja los resultados sobre el fotograma para comprobar que las regiones calculadas corresponden a lo que quieres analizar.
+
+## Cómo leer el resultado de una práctica de contornos
+
+Imagina una máscara con tres círculos blancos separados: uno grande y dos puntos pequeños. El programa puede encontrar tres fronteras, aunque tú solo quieras el círculo grande.
+
+1. Observa la máscara antes de mirar los contornos. ¿Hay tres regiones separadas?
+2. Busca el borde dibujado sobre cada región en el fotograma.
+3. Comprueba qué regiones descarta el filtro de área mínima.
+4. Aleja el círculo grande: su imagen ocupará menos píxeles y podría dejar de superar ese mínimo.
+5. Acércalo a otro objeto seleccionado hasta que las manchas se toquen. Comprueba si ahora aparece una frontera conjunta.
+
+**Resultado que debes comprobar:** los contornos describen las regiones de la máscara, no una lista infalible de objetos reales. Si una frontera no corresponde al objeto que buscas, revisa primero la máscara y después las medidas.
+
 
 [Anterior](07-operaciones-morfologicas.md) · [Índice](../README.md) · [Siguiente: Detectar figuras](09-detectar-figuras.md)

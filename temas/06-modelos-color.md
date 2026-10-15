@@ -4,6 +4,12 @@
 
 Compararás las representaciones RGB, BGR, escala de grises y HSV. Comprenderás por qué cambiar de modelo puede simplificar una tarea sin agregar información nueva a la imagen.
 
+## La idea en palabras sencillas
+
+Puedes describir una ubicación con una dirección o con coordenadas. Sigue siendo el mismo lugar, pero una descripción puede resultar más útil para una tarea. Con los colores pasa algo semejante: BGR y HSV describen información de color de formas diferentes.
+
+BGR habla de cantidades de azul, verde y rojo. HSV separa tono, saturación y brillo en su representación. Cambiar a HSV no hace que la cámara capture una escena mejor; facilita expresar algunas reglas. Relaciona este capítulo con los filtros que ya ejecutaste, sin intentar memorizar todas las escalas antes de observarlos.
+
 ## 1. Una misma imagen, distintas coordenadas de color
 
 Un modelo de color define cómo expresar numéricamente un color. Cambiar de RGB a HSV se parece a describir la misma posición con otro sistema de coordenadas: cambia la representación y facilita ciertas operaciones, pero no elimina automáticamente los problemas de iluminación o ruido.
@@ -58,6 +64,6 @@ Observa una escena con un objeto rojo, uno verde y uno blanco. Explica cuál inf
 
 ## Relaciona los modelos con el código
 
-Vuelve a los [tres filtros del tema 05](05-filtros-color.md). Identifica qué programa utiliza BGR directamente y cuáles convierten a HSV. Explica qué significa cada componente de sus límites y por qué el fotograma original puede seguir mostrándose después de la conversión.
+Vuelve a los [dos filtros del tema 05](05-filtros-color.md). Identifica qué programa utiliza BGR directamente y cuál convierte a HSV. Explica qué significa cada componente de sus límites y por qué el fotograma original puede seguir mostrándose después de la conversión.
 
 [Anterior](05-filtros-color.md) · [Índice](../README.md) · [Siguiente: Morfología](07-operaciones-morfologicas.md)

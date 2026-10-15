@@ -4,6 +4,12 @@
 
 Comprenderás el ciclo de captura de video y la responsabilidad de cada parte: abrir un dispositivo, leer imágenes, procesarlas, mostrarlas y liberar los recursos. Esta estructura se reutilizará tanto para los filtros de color como para YOLO.
 
+## La idea en palabras sencillas
+
+El video que ves en pantalla es una sucesión de fotografías. El programa pide una fotografía a la cámara, la muestra y vuelve a pedir otra. Esa repetición produce el movimiento.
+
+En esta primera práctica no intentaremos reconocer nada. Solo comprobaremos que la computadora recibe imágenes y puede mostrarlas. Cuando esto funcione, conservaremos la misma estructura y añadiremos el análisis de color. Si no tienes experiencia, ejecuta primero el ejemplo completo; después utiliza los comentarios para localizar dónde abre la cámara, dónde repite y dónde termina.
+
 ## 1. La cámara como fuente de fotogramas
 
 OpenCV ofrece `VideoCapture` para trabajar con una cámara o una fuente de video. Al abrir una cámara local, se suele indicar un índice de dispositivo. El índice 0 es un primer intento habitual, pero no garantiza que corresponda a la cámara deseada: un equipo puede tener una integrada, una externa y dispositivos virtuales.

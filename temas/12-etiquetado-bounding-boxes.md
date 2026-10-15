@@ -4,6 +4,12 @@
 
 Aprenderás a describir objetos mediante clases y cajas delimitadoras, a interpretar coordenadas y a revisar que las anotaciones proporcionen una supervisión consistente.
 
+## La idea en palabras sencillas
+
+Etiquetar significa dar al modelo la respuesta que esperamos que aprenda. En una fotografía con dos vasos, dibujas una caja alrededor de cada vaso y asignas a ambas la clase «vaso». Cada objeto visible que etiquetas es una instancia.
+
+La caja dice dónde está; el nombre de clase dice qué es. Si una caja está desplazada o tiene el nombre incorrecto, el ejemplo enseña una respuesta equivocada. Comenzaremos revisando visualmente las cajas. Después veremos cómo se guardan como números para que el programa pueda leerlas.
+
 ## 1. Qué es una bounding box
 
 Una **bounding box**, o caja delimitadora, es un rectángulo que localiza una instancia. En la detección convencional está alineado con los ejes de la imagen. La caja contiene el objeto, pero también puede incluir fondo, especialmente si el objeto tiene forma irregular.
@@ -68,5 +74,17 @@ Convierte una caja de esquinas a centro y tamaño, primero en píxeles y despué
 ## Antes de exportar las etiquetas
 
 Visualiza las cajas sobre varias imágenes y comprueba que sus clases coincidan con el mapa del proyecto. Repite la conversión numérica de esta sección con una caja de tu dataset. No avances al entrenamiento si las posiciones o las clases son incoherentes.
+
+## Tu primera anotación, paso a paso
+
+1. Abre una imagen en la herramienta de etiquetado y localiza un objeto de una clase del proyecto.
+2. Selecciona la herramienta para dibujar una caja rectangular.
+3. Arrastra desde una esquina hasta la opuesta, procurando encerrar la parte del objeto definida por la política de anotación.
+4. Asigna el nombre de clase correcto. No escribas un nombre distinto para cada objeto físico: dos vasos pertenecen a la misma clase si esa es la definición del proyecto.
+5. Repite con los demás objetos de interés de la fotografía.
+6. Guarda y vuelve a revisar las cajas. Ajusta las que dejen fuera partes relevantes o incluyan demasiado espacio innecesario.
+
+Imagina que aparecen dos vasos y una botella: necesitas tres cajas, no una sola caja gigante para los tres. Si solo anotas un vaso, el ejemplo queda incompleto para la tarea. Antes de continuar con muchas imágenes, revisa unas pocas con el instructor para confirmar que todos aplican el mismo criterio.
+
 
 [Anterior](11-que-es-un-dataset.md) · [Índice](../README.md) · [Siguiente: Roboflow](13-que-es-roboflow.md)

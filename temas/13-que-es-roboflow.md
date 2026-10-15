@@ -4,6 +4,12 @@
 
 Comprenderás qué papel desempeña Roboflow en el flujo del curso y cómo se relacionan workspace, proyecto, anotaciones, versiones y exportaciones.
 
+## La idea en palabras sencillas
+
+Roboflow será el lugar donde organizarás las imágenes y sus etiquetas. Puedes pensar en un workspace como un espacio de trabajo, en un proyecto como una colección para una tarea y en una versión como una preparación concreta de esa colección.
+
+Primero revisas las fotografías y cajas; después generas o eliges una versión que puedes descargar. No necesitas entrenar para comprender esa organización. Tu primera comprobación será que el proyecto contiene los objetos y las clases que quieres detectar, no simplemente que puedes abrirlo en el navegador.
+
 ## 1. Su función en el proyecto
 
 **Roboflow** es una plataforma para trabajar con datos de visión artificial. Permite organizar imágenes, anotar objetos, revisar etiquetas y generar versiones exportables en formatos compatibles con diferentes herramientas.
@@ -64,5 +70,17 @@ Explica la diferencia entre cambiar una anotación del proyecto y descargar una 
 ## Preparación para la descarga
 
 Localiza el workspace, el proyecto y la versión que vas a utilizar. Comprueba que la tarea sea detección de objetos y revisa sus clases. En el [tema 14](14-descargar-dataset-roboflow.md) verificarás los archivos exportados antes de entrenar.
+
+## Recorrido por la plataforma para empezar
+
+1. Abre [Roboflow](https://roboflow.com/) e inicia sesión con tu cuenta o el acceso indicado por el instructor.
+2. Entra al workspace de la práctica. Si vas a crear un proyecto, selecciona la tarea de detección de objetos, no clasificación.
+3. Abre el proyecto y revisa sus nombres de clase y fotografías.
+4. Si el proyecto es propio, sube imágenes y realiza el etiquetado descrito en el tema 12.
+5. Revisa las divisiones de datos y las transformaciones antes de generar una versión.
+6. Abre la versión que vas a utilizar y anota su identificación.
+
+Si el instructor comparte un proyecto ya preparado, no necesitas crear otro para descargarlo: primero comprueba que tienes permiso para acceder a esa versión. Las etiquetas de botones pueden cambiar, pero debes reconocer las mismas etapas: proyecto, anotaciones, versión y exportación.
+
 
 [Anterior](12-etiquetado-bounding-boxes.md) · [Índice](../README.md) · [Siguiente: Descargar dataset](14-descargar-dataset-roboflow.md)
