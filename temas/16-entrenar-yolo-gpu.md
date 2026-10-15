@@ -4,6 +4,12 @@
 
 Comprenderás los parámetros básicos del entrenamiento, cómo interpretar resultados y cómo seleccionar pesos sin confundir el desempeño sobre datos conocidos con el desempeño sobre escenas nuevas.
 
+## La idea en palabras sencillas
+
+Entrenar significa mostrar ejemplos al modelo y ajustar sus parámetros cuando se equivoca. Verás pasar grupos de imágenes y varias vueltas de entrenamiento. No necesitas interpretar todas las cifras para empezar: primero comprueba que se están utilizando los datos correctos y que el proceso avanza.
+
+Después observaremos qué objetos detecta, cuáles omite y qué falsas alarmas produce. Una puntuación alta no sustituye mirar los resultados. Al terminar guardarás los pesos, que son el archivo que necesitará la siguiente práctica para utilizar lo aprendido.
+
 ## 1. Qué cambia al entrenar
 
 Durante el entrenamiento se ajustan los parámetros del detector para relacionar imágenes con clases y cajas. En un flujo de transferencia de aprendizaje, el punto inicial son pesos preentrenados compatibles con el modelo elegido.
@@ -70,5 +76,16 @@ Compara dos modelos hipotéticos: uno detecta casi todos los objetos pero genera
 ## Registro del experimento
 
 Anota el modelo inicial, la versión del dataset y los valores de los parámetros antes de entrenar. Al terminar, conserva la carpeta de resultados, revisa métricas por clase y registra qué pesos seleccionaste. Utiliza imágenes nuevas para examinar errores que los promedios pueden ocultar.
+
+## Leer el entrenamiento sin perderte entre cifras
+
+Durante una ejecución, empieza por tres preguntas: ¿está usando el dataset correcto?, ¿avanzan las épocas?, ¿dónde se guardarán los resultados? Después revisa las medidas.
+
+Piensa en una imagen con diez objetos anotados. Si el detector encuentra correctamente ocho y no añade falsas alarmas, omitió dos. Si encuentra esos ocho pero también marca cuatro lugares sin objeto, además produjo cuatro falsas alarmas. Este ejemplo ilustra por qué necesitamos observar tanto objetos omitidos como detecciones incorrectas; no son el mismo problema.
+
+Los valores de entrenamiento reales utilizan criterios de clase, localización y emparejamiento, explicados en esta sección. Para comenzar, observa imágenes anotadas con las predicciones y busca esos dos tipos de error. No interpretes cada número como un porcentaje de «inteligencia» del modelo.
+
+Al terminar, anota la carpeta de resultados y el archivo de pesos elegido. Si cambias parámetros para una nueva prueba, registra qué modificaste. No mezcles resultados de ejecuciones diferentes como si pertenecieran al mismo experimento.
+
 
 [Anterior](15-colab-gpu-ultralytics.md) · [Índice](../README.md) · [Siguiente: Descargar modelo](17-descargar-yolo-uso-local.md)

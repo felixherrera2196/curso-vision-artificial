@@ -4,6 +4,12 @@
 
 Prepararás conceptualmente el entorno remoto de entrenamiento: notebook, paquetes, archivos, GPU y verificaciones. Comprenderás por qué elegir una GPU en la interfaz no basta para demostrar que el entrenamiento la está usando.
 
+## La idea en palabras sencillas
+
+Colab permite utilizar una computadora remota desde una página web. En vez de ejecutar todo en un archivo, trabajas con bloques llamados celdas. Cada celda puede contener instrucciones y mostrar resultados debajo.
+
+La GPU es un recurso de esa computadora que puede acelerar el entrenamiento. No es la cámara ni una biblioteca de Python. Primero prepararás el notebook, luego comprobarás el recurso disponible y finalmente ejecutarás el trabajo. Lo que instalaste en tu laptop no se instala automáticamente en Colab: son dos computadoras distintas.
+
 ## 1. Qué es Google Colab
 
 Colab permite ejecutar notebooks desde el navegador en un entorno remoto. Un notebook combina celdas de texto, que documentan el proceso, con celdas ejecutables. Las celdas comparten variables y archivos mientras conservas la sesión.
@@ -61,5 +67,21 @@ Explica qué perderías al reiniciar la sesión: variables, archivos temporales 
 ## Comprobación del entorno
 
 Antes de iniciar el entrenamiento, confirma la disponibilidad de GPU, la versión de Ultralytics y la ruta del dataset. Ejecuta las celdas en orden desde una sesión limpia y comprueba que las variables y archivos requeridos existan. Decide también dónde guardarás los pesos al terminar.
+
+## Abrir y utilizar un notebook por primera vez
+
+1. Entra a [Google Colab](https://colab.research.google.com/) e inicia sesión con tu cuenta de Google.
+2. Abre el notebook indicado por el instructor o crea uno nuevo. Ponle un nombre que puedas reconocer después.
+3. Si el notebook es compartido y necesitas conservar cambios propios, guarda una copia en tu Drive.
+4. Busca **Entorno de ejecución → Cambiar tipo de entorno de ejecución**. Selecciona GPU si está disponible y guarda. Los nombres de las opciones pueden variar según el idioma y la interfaz.
+5. Conecta la sesión y ejecuta las celdas de preparación en el orden de la práctica.
+6. Para ejecutar una celda, pulsa su botón de reproducción o **Shift + Enter**. Espera a que termine antes de avanzar si la siguiente depende de ella.
+7. Lee el resultado debajo de la celda: puede ser un mensaje, una tabla, una imagen o un error.
+8. Si reinicias o cambias el entorno, vuelve a ejecutar la preparación. Que una salida vieja siga visible no significa que las variables sigan existiendo.
+
+No necesitas pulsar muchas veces el botón de una celda que está trabajando. Una instalación o un entrenamiento puede tardar. Busca el indicador de ejecución y los mensajes de avance.
+
+**Notebook y sesión son diferentes:** guardar el notebook conserva sus instrucciones y, según el guardado, sus salidas. No conserva automáticamente todos los archivos temporales ni el estado de la computadora remota. Copia los pesos antes de terminar.
+
 
 [Anterior](14-descargar-dataset-roboflow.md) · [Índice](../README.md) · [Siguiente: Entrenamiento](16-entrenar-yolo-gpu.md)

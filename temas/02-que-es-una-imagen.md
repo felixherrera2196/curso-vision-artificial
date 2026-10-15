@@ -4,6 +4,12 @@
 
 Entenderás cómo se representa una imagen digital, qué es un píxel, cómo se organizan sus canales y por qué importan las coordenadas y el tipo de dato. Estas ideas explican muchos errores habituales al utilizar OpenCV.
 
+## La idea en palabras sencillas
+
+Amplía mucho una fotografía y empezarás a distinguir pequeños cuadros: los píxeles. Para la computadora, la imagen es una tabla de números que describe esos cuadros. Una imagen de color tiene varios números por posición para representar sus componentes.
+
+Piensa en una hoja cuadriculada: para localizar un cuadro necesitas saber su fila y su columna. En el curso hablaremos también de x e y para marcar posiciones. Antes de utilizar esos números, recuerda esta idea: una imagen visible en pantalla es, al mismo tiempo, información que el programa puede medir y comparar.
+
 ## 1. Una imagen como cuadrícula de datos
 
 Una imagen digital está formada por una cuadrícula de **píxeles**. Cada píxel representa una muestra de la escena en una posición. La cantidad de columnas es el ancho y la cantidad de filas es el alto. Una imagen de 640 × 480 tiene 640 columnas, 480 filas y 307 200 posiciones.

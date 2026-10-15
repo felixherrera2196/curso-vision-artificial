@@ -4,6 +4,12 @@
 
 Relacionarás segmentación, contornos y medidas para reconocer figuras geométricas sencillas. Comprenderás qué reglas pueden servir en una práctica controlada y por qué esas reglas tienen límites.
 
+## La idea en palabras sencillas
+
+Para reconocer un triángulo sencillo solemos buscar tres esquinas y tres lados. El programa utilizará pistas parecidas, calculadas a partir del contorno. Primero reduce los pequeños detalles del borde y después examina la forma resultante.
+
+Esta práctica funciona mejor con figuras planas, separadas y de frente. Una figura parcialmente tapada puede perder esquinas; una sombra puede parecer otra figura. No se trata de que el programa comprenda cualquier objeto: aplica reglas geométricas a lo que quedó seleccionado. La respuesta «no determinada» es útil cuando la forma no está clara.
+
 ## 1. Del contorno a una hipótesis
 
 Un contorno puede contener muchos puntos. Para identificar una figura necesitamos resumir su geometría: cuántos lados aparenta tener, qué proporciones presenta y qué tan parecida es a un círculo. Esa descripción permite proponer una clase como triángulo, cuadrilátero o círculo.
@@ -58,5 +64,14 @@ Usa triángulo, cuadrado, rectángulo y círculo sobre un fondo contrastante. Pr
 ## Preparación de la práctica
 
 Organiza tus reglas antes de programar: escribe qué medidas utilizarás para cada figura y cuándo devolverás una clase no determinada. Usa figuras separadas y de frente para la primera prueba; después cambia orientación, distancia y oclusión para reconocer los límites del método.
+
+## Ejemplo explicado: una figura que deja de parecer triángulo
+
+Coloca un triángulo verde sobre un fondo claro. Si el filtro de color conserva toda su silueta, la aproximación del contorno puede dejar tres esquinas y la regla proponer «triángulo».
+
+Ahora tapa una de sus puntas. El objeto físico sigue siendo un triángulo, pero la parte visible ya no tiene necesariamente la misma silueta. La regla podría proponer otra clase o no determinarla. No significa que el programa haya olvidado la figura: las reglas analizan la información visible de ese momento.
+
+Haz una tabla con tres columnas: figura que colocaste, respuesta del programa y explicación. Incluye una prueba de frente, otra girada y otra parcialmente tapada. No borres los fallos del registro: ayudan a explicar cuándo puedes utilizar el método.
+
 
 [Anterior](08-contornos.md) · [Índice](../README.md) · [Siguiente: Deep Learning](10-introduccion-deep-learning.md)

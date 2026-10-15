@@ -4,6 +4,12 @@
 
 Prepararás el entorno local y distinguirás entre el lenguaje, el editor, los paquetes y los servicios que se usarán durante el curso. Al terminar la preparación, el editor debe ejecutar el mismo Python en el que instalaste las bibliotecas.
 
+## La idea en palabras sencillas
+
+Antes de usar una herramienta hay que tenerla disponible. Python ejecuta las instrucciones; VS Code permite escribirlas; OpenCV aporta funciones para la cámara. Instalarlos es parecido a preparar la mesa y reunir los materiales antes de una práctica de laboratorio.
+
+No tienes que aprender todos los nombres de esta sección de memoria. Tu primera meta es abrir el ejemplo de cámara y ejecutarlo sin errores. Si todavía no sabes dónde pegar un programa o dónde escribir un comando, consulta [Antes de empezar](00-antes-de-empezar.md). Allí se muestra el recorrido desde la creación del archivo hasta su ejecución.
+
 ## 1. Para qué sirve cada componente
 
 | Componente | Función en el curso |
