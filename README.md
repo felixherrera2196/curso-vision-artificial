@@ -25,7 +25,7 @@ Si necesitas preparar tu equipo, comienza por los tutoriales de [instalación de
 5. Guarda tus observaciones: parámetros, condiciones de iluminación, resultados y situaciones en las que el método falla.
 6. Para YOLO, conserva también la versión del dataset, la configuración de entrenamiento y los pesos seleccionados.
 
-Los capítulos **04 y 05** incluyen programas completos para captura de cámara y filtrado de color. El capítulo **07** incluye tres programas separados: erosión, dilatación y erosión seguida de dilatación sobre una máscara verde de un solo intervalo. Los demás capítulos ofrecen fundamentos, procedimientos y actividades para acompañar las prácticas del taller; no todos contienen un programa completo.
+Los capítulos **04 y 05** incluyen programas completos para captura de cámara y filtrado de color. El capítulo **07** incluye tres programas separados: erosión, dilatación y erosión seguida de dilatación sobre una máscara verde de un solo intervalo. El capítulo **08** añade un programa completo para encontrar, filtrar y dibujar contornos. El capítulo **09** utiliza esos contornos para buscar candidatos de cuatro esquinas en hojas verdes. Los demás capítulos ofrecen fundamentos, procedimientos y actividades para acompañar las prácticas del taller; no todos contienen un programa completo.
 
 El taller presencial tiene una duración de cuatro horas. La guía amplía las explicaciones para que puedas consultar los detalles después de clase y repetir las actividades a tu ritmo.
 

@@ -342,4 +342,10 @@ Los programas contemplan salida por ESC y por lectura fallida. Como en las prác
 - ¿Por qué una región borrada por erosión no tiene que reaparecer al dilatar?
 - ¿Por qué debes comprobar la selección verde antes de ajustar el kernel?
 
+## Para dar el siguiente paso
+
+Ahora tenemos una máscara más limpia, pero el programa todavía trabaja con píxeles blancos y negros. **¿Cómo podemos obtener el borde de cada región para analizarla por separado y medir su tamaño?**
+
+En el siguiente capítulo buscaremos contornos: fronteras que nos permitirán pasar de una selección de píxeles a regiones que podemos medir y dibujar.
+
 [Anterior](06-modelos-color.md) · [Índice](../README.md) · [Siguiente: Contornos](08-contornos.md)
