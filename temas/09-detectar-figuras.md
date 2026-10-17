@@ -18,6 +18,14 @@ Este procedimiento reconoce una **silueta geométrica** bajo ciertas condiciones
 
 ## 2. Aproximación poligonal
 
+```python
+approx = cv2.approxPolyDP(
+    contour,
+    epsilon,
+    True
+)
+```
+
 `approxPolyDP` aproxima una curva por otra con menos vértices, usando una tolerancia llamada epsilon. La idea es conservar la forma global mientras se eliminan variaciones pequeñas del borde.
 
 Es habitual relacionar epsilon con el perímetro para que la tolerancia se adapte parcialmente al tamaño de la figura. El factor exacto debe ajustarse: una tolerancia muy pequeña conserva ruido y demasiados vértices; una muy grande simplifica tanto que elimina esquinas reales.
@@ -33,6 +41,10 @@ Contar cuatro vértices no basta para afirmar «rectángulo»: un trapecio o un 
 ## 4. Cuadrados, rectángulos y perspectiva
 
 La relación ancho / alto del rectángulo envolvente puede ayudar a separar un cuadrado de un rectángulo alargado en una escena bien alineada. Sin embargo, el rectángulo alineado con los ejes cambia cuando la figura rota. Un objeto alargado inclinado puede tener un rectángulo envolvente de proporciones engañosas.
+
+```python
+rect = cv2.minAreaRect(contour)
+```
 
 Un rectángulo orientado, como el obtenido con `minAreaRect`, reduce ese problema de rotación en el plano, pero no elimina las deformaciones de perspectiva. Un cuadrado inclinado respecto a la cámara puede verse como otro cuadrilátero. Para una práctica inicial, coloca figuras planas de frente y expresa esa condición como parte del método.
 
@@ -276,6 +288,14 @@ Las primeras instrucciones importan las herramientas, abren la cámara y crean e
 
 Después aplica erosión y dilatación en ese orden. Ambas guardan su salida en `mask`, de modo que la segunda recibe el resultado de la primera. El mismo nombre conserva ahora la máscara procesada, no la original sin limpiar.
 
+```python
+contours, _ = cv2.findContours(
+    mask,
+    cv2.RETR_EXTERNAL,
+    cv2.CHAIN_APPROX_SIMPLE
+)
+```
+
 `findContours` busca las fronteras externas de esa máscara. El `for` permite analizar cada una y `continue` salta aquellas cuya área es menor que 500. Ese límite sigue siendo una referencia inicial que debes ajustar a la distancia y resolución de tu escena.
 
 Hasta aquí, el recorrido coincide con el programa de contornos. Ahora añadimos medidas para decidir qué regiones dibujar.
@@ -283,6 +303,13 @@ Hasta aquí, el recorrido coincide con el programa de contornos. Ahora añadimos
 ### 2. Medir el perímetro con `arcLength`
 
 El **perímetro** es la longitud del borde. Imagina recorrer la orilla de la hoja con un hilo y después medir el hilo. Aquí se mide sobre la imagen, por lo que el resultado está expresado en unidades de píxel, no en centímetros.
+
+```python
+perimeter = cv2.arcLength(
+    contour,
+    True
+)
+```
 
 `cv2.arcLength(contour, True)` recibe la secuencia de puntos y la indicación de que la curva es cerrada. `True` significa que se incluye el segmento desde el último punto de vuelta al primero. La variable `perimeter` conserva la longitud calculada.
 
@@ -300,6 +327,14 @@ Relacionarla con el perímetro permite adaptar la escala de la tolerancia al tam
 
 ### 4. Simplificar el borde con `approxPolyDP`
 
+```python
+approx = cv2.approxPolyDP(
+    contour,
+    epsilon,
+    True
+)
+```
+
 `cv2.approxPolyDP(contour, epsilon, True)` recibe el contorno, su tolerancia y la indicación de tratar el resultado como un polígono cerrado. Devuelve una secuencia simplificada de puntos que conservamos en `approx`.
 
 Imagina pasar de un trazo tembloroso alrededor de una hoja a una figura con unos pocos segmentos. La función busca una aproximación geométrica; no sabe que el objeto es papel ni que debería tener cuatro lados.
@@ -314,6 +349,10 @@ No se debe aumentar epsilon hasta conseguir cuatro esquinas a cualquier costo. S
 
 ### 5. Contar y comparar las esquinas
 
+```python
+corners = len(approx)
+```
+
 `len(approx)` cuenta cuántos puntos hay en la aproximación. Guardamos ese número en `corners`, que significa esquinas. Estos puntos son los vértices del polígono calculado; su cantidad puede variar si cambia la máscara.
 
 `if corners == 4` pregunta si el número es exactamente cuatro. Recuerda que `=` asigna un valor y `==` compara dos valores. La sangría indica qué instrucciones se ejecutan solamente cuando se cumple esa comparación.
@@ -323,6 +362,10 @@ En esta práctica, cuatro puntos permiten tratar la región como **candidata a c
 Si hay tres, cinco o más vértices, el programa no entra en ese bloque y sigue con el siguiente contorno. La imagen continúa mostrándose: no detectar una candidata no es un fallo de la cámara.
 
 ### 6. Obtener una caja con `boundingRect`
+
+```python
+x, y, w, h = cv2.boundingRect(contour)
+```
 
 `x, y, w, h = cv2.boundingRect(contour)` obtiene cuatro resultados y los guarda en cuatro variables:
 
@@ -339,9 +382,31 @@ En el programa se calcula la caja del `contour` original, después de comprobar 
 
 ### 7. Dibujar el rectángulo y los textos
 
+```python
+cv2.rectangle(
+    frame,
+    (x, y),
+    (x + w, y + h),
+    (0, 255, 0),
+    3
+)
+```
+
 `cv2.rectangle` dibuja sobre `frame` utilizando una esquina en `(x, y)` y la opuesta en `(x + w, y + h)`. Los signos `+` suman ancho y alto a la posición inicial. `(0, 255, 0)` indica verde en BGR y `3` es el grosor de la línea.
 
 A diferencia del tema 08, este ejemplo dibuja directamente sobre `frame`, sin crear `result`. Es adecuado para mostrar el resultado al final de la vuelta, porque la máscara ya se calculó antes de agregar los dibujos. La siguiente lectura entrega otro fotograma: los rectángulos no se van acumulando sobre el video futuro.
+
+```python
+cv2.putText(
+    frame,
+    "Cuadrilatero verde",
+    (x, y - 10),
+    cv2.FONT_HERSHEY_SIMPLEX,
+    0.8,
+    (0, 255, 0),
+    2
+)
+```
 
 `cv2.putText` añade texto sobre la imagen. Sus argumentos indican dónde dibujar, qué escribir, la posición, la fuente, la escala, el color y el grosor:
 
@@ -372,6 +437,10 @@ ESC termina el ciclo; después se libera la cámara y se cierran las ventanas. E
 4. **Triángulo o círculo verde:** en una segmentación y aproximación adecuadas no deberían activar esta regla, pero pueden aparecer falsos positivos. El programa no les asignará un nombre alternativo.
 5. **Hoja inclinada, doblada o parcialmente tapada:** observa cómo cambia el contorno visible y si deja de cumplir la regla. La hoja física no cambia de identidad, pero su silueta en la imagen sí puede cambiar.
 6. **Distancia:** aleja la hoja. Puede perder detalle o quedar por debajo del filtro de área.
+
+```python
+print(corners)
+```
 
 Registra figura real, si aparece caja y qué muestra la máscara. Para observar el conteo de otras formas, puedes colocar temporalmente un `print(corners)` después de calcular `corners`, fuera del bloque `if corners == 4`. El video repetirá muchas lecturas en la terminal; retíralo después de la observación. Es una ayuda de diagnóstico, no un requisito del programa.
 

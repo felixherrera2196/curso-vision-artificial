@@ -18,6 +18,14 @@ Un contorno no equivale necesariamente a un objeto real. Una máscara fragmentad
 
 ## 2. Entrada de la búsqueda
 
+```python
+contours, _ = cv2.findContours(
+    mask,
+    cv2.RETR_EXTERNAL,
+    cv2.CHAIN_APPROX_SIMPLE
+)
+```
+
 La práctica habitual utiliza una imagen binaria de un canal. Puede ser una máscara de color limpia o el resultado de un umbral. `findContours` interpreta las regiones del primer plano según el modo elegido.
 
 No conviene enviar directamente un fotograma BGR esperando que la función reconozca objetos. Primero hay que definir qué píxeles pertenecen a la región de interés. Encontrar bordes con otro algoritmo también puede generar una entrada útil, pero su interpretación requiere atención: bordes rotos o dobles no describen necesariamente una región cerrada limpia.
@@ -32,13 +40,25 @@ La aproximación de almacenamiento de puntos también es diferente de la recuper
 
 ## 4. Área y perímetro
 
+```python
+area = cv2.contourArea(contour)
+```
+
 `contourArea` estima el área encerrada por el contorno mediante su geometría. Se expresa en unidades de píxel al cuadrado. No debe confundirse siempre con contar exactamente los píxeles blancos de una máscara: son procedimientos diferentes y pueden dar valores distintos, especialmente en regiones pequeñas o complejas.
+
+```python
+perimeter = cv2.arcLength(contour, True)
+```
 
 `arcLength` calcula la longitud de la secuencia, indicando si se trata como cerrada. El perímetro se expresa en unidades de píxel. Un borde ruidoso puede tener una longitud mayor que una frontera suave, aunque ambos correspondan al mismo objeto.
 
 Un filtro de área mínima ayuda a descartar ruido. El umbral depende de la resolución y de la distancia del objeto. Si alejas la figura de la cámara, su área aparente disminuye y puede quedar descartada sin haber cambiado físicamente.
 
 ## 5. Rectángulo y centro
+
+```python
+x, y, w, h = cv2.boundingRect(contour)
+```
 
 `boundingRect` proporciona un rectángulo alineado con los ejes que contiene el contorno. Es útil para dibujar la posición de una región o extraer una zona. El rectángulo puede contener fondo; no equivale a la máscara de la figura.
 
@@ -270,7 +290,19 @@ cv2.destroyAllWindows()
 
 `cv2` proporciona las herramientas de cámara e imagen. `np` es el nombre corto de NumPy, que utilizamos para construir los límites y la plantilla de 5 × 5.
 
+```python
+ret, frame = cap.read()
+```
+
 La cámara se abre una vez, antes de `while True`. En cada vuelta, `cap.read()` entrega el indicador `ret` y la imagen `frame`. Si la lectura falla, `break` sale del ciclo y el programa libera los recursos al final. En este ejemplo, ese fallo de lectura no imprime un mensaje adicional.
+
+```python
+mask = cv2.inRange(
+    hsv,
+    lower_green,
+    upper_green
+)
+```
 
 Después se convierte a HSV y se crea una máscara con el mismo intervalo verde del tema 05. Si calibraste otros límites para tus hojas, utiliza aquí esos valores. Solo hay una llamada a `inRange`: no se combinan dos máscaras.
 
@@ -296,6 +328,10 @@ Un **contorno** es una secuencia de puntos de una frontera; **`contours`** es la
 
 ### 3. Crear una imagen donde dibujar
 
+```python
+result = frame.copy()
+```
+
 `result = frame.copy()` crea una copia de los datos del fotograma. Dibujaremos sobre `result`, dejando `frame` disponible sin esas líneas añadidas.
 
 Es como fotocopiar una fotografía para marcar sobre la copia. Si solo escribiéramos `result = frame`, ambos nombres se referirían al mismo arreglo y dibujar sobre uno también afectaría al otro. `.copy()` evita compartir esos mismos datos para el dibujo.
@@ -311,6 +347,10 @@ La sangría muestra qué instrucciones se repiten para cada contorno. Este ciclo
 Si hay tres contornos, el cuerpo del `for` se evalúa tres veces. Si no hay ninguno, se omite ese cuerpo y el programa continúa mostrando el video y consultando ESC.
 
 ### 5. Medir el área y saltar regiones pequeñas
+
+```python
+area = cv2.contourArea(contour)
+```
 
 `area = cv2.contourArea(contour)` calcula el área encerrada por esa frontera. El valor se expresa en píxeles cuadrados, no en centímetros cuadrados ni en número de hojas. La cámara no conoce la escala física de la escena con este programa.
 
@@ -346,6 +386,11 @@ El color de dibujo es independiente del intervalo HSV de selección. Podrías di
 ### 7. Mostrar el resultado y terminar
 
 «Contornos detectados» muestra `result`, la copia del fotograma con los bordes de las regiones aceptadas. «Mascara» muestra la selección después de la erosión y la dilatación, antes de cualquier decisión sobre dibujar por área.
+
+```python
+cap.release()
+cv2.destroyAllWindows()
+```
 
 Pulsa ESC con una ventana seleccionada para salir. `release()` deja libre la cámara y `destroyAllWindows()` cierra las ventanas. Una excepción imprevista no está cubierta por una estructura `try` y `finally` en este ejemplo; su limpieza es la de las salidas normales ya estudiadas.
 

@@ -71,9 +71,27 @@ cv2.destroyAllWindows()
 
 ### Cómo leer el programa
 
+```python
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+```
+
 `import cv2` permite utilizar OpenCV y `import numpy as np` permite crear los arreglos de límites. `cap` conserva la conexión con la cámara. Antes del ciclo, `isOpened()` comprueba que la conexión pudo abrirse.
 
+```python
+ret, frame = cap.read()
+```
+
 `while True` repite la captura. En cada vuelta, `ret` indica si hubo lectura correcta y `frame` contiene el fotograma actual. El bloque `if not ret` evita continuar con una imagen inexistente.
+
+```python
+lower_green = np.array([0, 100, 0], dtype=np.uint8)
+```
 
 `np.array` crea un arreglo de números. `dtype=np.uint8` indica que sus valores son enteros de ocho bits sin signo, entre 0 y 255. En estos límites se interpreta cada posición así:
 
@@ -83,9 +101,24 @@ cv2.destroyAllWindows()
 | G: verde | 100 | 255 | Una intensidad verde suficiente. |
 | R: rojo | 0 | 120 | No demasiado rojo. |
 
+```python
+mask = cv2.inRange(frame, lower_green, upper_green)
+```
+
 `cv2.inRange` recibe `frame` y ambos límites. Acepta un píxel solo cuando **los tres canales** están dentro de sus intervalos, incluidos los extremos. Por ejemplo, BGR `[40, 180, 50]` se acepta; `[40, 80, 50]` se rechaza porque G no llega a 100. Son ejemplos numéricos para entender la regla, no medidas de tu hoja.
 
 La salida `mask` tiene el mismo alto y ancho que el fotograma, pero un solo canal. Sus valores son 0 o 255. Por eso la hoja seleccionada aparece blanca en la máscara, aunque en la cámara siga siendo verde.
+
+```python
+cv2.imshow("Camara web", frame)
+cv2.imshow("Mascara original", mask)
+if cv2.waitKey(1) & 0xFF == 27:
+    break
+
+# Al salir del ciclo:
+cap.release()
+cv2.destroyAllWindows()
+```
 
 `imshow` abre o actualiza las ventanas. `waitKey` atiende sus eventos y consulta el teclado. Si ESC tiene código 27, `break` termina el ciclo. Al final, `release` libera la cámara y `destroyAllWindows` cierra las ventanas.
 
@@ -148,7 +181,15 @@ cv2.destroyAllWindows()
 
 ### Qué cambió respecto al primer programa
 
+```python
+hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+```
+
 La captura, las ventanas y la salida son iguales. El cambio empieza en `cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)`, que guarda en `hsv` una representación HSV del fotograma. `frame` sigue disponible en BGR para mostrar el video original.
+
+```python
+mask = cv2.inRange(hsv, lower_green, upper_green)
+```
 
 Ahora `inRange` recibe **`hsv`**, no `frame`. Los límites ya no significan azul, verde y rojo:
 
@@ -164,9 +205,36 @@ Los valores 35 y 85 no son porcentajes ni grados escritos directamente: pertenec
 
 ### Por qué usamos verde y un solo intervalo
 
+```python
+mask = cv2.inRange(hsv, lower_green, upper_green)
+```
+
 El tono es circular, como los números de una carátula de reloj. En HSV el rojo está cerca de la unión entre el comienzo y el final de la escala, por lo que una selección amplia de rojos puede necesitar dos intervalos. El verde que seleccionamos está en una zona continua, lejos de esa unión. Por eso basta **una llamada a `inRange` y una máscara**.
 
 En esta práctica no hay que unir máscaras ni aprender una operación extra para resolver el color. Nos centraremos en observar la selección. El mismo filtro HSV se reutilizará en las operaciones morfológicas.
+
+### Por qué conviene pasar de BGR a HSV para seleccionar la hoja
+
+En RGB y BGR el color se describe con cantidades de rojo, verde y azul; solo cambia el orden de los canales. Por eso, pasar de BGR a RGB no resuelve por sí mismo las dificultades del filtro. Cuando cambia la iluminación de una hoja, pueden cambiar los tres componentes a la vez, aunque nosotros sigamos viendo la misma hoja verde.
+
+Por ejemplo, considera dos píxeles BGR: `[40, 180, 50]` y `[20, 90, 25]`. El segundo tiene la mitad de intensidad en cada componente y representa un verde más oscuro. El filtro BGR de esta práctica acepta el primero, pero rechaza el segundo porque su componente G es menor que 100. Bajar ese mínimo puede recuperar la sombra, pero también admitir otros colores: el filtro comprueba cantidades independientes de azul, verde y rojo, sin exigir una relación entre ellas que describa el tono verde.
+
+HSV facilita expresar una regla más cercana a lo que buscamos: **«seleccionar tonos verdes, suficientemente coloreados y con brillo suficiente»**. Cada parte de esa regla tiene un ajuste específico:
+
+- **H permite elegir la familia de color.** Podemos acotar el verde sin describir de nuevo las cantidades de los tres componentes BGR.
+- **S permite excluir zonas poco coloreadas.** Un mínimo de saturación ayuda a rechazar grises, blancos y algunos reflejos que podrían cumplir límites BGR demasiado amplios. También puede eliminar partes de la hoja si se exige demasiado.
+- **V permite ajustar el brillo permitido.** Si perdemos zonas verdes oscuras, podemos probar un mínimo V menor manteniendo inicialmente el intervalo de tono. Así resulta más fácil entender qué cambia con cada ajuste.
+
+En el ejemplo anterior, ambos píxeles tienen aproximadamente H = 58 y S = 198 al convertirlos con OpenCV; lo que cambia es V, de 180 a 90. Por eso el intervalo HSV inicial de esta práctica acepta los dos. Es un ejemplo ideal de oscurecimiento proporcional: en una cámara real las sombras, los reflejos y los cambios de luz también pueden modificar el tono y la saturación.
+
+```python
+hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+mask = cv2.inRange(hsv, lower_green, upper_green)
+```
+
+La primera línea cambia la representación de los píxeles; la segunda aplica los límites sobre H, S y V. La selección sigue necesitando que **los tres valores** cumplan sus intervalos. La ventaja está en que ahora resulta más sencillo interpretar y calibrar esos límites. Conservamos `frame` en BGR para mostrar la cámara original.
+
+HSV no agrega información ni garantiza una selección correcta con cualquier iluminación. Si la hoja queda casi negra, pierde saturación o recibe luz de otro color, puede dejar de cumplir el intervalo. El cambio se justifica aquí porque queremos filtrar por color y ajustar sus condiciones de manera comprensible. BGR sigue siendo útil para visualizar el video y puede bastar para filtrar en una escena estable y controlada.
 
 ## 4. Comparar ambos programas
 
@@ -217,6 +285,14 @@ Tendrás una barra para el mínimo y otra para el máximo de H, S y V. Los núme
 La herramienta sigue usando **un intervalo y una máscara**. No aplica erosión ni dilatación: aquí interesa calibrar primero la selección de color, antes de limpiar sus imperfecciones.
 
 ### Entorno de la práctica: Windows 11 y Python 3.12.10
+
+```python
+cv2.namedWindow("Ajustes HSV", cv2.WINDOW_NORMAL)
+cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
+h_min = cv2.getTrackbarPos("H minimo", "Ajustes HSV")
+cv2.imshow("Ajustes HSV", panel)
+key = cv2.waitKey(1) & 0xFF
+```
 
 Las barras utilizan **HighGUI**, la interfaz de ventanas de OpenCV, disponible en la distribución de escritorio `opencv-python` para Windows. No necesitas instalar Qt ni crear una aplicación con otro editor visual. `namedWindow`, `createTrackbar`, `getTrackbarPos`, `imshow` y `waitKey` forman parte de este mismo conjunto de herramientas.
 
@@ -367,19 +443,56 @@ La tecla P **no escribe ni modifica archivos automáticamente**. Solo imprime el
 
 ### Qué hace cada parte nueva del código
 
+```python
+def al_cambiar(valor):
+    pass
+
+cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
+```
+
 **`def al_cambiar(valor)` y `pass`.** `def` define una función. OpenCV necesita una función para notificar el movimiento de cada barra y le entrega su nueva posición como argumento. En este ejemplo la función no realiza ninguna operación: `pass` significa «no hacer nada». Las posiciones se consultan dentro del ciclo de video. No escribas `al_cambiar()` al crear las barras: se entrega el nombre de la función para que OpenCV pueda llamarla después.
+
+```python
+cv2.namedWindow("Ajustes HSV", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Ajustes HSV", 700, 180)
+cv2.imshow("Ajustes HSV", panel)
+```
 
 **`namedWindow`.** Crea la ventana antes de colocar controles dentro. `WINDOW_NORMAL` permite cambiar su tamaño. `resizeWindow` propone un tamaño inicial. Mostramos además un panel negro con instrucciones mediante `imshow` antes de crear las barras, para que la ventana tenga contenido visible desde el principio. Ese panel no es otra máscara de color; solo sirve de fondo para la interfaz. Puedes ampliar la ventana si las barras no se ven cómodamente.
 
+```python
+cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
+```
+
 **`createTrackbar`.** Cada llamada indica nombre de la barra, ventana donde aparece, valor inicial, valor máximo y función de aviso. El mínimo de recorrido es 0. H termina en 179 porque esa es la escala de esta conversión HSV de ocho bits; S y V terminan en 255. Los nombres con «mínimo» y «máximo» indican qué límite del filtro controla cada barra, no escalas diferentes.
+
+```python
+h_min = cv2.getTrackbarPos("H minimo", "Ajustes HSV")
+```
 
 **`getTrackbarPos`.** Lee la posición actual de una barra. Se ejecuta en cada fotograma, de modo que al moverla cambia el arreglo de límites y se recalcula la máscara. Los nombres de barra y ventana deben coincidir con los utilizados al crearlas.
 
 **`rango_valido` y `and`.** Comprobamos las tres parejas de límites. `and` exige que todas las comparaciones sean verdaderas. No tiene sentido pedir simultáneamente H mayor o igual que 80 y menor o igual que 40. Si cruzas una pareja, el programa muestra un aviso y una máscara negra hasta que la corrijas. No intercambia números automáticamente: así ves qué valor necesitas ajustar.
 
+```python
+mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+```
+
 **`np.zeros(frame.shape[:2], dtype=np.uint8)`.** Se utiliza únicamente para mostrar una máscara negra cuando el intervalo es inválido. `frame.shape[:2]` toma alto y ancho del fotograma; `zeros` crea una imagen llena de ceros de esas dimensiones. No se combina con otra máscara de color.
 
+```python
+cv2.putText(
+    preview, f"Min HSV: {lower_green.tolist()}",
+    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2
+)
+print(f"lower_green = np.array({lower_green.tolist()}, dtype=np.uint8)")
+```
+
 **`tolist()`, textos y `print`.** `tolist()` permite presentar los valores del arreglo como una lista legible. `putText` los muestra en la cámara y `print` escribe las líneas de Python en la terminal. Los textos que empiezan por `f` insertan los valores actuales dentro del mensaje.
+
+```python
+if key == ord("p") or key == ord("P"):
+```
 
 **`ord("p")`.** Permite comparar la tecla recibida con la letra P. Se aceptan tanto minúscula como mayúscula. Si la terminal tiene el foco, la pulsación puede no llegar a OpenCV: selecciona una ventana de la herramienta antes de pulsarla.
 
@@ -393,6 +506,10 @@ La tecla P **no escribe ni modifica archivos automáticamente**. Solo imprime el
 6. Pulsa ESC con una ventana seleccionada y verifica que las ventanas se cierren. Vuelve a ejecutar para comprobar que la cámara quedó libre.
 
 Si no aparecen ventanas y el mensaje dice que la función no está implementada, revisa si instalaste una variante *headless* o si ejecutas desde otro entorno. Si las ventanas aparecen pero no hay cámara, revisa conexión, otras aplicaciones y los permisos de **Configuración → Privacidad y seguridad → Cámara** de Windows 11, incluido el acceso de aplicaciones de escritorio.
+
+```python
+key = cv2.waitKey(1) & 0xFF
+```
 
 Si las barras no se ven completas, amplía la ventana de ajustes y separa las ventanas en la pantalla. Si P o ESC no responden, haz clic en una ventana de OpenCV antes de pulsarlas; la terminal no debe tener el foco. La atención a estas ventanas se mantiene mediante `waitKey` dentro del ciclo, así que no elimines esa llamada.
 

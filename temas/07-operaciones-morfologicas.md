@@ -61,6 +61,21 @@ El cierre no reconstruye la identidad de un objeto: solo actúa según proximida
 
 El recorrido habitual será fotograma, conversión de color, máscara, morfología y contornos. Mantén visible la máscara original y la procesada mientras ajustas parámetros. Si solo observas el resultado final, será más difícil descubrir qué operación eliminó información.
 
+```python
+mask_eroded = cv2.erode(mask, kernel, iterations=1)
+mask_dilated = cv2.dilate(mask, kernel, iterations=1)
+```
+
+```python
+# Operaciones independientes sobre una máscara ya creada:
+mask_eroded = cv2.erode(mask, kernel, iterations=1)
+mask_dilated = cv2.dilate(mask, kernel, iterations=1)
+
+# Alternativa para definir un kernel y realizar una apertura:
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+mask_opened = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+```
+
 En OpenCV, `erode`, `dilate` y `morphologyEx` permiten realizar estas operaciones. `getStructuringElement` ayuda a definir kernels con formas comunes. Al aplicarlas, identifica siempre la máscara de entrada, la forma del kernel y el número de iteraciones.
 
 ## Actividad de comprensión
@@ -147,6 +162,11 @@ cv2.destroyAllWindows()
 
 ### Explicación paso a paso
 
+```python
+kernel = np.ones((5, 5), np.uint8)
+mask_eroded = cv2.erode(mask, kernel, iterations=1)
+```
+
 1. Las importaciones y la captura son las mismas que en los temas anteriores. `ret` comprueba cada lectura; `frame` contiene su imagen.
 2. Antes del ciclo, `np.ones((5, 5), np.uint8)` crea una plantilla llamada `kernel`: cinco filas y cinco columnas con 25 posiciones activas. Los unos indican dónde examinar vecinos; no son el color del resultado.
 3. Dentro del ciclo se convierte a HSV y se crea **una máscara** con el intervalo verde. Si cambias los límites al calibrar, utiliza los mismos valores en los tres programas para comparar.
@@ -226,6 +246,10 @@ cv2.destroyAllWindows()
 
 ### Explicación de la operación
 
+```python
+mask_dilated = cv2.dilate(mask, kernel, iterations=1)
+```
+
 La captura, el filtro y el kernel permanecen iguales. La diferencia es `cv2.dilate(mask, kernel, iterations=1)`. La entrada sigue siendo `mask`; el resultado nuevo se guarda en `mask_dilated`.
 
 Con este kernel, basta que una de las posiciones examinadas sea blanca para que la posición de salida sea blanca. Es equivalente a tomar el máximo: un 255 entre los vecinos hace que el máximo sea 255. Por eso el blanco se extiende hacia posiciones que antes eran negras.
@@ -299,6 +323,11 @@ cv2.destroyAllWindows()
 ```
 
 ### La línea que conecta ambos pasos
+
+```python
+mask_eroded = cv2.erode(mask, kernel, iterations=1)
+mask_clean = cv2.dilate(mask_eroded, kernel, iterations=1)
+```
 
 El primer paso recibe la máscara original y produce `mask_eroded`. El segundo recibe **`mask_eroded`**, no `mask`. Ese cambio de entrada es la clave: la dilatación trabaja sobre el resultado de la erosión.
 

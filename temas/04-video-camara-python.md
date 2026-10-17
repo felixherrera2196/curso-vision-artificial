@@ -12,7 +12,19 @@ En esta primera práctica no intentaremos reconocer nada. Solo comprobaremos que
 
 ## 1. La cámara como fuente de fotogramas
 
+```python
+cap = cv2.VideoCapture(0)
+```
+
 OpenCV ofrece `VideoCapture` para trabajar con una cámara o una fuente de video. Al abrir una cámara local, se suele indicar un índice de dispositivo. El índice 0 es un primer intento habitual, pero no garantiza que corresponda a la cámara deseada: un equipo puede tener una integrada, una externa y dispositivos virtuales.
+
+```python
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+
+ret, frame = cap.read()
+```
 
 Abrir una fuente y recibir imágenes son comprobaciones diferentes. `isOpened` permite saber si se abrió la captura. La lectura con `read` devuelve una señal de éxito y el fotograma obtenido. Debes revisar ambas cosas; procesar un fotograma inexistente provoca errores en etapas posteriores.
 
@@ -31,6 +43,12 @@ La captura no debe abrirse nuevamente en cada iteración. Hacerlo añade trabajo
 
 ## 3. Visualización y respuesta del teclado
 
+```python
+cv2.imshow("Camara web", frame)
+if cv2.waitKey(1) & 0xFF == 27:
+    break
+```
+
 En un programa local, `imshow` permite mostrar un fotograma en una ventana. Las funciones de espera de teclado, como `waitKey`, también permiten que OpenCV procese eventos de esa ventana. Si el programa no atiende los eventos, la interfaz puede aparentar que se bloqueó.
 
 La espera debe ser breve para seguir avanzando por el video. Su valor no establece por sí solo los fotogramas por segundo: también cuenta el tiempo de lectura, el procesamiento y la visualización. Al crear tu aplicación, indica qué tecla permite salir y comprueba su pulsación dentro del ciclo.
@@ -38,6 +56,10 @@ La espera debe ser breve para seguir avanzando por el video. Su valor no estable
 Conviene que el programa pueda liberar recursos aunque haya una excepción. La lógica de limpieza suele organizarse de forma que se ejecute al terminar normalmente o al producirse un fallo. El ejemplo de esta guía libera los recursos al salir por ESC o por un fallo de lectura; para asegurar la limpieza también ante excepciones, puedes utilizar una estructura `try` y `finally`.
 
 ## 4. Liberar los recursos
+
+```python
+cap.release()
+```
 
 `release` libera la fuente de captura. Cerrar las ventanas elimina la interfaz de visualización. Son acciones relacionadas, pero no equivalentes: cerrar una ventana no debe sustituir el cierre del dispositivo.
 
@@ -116,11 +138,21 @@ cv2.destroyAllWindows()
 
 ### Crear el objeto de captura
 
+```python
+cap = cv2.VideoCapture(0)
+```
+
 `cap = cv2.VideoCapture(0)` construye un objeto y solicita la apertura del dispositivo de índice 0. `cap` es una variable que conserva ese objeto para las lecturas posteriores. No almacena todo el video; administra la fuente desde la cual iremos obteniendo imágenes.
 
 La línea se ejecuta una sola vez. Si hay varias cámaras, puede ser necesario cambiar el índice después de identificar los dispositivos disponibles. La cámara que el sistema considera primero puede no ser la externa que quieras utilizar.
 
 ### Comprobar la apertura
+
+```python
+if not cap.isOpened():
+    print("No se pudo abrir la cámara.")
+    exit()
+```
 
 `cap.isOpened()` produce una respuesta de verdadero o falso sobre la apertura. `not` invierte esa respuesta, de modo que el bloque del `if` se ejecuta cuando la fuente **no** se pudo abrir. El programa imprime un mensaje y termina mediante `exit()`.
 
@@ -134,6 +166,10 @@ La sangría indica qué instrucciones pertenecen al ciclo. Las últimas dos inst
 
 ### Separar éxito e imagen
 
+```python
+ret, frame = cap.read()
+```
+
 `ret, frame = cap.read()` recibe dos resultados. `ret` indica si se obtuvo el fotograma y `frame` contiene los datos de esa imagen cuando la lectura fue válida. La coma permite asignar cada resultado a una variable diferente.
 
 `ret` no representa la frecuencia de video ni la resolución. `frame` tampoco es el archivo completo del video: es la imagen de la lectura actual. En la siguiente vuelta se reemplaza por otra imagen.
@@ -142,11 +178,20 @@ El bloque `if not ret` evita intentar mostrar una captura fallida. El mensaje in
 
 ### Mostrar el fotograma
 
+```python
+cv2.imshow("Camara web", frame)
+```
+
 `cv2.imshow("Camara web", frame)` presenta la imagen en una ventana identificada por ese título. Usar el mismo título en cada vuelta actualiza la misma ventana. La imagen habitual de la cámara es un arreglo BGR, como se explicó en el tema 02.
 
 En este punto todavía no se ha aplicado un filtro ni un detector: se muestra lo que entrega la cámara. Esta es una base útil para comprobar captura y visualización antes de agregar procesamiento.
 
 ### Consultar ESC
+
+```python
+if cv2.waitKey(1) & 0xFF == 27:
+    break
+```
 
 `cv2.waitKey(1)` atiende eventos de la ventana y espera brevemente una entrada de teclado. La espera solicitada es de un milisegundo; el tiempo real puede ser mayor por la planificación del sistema y por el trabajo del ciclo. No significa que el programa alcance mil fotogramas por segundo.
 
@@ -155,6 +200,11 @@ En este punto todavía no se ha aplicado un filtro ni un detector: se muestra lo
 `== 27` compara el código con el de ESC. Si coincide, `break` termina el ciclo. La ventana de OpenCV debe tener el foco para recibir esa tecla. Cerrar la ventana con su botón no es la condición de salida que implementa este ejemplo; utiliza ESC durante la práctica.
 
 ### Liberar y cerrar
+
+```python
+cap.release()
+cv2.destroyAllWindows()
+```
 
 `cap.release()` deja disponible la cámara y `cv2.destroyAllWindows()` cierra las ventanas creadas por OpenCV. Ambas se ejecutan después de las salidas normales del ciclo.
 

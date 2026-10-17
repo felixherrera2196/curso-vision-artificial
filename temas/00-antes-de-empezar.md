@@ -46,6 +46,12 @@ Si el editor no encuentra Python o aparece un error, revisa el tutorial de insta
 
 Una **variable** es un nombre que permite conservar un dato para utilizarlo después. En los ejemplos, `frame` guarda la imagen que acaba de capturar la cámara. El signo `=` asigna un resultado a un nombre; no es una pregunta sobre igualdad. Para comparar igualdad se usa `==`.
 
+En las explicaciones de funciones encontrarás un fragmento con la línea que se está comentando. Estos fragmentos se leen dentro del contexto del programa completo: pueden necesitar variables previas o estar dentro de un ciclo. Para ejecutar una práctica, copia su código completo.
+
+```python
+cv2.imshow("Camara web", frame)
+```
+
 Una **función** es una herramienta que recibe información y realiza una tarea. En `cv2.imshow("Camara web", frame)`, el nombre identifica la herramienta y los paréntesis contienen lo que necesita: el título de la ventana y la imagen. Los valores que le entregamos se llaman **argumentos**.
 
 `import cv2` permite utilizar OpenCV. El punto en `cv2.imshow` indica que estamos utilizando una herramienta de esa biblioteca. Las comillas delimitan texto; por ejemplo, el nombre que aparece en una ventana.

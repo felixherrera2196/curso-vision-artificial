@@ -20,6 +20,12 @@ El orden de ejecución importa. Si ejecutas una celda que usa una variable antes
 
 En la configuración del entorno de ejecución puedes solicitar un acelerador GPU. Su disponibilidad y tipo pueden variar. Colab puede tener límites de uso o no asignar el recurso en un momento determinado.
 
+```python
+import torch
+
+print(torch.cuda.is_available())
+```
+
 Debes comprobar tres cosas: que la sesión tenga GPU asignada, que la biblioteca de cómputo pueda verla y que el entrenamiento utilice ese dispositivo. PyTorch, utilizado por Ultralytics, proporciona mecanismos como `torch.cuda.is_available()` para revisar disponibilidad CUDA en las configuraciones NVIDIA habituales.
 
 Un resultado negativo no se corrige únicamente cambiando un argumento del entrenamiento. Puede significar que no se asignó GPU o que la instalación no tiene el soporte necesario. Primero identifica el nivel que falla.
@@ -41,6 +47,10 @@ Las carpetas temporales de Colab pueden desaparecer cuando termina o se reinicia
 Antes de entrenar, decide dónde quedarán dataset, resultados y pesos. La estrategia puede ser entrenar en almacenamiento temporal y copiar resultados después, pero necesitas hacerlo antes de perder la sesión.
 
 ## 5. Colab no es el escritorio de tu computadora
+
+```python
+cap = cv2.VideoCapture(0)
+```
 
 Las funciones de ventana de OpenCV no funcionan igual que en un programa local. Tampoco puedes asumir que `VideoCapture(0)` accede a la webcam del navegador. Para el flujo de este curso, Colab prepara y entrena; la aplicación de cámara se ejecuta localmente después.
 
