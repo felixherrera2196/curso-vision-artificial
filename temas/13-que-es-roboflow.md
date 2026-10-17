@@ -1,114 +1,88 @@
-# 13. ¿Qué es Roboflow?
+# 13. Roboflow y tutorial de etiquetado
 
-## Qué aprenderás
+## Qué es Roboflow y cómo sirve para etiquetar
 
-Comprenderás qué papel desempeña Roboflow en el flujo del curso y cómo se relacionan workspace, proyecto, anotaciones, versiones y exportaciones.
+**Roboflow** es una plataforma web que permite organizar imágenes y etiquetar los objetos que aparecen en ellas. En este curso la utilizaremos para subir nuestras fotografías, dibujar una **bounding box** alrededor de cada objeto y asignarle su clase.
 
-## La idea en palabras sencillas
+Al terminar, podremos descargar las imágenes y sus etiquetas en **formato YOLO** para entrenar nuestro detector. La plataforma genera los archivos de etiquetas: no tendremos que escribir a mano las coordenadas de cada caja.
 
-Roboflow será el lugar donde organizarás las imágenes y sus etiquetas. Puedes pensar en un workspace como un espacio de trabajo, en un proyecto como una colección para una tarea y en una versión como una preparación concreta de esa colección.
+## Tutorial de etiquetado
 
-Primero revisas las fotografías y cajas; después generas o eliges una versión que puedes descargar. No necesitas entrenar para comprender esa organización. Tu primera comprobación será que el proyecto contiene los objetos y las clases que quieres detectar, no simplemente que puedes abrirlo en el navegador.
+Los nombres y la ubicación de los botones pueden variar según la versión de la interfaz. Sigue el orden de estos pasos y busca la opción equivalente si cambia algún texto.
 
-## 1. Su función en el proyecto
+### 1. Capturar las fotografías
 
-**Roboflow** es una plataforma para trabajar con datos de visión artificial. Permite organizar imágenes, anotar objetos, revisar etiquetas y generar versiones exportables en formatos compatibles con diferentes herramientas.
+Descarga [muestreo.py](https://raw.githubusercontent.com/felixherrera2196/curso-vision-artificial/main/ejemplos/muestreo.py), el mismo programa de captura del capítulo de datasets. Si el navegador muestra el código como texto, guárdalo con **Ctrl + S** y comprueba que el nombre termine en `.py`, no en `.txt`.
 
-En este curso lo utilizaremos como apoyo para preparar o descargar un dataset. El entrenamiento descrito en el temario se realizará con Ultralytics en Colab. Aunque la plataforma puede ofrecer otras funciones, organizar datos y entrenar el modelo son responsabilidades que conviene distinguir.
+Ejecuta el archivo con el Python y OpenCV de las prácticas anteriores:
 
-## 2. Workspace, proyecto y versión
+```bash
+python muestreo.py
+```
 
-Un **workspace** agrupa recursos y proyectos. Un **proyecto** define un conjunto de datos para una tarea, como detección de objetos. Una **versión** representa una preparación concreta del dataset con imágenes, anotaciones, divisiones y transformaciones determinadas.
+El programa captura fotografías automáticamente cada **0.5 segundos**. Puedes cambiar ese tiempo en `INTERVALO_SEGUNDOS`, tomar una foto adicional con **espacio** y terminar con **ESC**. Haz clic en la ventana de cámara para que reciba las teclas. Las fotografías se guardan en la carpeta indicada en `OUTPUT_DIR`.
 
-El nombre del proyecto no es suficiente para reproducir un entrenamiento. Dos versiones pueden tener distinta cantidad de imágenes, diferentes etiquetas o cambios de preprocesamiento. Registra el identificador del proyecto y el número de versión que realmente descargaste.
+Para esta práctica, reúne **al menos 100 imágenes variadas** como punto de partida. Si el tiempo lo permite, apunta a **unas 300 imágenes** para ampliar la colección. Un conjunto de **500 a 1000 imágenes** puede ser una meta para un proyecto más completo, pero queda fuera del objetivo inicial del curso. Estas cantidades son referencias de trabajo: **ninguna garantiza por sí sola una buena detección**.
 
-Los nombres visibles y los identificadores utilizados por el SDK pueden no coincidir exactamente. Para una descarga reproducible, utiliza los valores que la plataforma proporciona en la exportación correspondiente.
+Cambia posición, distancia, fondo e iluminación y utiliza distintos ejemplares de tus clases. Si trabajarás con varias clases, procura reunir suficientes ejemplos de cada una. Evita alcanzar la cantidad repitiendo casi la misma foto; la variedad y el etiquetado correcto importan más que acumular archivos.
 
-## 3. Crear o elegir un proyecto
+### 2. Crear una cuenta
 
-Para seguir el taller, la tarea debe ser **detección de objetos con cajas**. Un proyecto de clasificación o segmentación utiliza anotaciones diferentes y no debe tratarse como si fuera automáticamente un dataset de detección.
+1. Entra a [Roboflow](https://app.roboflow.com/login).
+2. Crea tu cuenta o inicia sesión si ya tienes una.
+3. Entra a tu espacio de trabajo (*workspace*) para crear el proyecto.
 
-Si utilizas un dataset ya publicado, revisa sus clases, imágenes, anotaciones y condiciones de uso antes de entrenar. Tener acceso a una descarga no demuestra por sí solo que sus datos sean adecuados para tu cámara o que puedas redistribuirlos sin revisar su licencia.
+### 3. Crear un proyecto de detección
 
-Si preparas un proyecto propio, define las clases y la política de anotación del tema 12 antes de empezar a dibujar cajas. Esto reduce correcciones posteriores.
+1. Abre **Projects → New Project**.
+2. En **Project Name**, escribe `custom_object_detector_yolo11` o un nombre que identifique tu práctica.
+3. En **Project Type**, selecciona **Object Detection**: utilizaremos cajas para localizar los objetos.
+4. Pulsa **Create Public Project**. Esta opción crea un proyecto público; utiliza imágenes que puedas compartir públicamente.
 
-## 4. Flujo de preparación
+### 4. Subir las imágenes
 
-1. Crear o abrir un proyecto de detección.
-2. Subir imágenes representativas o revisar las disponibles.
-3. Anotar todas las instancias relevantes.
-4. Revisar clases, cajas y casos ambiguos.
-5. Establecer divisiones que eviten fuga de datos.
-6. Elegir preprocesamiento y aumentos apropiados.
-7. Generar una versión.
-8. Exportar en el formato requerido por el entrenamiento.
+1. Abre la sección para cargar imágenes del proyecto, normalmente **Upload Data**.
+2. Asigna un nombre al **batch**, es decir, al lote de imágenes. Por ejemplo, `09/29/26-1`: una fecha y un número para identificar esa sesión. Puedes usar la fecha de tu propia captura.
+3. Selecciona todas las imágenes de la colección que vas a etiquetar y espera a que terminen de cargarse.
+4. Pulsa **Save and Continue**.
+5. Selecciona el modo de **etiquetado manual** cuando la plataforma te pregunte cómo quieres anotarlas.
 
-La interfaz puede cambiar de nombres o de ubicación. La idea importante es conservar ese orden lógico y revisar el resultado exportado, en lugar de confiar únicamente en que la plataforma generó un archivo.
+### 5. Definir las clases y etiquetar
 
-## 5. Preprocesamiento y aumento
+1. En **Classes and Tags**, escribe los nombres de las clases separados por comas, por ejemplo `vaso, botella`, y pulsa **Add Classes**.
+2. Entra a **Annotate**, selecciona el lote que subiste y pulsa **Start Annotating**.
+3. Abre una imagen y dibuja una caja ajustada alrededor de un objeto de interés.
+4. Asigna la clase correspondiente a esa caja.
+5. Repite con **todos los objetos de las clases del proyecto** que aparezcan en la imagen. Si hay dos vasos y una botella, debes dibujar tres cajas.
+6. Guarda la anotación y continúa con las demás imágenes hasta terminar el lote.
 
-El **preprocesamiento** establece transformaciones de preparación, como ajustes de tamaño. El **aumento** produce variaciones útiles para entrenamiento. Ambos deben transformar también las cajas cuando modifican la geometría.
+Antes de continuar, revisa algunas imágenes: las cajas deben rodear los objetos y tener la clase correcta. Si encuentras errores, corrígelos antes de generar el dataset.
 
-Cambiar la proporción de una imagen puede deformar el objeto; recortar puede eliminar parte de una instancia; voltear puede ser válido para algunos objetos e inválido para otros. Elige cada transformación según la escena final.
+### 6. Agregar las imágenes al dataset
 
-Además, Ultralytics puede aplicar transformaciones durante el entrenamiento. Revisa las dos etapas para comprender qué recibe el modelo. Acumular aumentos fuertes en ambos lugares puede crear ejemplos alejados del uso real.
+1. Con el lote etiquetado, selecciona **Add Images to Dataset**.
+2. En **Method**, busca la opción para distribuir imágenes entre **Train, Valid y Test**; puede aparecer como **Split Images Between Train/Valid/Test**.
+3. Define el reparto indicado por el instructor. **Train** se usa para aprender, **Valid** para revisar el modelo durante su desarrollo y **Test** para evaluarlo al final.
+4. Pulsa **Add Images**.
 
-## 6. API y credenciales
+Si capturaste secuencias de fotos casi idénticas, mantenlas en la misma división. Cuando tengas varias sesiones, sepáralas por sesión para evitar evaluar con imágenes casi iguales a las de entrenamiento.
 
-El SDK puede necesitar una clave de API para acceder a recursos autorizados. Esa clave identifica acceso, no es una clase del dataset ni un parámetro del modelo. Usa una credencial propia con el alcance necesario y evita pegarla en documentación pública.
+### 7. Crear una versión
 
-Si compartes tu notebook o lo subes a GitHub, sustituye la clave real por un marcador o utiliza un mecanismo de secretos. En tu propia ejecución, configura los identificadores de workspace, proyecto y versión correspondientes al dataset que vas a utilizar.
+1. Abre **Versions** y comienza la creación de una nueva versión, con **Create New Version** o la opción equivalente.
+2. Revisa el preprocesamiento y pulsa **Continue**.
+3. Revisa los aumentos de datos y pulsa **Continue**. Para esta primera práctica, conserva los ajustes indicados por el instructor; no necesitas agregar transformaciones para completar el etiquetado.
+4. Revisa el resumen, pulsa **Create** y espera a que termine la generación.
 
-## 7. Qué conservar para reproducir el trabajo
+Una versión es una preparación del dataset lista para descargar. Si después corriges etiquetas, genera una nueva versión que incluya esas correcciones.
 
-Registra proyecto, versión, clases, formato exportado, cantidad de imágenes por división y transformaciones. Esa información permite entender si un cambio de resultado proviene de los datos o de los parámetros de entrenamiento.
+### 8. Descargar en formato YOLO
 
-## Actividad de comprensión
+1. En **Versions**, abre la versión que acabas de crear.
+2. Pulsa **Download Dataset**.
+3. Selecciona el formato **YOLOv11**, correspondiente al flujo de detección del curso. Si la interfaz muestra **YOLO11** u otra denominación, comprueba que sea el formato de detección compatible con YOLO11 y Ultralytics.
+4. Descarga el archivo comprimido a tu computadora y extráelo en una carpeta que puedas localizar.
 
-Explica la diferencia entre cambiar una anotación del proyecto y descargar una versión ya generada. Describe por qué necesitas generar o seleccionar una versión coherente después de corregir datos y verificar qué versión usa realmente el notebook.
-
-## Preparación para la descarga
-
-Localiza el workspace, el proyecto y la versión que vas a utilizar. Comprueba que la tarea sea detección de objetos y revisa sus clases. En el [tema 14](14-descargar-dataset-roboflow.md) verificarás los archivos exportados antes de entrenar.
-
-## Recorrido por la plataforma para empezar
-
-1. Abre [Roboflow](https://roboflow.com/) e inicia sesión con tu cuenta o el acceso indicado por el instructor.
-2. Entra al workspace de la práctica. Si vas a crear un proyecto, selecciona la tarea de detección de objetos, no clasificación.
-3. Abre el proyecto y revisa sus nombres de clase y fotografías.
-4. Si el proyecto es propio, sube imágenes y realiza el etiquetado descrito en el tema 12.
-5. Revisa las divisiones de datos y las transformaciones antes de generar una versión.
-6. Abre la versión que vas a utilizar y anota su identificación.
-
-Si el instructor comparte un proyecto ya preparado, no necesitas crear otro para descargarlo: primero comprueba que tienes permiso para acceder a esa versión. Las etiquetas de botones pueden cambiar, pero debes reconocer las mismas etapas: proyecto, anotaciones, versión y exportación.
-
-## Qué hace cada herramienta en esta parte del curso
-
-| Herramienta | Para qué la utilizarás |
-| --- | --- |
-| Roboflow | Organizar imágenes, revisar anotaciones y preparar una versión exportable. |
-| Colab | Ejecutar las instrucciones en un equipo remoto y solicitar GPU cuando esté disponible. |
-| Ultralytics | Cargar, entrenar y utilizar un detector compatible. |
-| OpenCV en Windows | Recibir la cámara y mostrar los resultados locales. |
-
-No necesitas hacer todo en la misma página. Cada herramienta cubre una etapa. Tener el dataset en Roboflow no significa que ya esté descargado en Colab, y haber entrenado en Colab no coloca automáticamente los pesos en Windows.
-
-## Antes de generar una versión
-
-Revisa el tipo de tarea y las clases; observa cajas sobre varias imágenes; comprueba las divisiones. Después decide si necesitas redimensionar y si los aumentos representan cambios razonables para tu escena.
-
-Si recortas o giras imágenes, las cajas deben seguir describiendo los objetos en la imagen transformada. Una exportación puede efectuar esa conversión, pero debes revisar el resultado, no asumir que todas las transformaciones mejoran tus datos.
-
-Una versión facilita identificar qué preparación utilizaste. Si después corriges etiquetas, selecciona o genera una versión coherente con esas correcciones y confirma cuál descarga el notebook. Registra su número para que otra persona pueda repetir la misma práctica.
-
-## Acceso y datos de tu proyecto
-
-El workspace es el espacio de trabajo, el proyecto identifica la colección y la versión identifica su preparación. Si las instrucciones de descarga necesitan una clave de API, utiliza un mecanismo de secretos en el notebook y evita incluir la clave en archivos públicos o capturas.
-
-Los identificadores de un ejemplo ajeno no apuntan a tus datos. Comprueba que los nombres visibles y los identificadores de la exportación corresponden al proyecto que tienes autorizado para la práctica. Si compartes un dataset existente, revisa también sus condiciones de uso.
-
-## Para dar el siguiente paso
-
-Las imágenes ya están organizadas en un proyecto. **¿Cómo llevamos una versión concreta al entorno donde entrenaremos, sin perder sus clases y anotaciones?** En el siguiente capítulo revisaremos la descarga y los archivos del dataset.
+Al terminar tendrás tus fotografías y sus etiquetas en formato YOLO. En el [siguiente capítulo](14-descargar-dataset-roboflow.md) revisaremos los archivos descargados antes de utilizarlos para entrenar.
 
 [Anterior](12-etiquetado-bounding-boxes.md) · [Índice](../README.md) · [Siguiente: Descargar dataset](14-descargar-dataset-roboflow.md)
