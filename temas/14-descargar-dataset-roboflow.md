@@ -82,5 +82,44 @@ Anota la ruta de descarga y localiza el archivo de configuración del dataset. R
 
 No copies literalmente las rutas del equipo de otra persona. Una ruta es una dirección de archivo: debe corresponder al lugar donde están tus datos en la sesión actual.
 
+## Reconocer una estructura de archivos de detección
+
+Una exportación puede tener una organización similar a esta. Es un esquema didáctico, no una ruta obligatoria ni un comando:
+
+```text
+dataset/
+    data.yaml
+    train/
+        images/
+        labels/
+    valid/
+        images/
+        labels/
+    test/
+        images/
+        labels/
+```
+
+`images` guarda imágenes y `labels` sus anotaciones. `train` corresponde a entrenamiento, `valid` a validación y `test` a prueba si esa división existe. Los nombres y las rutas pueden variar; el archivo de configuración debe señalar la organización real.
+
+Por ejemplo, una imagen `train/images/foto_01.jpg` suele asociarse con `train/labels/foto_01.txt`. Abre una imagen y su anotación visualizada para comprobar la correspondencia. No basta con encontrar carpetas con esos nombres.
+
+## Cómo leer el archivo de configuración sin programar
+
+Busca las entradas que señalan entrenamiento, validación y prueba, si se incluye, y la relación entre identificadores y nombres de clase. Puedes abrir el YAML como texto para consultarlo; no es un documento de pesos ni un programa de cámara.
+
+Una ruta absoluta empieza desde la raíz del sistema; una relativa depende de una base. Colab suele usar rutas de su sistema remoto, distintas de las de Windows. Copiar una dirección de Descargas de Windows en el notebook no traslada los archivos.
+
+Si el entrenamiento informa que falta una ruta, localiza primero los archivos y después revisa la configuración. No cambies todas las referencias por nombres inventados. Si exportaste una versión distinta, revisa también que las clases sigan siendo las esperadas.
+
+## Qué conservar de esta etapa
+
+Registra workspace, proyecto, versión, formato, carpeta descargada y configuración utilizada. Esos datos permiten repetir el entrenamiento y comparar resultados sin confundir cambios de datos con cambios de modelo.
+
+**Comprobación final:** señala una imagen de entrenamiento, su etiqueta, la división de validación y el archivo de configuración. Si no puedes encontrarlos, resuelve la descarga antes de usar GPU.
+
+## Para dar el siguiente paso
+
+Ya podemos localizar imágenes, etiquetas y configuración. **¿Dónde ejecutaremos el entrenamiento si la computadora del laboratorio no tiene una GPU adecuada?** Prepararemos Google Colab y comprobaremos los recursos de su sesión remota.
 
 [Anterior](13-que-es-roboflow.md) · [Índice](../README.md) · [Siguiente: Colab](15-colab-gpu-ultralytics.md)

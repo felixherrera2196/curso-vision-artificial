@@ -168,6 +168,70 @@ Después vuelve a ejecutar el programa. Si la cámara abre nuevamente, la libera
 
 Realiza esta comprobación en tu computadora con cámara y escritorio gráfico. Si la ventana no aparece o el dispositivo no se abre, revisa los permisos, la conexión y el entorno de Python antes de continuar.
 
+## Consulta: herramientas nuevas de este capítulo
+
+### Cómo leer los parámetros de una función
+
+Un **parámetro** es el nombre de un dato que una herramienta puede recibir. Un **argumento** es el valor que entregas al utilizarla. Por ejemplo, en `cv2.waitKey(1)`, `delay` es el parámetro y `1` es el argumento que elegimos.
+
+Un argumento puede escribirse por posición, respetando el orden, o por nombre cuando la interfaz lo permite, como `iterations=1`. Un parámetro opcional utiliza su valor predeterminado si no lo escribes. Las formas mostradas aquí están simplificadas para la práctica: algunas herramientas tienen más variantes.
+
+### `cv2.VideoCapture`: abrir una fuente de video
+
+Es un constructor: crea un objeto de captura. Una forma habitual para cámara es `cv2.VideoCapture(index, apiPreference=cv2.CAP_ANY)`.
+
+| Parámetro | ¿Lo necesitas indicar? | Qué significa y qué suele utilizarse |
+| --- | --- | --- |
+| `index` | Sí, en esta forma de apertura. | Número del dispositivo. Se suele comenzar con `0`; otra cámara puede estar en `1` u otro índice. |
+| `apiPreference` | No. | Interfaz de captura preferida. `CAP_ANY` deja elegir a OpenCV. En Windows existen opciones como `CAP_DSHOW` y `CAP_MSMF`. |
+
+**Devuelve:** un objeto que guardamos en `cap`. Crear el objeto no garantiza que la cámara se haya abierto; por eso comprobamos `isOpened()`.
+
+El primer argumento también puede ser el nombre de un archivo de video en otra forma de uso. Abrir un archivo y abrir un dispositivo son situaciones distintas. Para el laboratorio conservamos el índice de cámara.
+
+**Opciones comunes:** prueba primero `VideoCapture(0)` como en el programa. Si en Windows hay problemas concretos de captura, el instructor puede probar una interfaz explícita. Cambiar la interfaz no corrige por sí solo permisos denegados, una cámara desconectada o un índice equivocado.
+
+### `cap.isOpened()`: comprobar la apertura
+
+Se llama sobre el objeto `cap`, sin argumentos adicionales. **Devuelve** `True` si la captura está abierta y `False` si no. Solo comprueba el estado de apertura: aún necesitamos verificar cada lectura.
+
+### `cap.read()`: pedir la siguiente imagen
+
+En la forma utilizada en el curso no necesita argumentos. **Devuelve dos resultados:** la señal de éxito y la imagen. Los guardamos en `ret, frame`.
+
+Si la lectura falla, no utilices el supuesto fotograma para convertir color ni mostrarlo. En un archivo de video puede fallar al terminar el contenido; en una cámara puede indicar una interrupción de captura. La función no devuelve toda la grabación ni guarda imágenes automáticamente.
+
+### `cv2.imshow`: mostrar o actualizar una imagen
+
+Forma de uso: `cv2.imshow(winname, mat)`.
+
+| Parámetro | Qué recibe | Uso habitual |
+| --- | --- | --- |
+| `winname` | Texto que identifica la ventana. | Mantener el mismo nombre para actualizar la misma ventana. |
+| `mat` | Imagen que se mostrará. | `frame` para la cámara o una máscara de un canal. |
+
+Ambos argumentos son necesarios en esta forma. **No devuelve una imagen procesada**: su propósito es mostrarla. Para una imagen de color de OpenCV se utiliza BGR. La atención de eventos requiere `waitKey` u otra función de eventos compatible; llamar repetidamente a `imshow` sin atenderlos puede dejar la ventana sin respuesta.
+
+### `cv2.waitKey`: atender ventanas y consultar una tecla
+
+Forma: `cv2.waitKey(delay=0)`.
+
+| Valor de `delay` | Comportamiento |
+| --- | --- |
+| `0`, predeterminado | Espera una tecla sin un límite temporal. Es común al mostrar una fotografía fija. |
+| Positivo, como `1` | Solicita una espera breve en milisegundos. Se utiliza habitualmente dentro del ciclo de video. |
+
+**Devuelve:** un código de tecla, o `-1` si no se recibió ninguna en el intervalo. La espera real puede superar el tiempo solicitado según el sistema. `1` no significa «procesar mil imágenes por segundo».
+
+`& 0xFF` conserva los ocho bits inferiores para la comparación usada en el ejemplo; `27` corresponde a ESC. La ventana debe tener el foco para recibir la tecla. No elimines `waitKey` pensando que solo retrasa el video: también participa en la respuesta de las ventanas.
+
+### `cap.release()` y `cv2.destroyAllWindows()`: terminar
+
+En estas formas no necesitan argumentos y no producen una imagen de salida. `release()` libera la captura del objeto; `destroyAllWindows()` cierra las ventanas creadas por OpenCV. Cumplen tareas diferentes y por eso utilizamos ambas.
+
+No liberan automáticamente los recursos si el programa falla antes de llegar a ellas. Una estructura de limpieza ante excepciones sería una mejora posterior. Para esta práctica utiliza ESC cuando el video responda.
+
+
 ## Para dar el siguiente paso
 
 Ya conseguimos que la cámara muestre lo que tiene enfrente. **¿Cómo podemos hacer que el programa seleccione únicamente la hoja verde, en lugar de tratar toda la imagen por igual?**

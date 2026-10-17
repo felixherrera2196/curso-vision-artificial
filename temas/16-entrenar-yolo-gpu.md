@@ -87,5 +87,28 @@ Los valores de entrenamiento reales utilizan criterios de clase, localización y
 
 Al terminar, anota la carpeta de resultados y el archivo de pesos elegido. Si cambias parámetros para una nueva prueba, registra qué modificaste. No mezcles resultados de ejecuciones diferentes como si pertenecieran al mismo experimento.
 
+## Ejemplo numérico: errores distintos, medidas distintas
+
+Supón que una evaluación tiene diez instancias anotadas. Bajo su criterio de coincidencia, el modelo acierta ocho y añade dos detecciones falsas. Tendría ocho aciertos, dos objetos omitidos y dos falsas alarmas. Su precision sería 8 / 10 = 0.8 y su recall también 8 / 10 = 0.8 en este ejemplo simplificado.
+
+Si ahora conserva esos ocho aciertos pero añade seis falsas alarmas, su precision pasa a 8 / 14, aproximadamente 0.57, mientras el recall permanece en 0.8. Eso muestra por qué detectar muchos objetos y evitar falsas alarmas son objetivos relacionados pero diferentes.
+
+En una evaluación real también cuentan la clase, el emparejamiento y la localización según IoU. No puedes contar dos cajas del mismo objeto como dos instancias correctas por conveniencia. Las herramientas realizan esa evaluación bajo un protocolo definido.
+
+## Ejemplo de configuración que debes poder explicar
+
+Si una práctica utiliza 20 épocas y un batch de 8, significa un máximo de veinte pasadas por entrenamiento y grupos de ocho ejemplos por paso, con los detalles del cargador de datos y la configuración. No significa veinte fotografías ni que solo se admitan ocho clases.
+
+Estos números ilustran los conceptos; no fijan los parámetros del experimento del taller. El tamaño de imagen y el batch deben caber en la memoria disponible. Una GPU más rápida no vuelve correctas las anotaciones equivocadas.
+
+## Cómo decidir si repetir un entrenamiento
+
+Antes de aumentar épocas, inspecciona imágenes con predicciones: ¿falla una clase concreta?, ¿son objetos muy pequeños?, ¿faltan condiciones del laboratorio?, ¿hay etiquetas incorrectas? Esos hallazgos indican si necesitas corregir datos, reunir variación o ajustar la configuración.
+
+Conserva el experimento anterior y cambia una decisión identificable. Compara en validación y evita elegir cambios mirando repetidamente el conjunto final de prueba. Después revisa también la cámara real: las métricas del dataset no describen automáticamente cualquier entorno.
+
+## Para dar el siguiente paso
+
+El entrenamiento produjo archivos y métricas. **¿Cuál de esos archivos debemos conservar para utilizar el detector en la computadora de Windows?** En el siguiente capítulo seleccionaremos y trasladaremos los pesos.
 
 [Anterior](15-colab-gpu-ultralytics.md) · [Índice](../README.md) · [Siguiente: Descargar modelo](17-descargar-yolo-uso-local.md)

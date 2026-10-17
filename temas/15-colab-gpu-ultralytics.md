@@ -83,5 +83,31 @@ No necesitas pulsar muchas veces el botón de una celda que está trabajando. Un
 
 **Notebook y sesión son diferentes:** guardar el notebook conserva sus instrucciones y, según el guardado, sus salidas. No conserva automáticamente todos los archivos temporales ni el estado de la computadora remota. Copia los pesos antes de terminar.
 
+## Orden de trabajo y ubicación de cada paso
+
+| Acción | Dónde ocurre | Qué debes observar |
+| --- | --- | --- |
+| Abrir el notebook | Navegador de tu computadora. | El documento con sus celdas. |
+| Ejecutar una celda | Equipo remoto de Colab. | Salida o error debajo de la celda. |
+| Descargar datos desde una celda | Almacenamiento remoto de la sesión. | Carpeta del dataset en Colab. |
+| Descargar pesos mediante el navegador | Transferencia del remoto a Windows. | Archivo en tu equipo al finalizar. |
+
+**Python 3.12.10 es la versión del equipo Windows del curso.** Colab administra la versión de su entorno remoto y puede utilizar otra. No reemplaces su Python para que el número coincida: primero verifica que las bibliotecas del notebook sean compatibles con la sesión disponible.
+
+## Si aparece un error, identifica la etapa
+
+Si una celda no encuentra una variable, comprueba que ejecutaste la que la define. Si no encuentra un archivo, revisa dónde está descargado. Si no hay GPU disponible, revisa el acelerador asignado y las comprobaciones de la biblioteca. Un error de acceso al dataset no se corrige eligiendo otra GPU.
+
+La selección del acelerador puede reiniciar o reemplazar la sesión. Por eso conviene configurarlo antes de preparar datos y ejecutar el entrenamiento. Si la sesión se pierde, vuelve a ejecutar la preparación en orden y no supongas que una salida guardada representa el estado actual.
+
+## Antes de pulsar entrenar
+
+Comprueba datos y clases, GPU disponible y utilizada, biblioteca compatible y destino de resultados. Guarda el notebook con un nombre reconocible. Espera a que termine cada paso del que dependa el siguiente.
+
+No necesitas que cada celda sea un programa independiente: algunas preparan variables que usan las siguientes. Esta es la diferencia práctica entre ejecutar un notebook en orden y copiar una celda suelta en cualquier lugar.
+
+## Para dar el siguiente paso
+
+Ya tenemos entorno, datos y recursos preparados. **¿Cómo indicamos al modelo que aprenda de este dataset y cómo sabremos si mejora?** En el siguiente capítulo revisaremos el entrenamiento y sus resultados.
 
 [Anterior](14-descargar-dataset-roboflow.md) · [Índice](../README.md) · [Siguiente: Entrenamiento](16-entrenar-yolo-gpu.md)

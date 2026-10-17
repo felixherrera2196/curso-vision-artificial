@@ -58,6 +58,16 @@ La **sangría** son los espacios al comienzo de las líneas. En Python agrupa in
 
 No necesitas entender todos los símbolos el primer día. Empieza respondiendo: ¿de dónde sale la imagen?, ¿qué operación la analiza?, ¿qué ventana muestra el resultado? Después estudia cada bloque.
 
+## Cómo utilizar las fichas de funciones de cada capítulo
+
+Cuando aparezca una herramienta nueva, consulta su ficha: explica qué datos recibe, cuáles debes indicar, qué sucede si omites una opción y qué resultado produce. No tienes que memorizar toda la tabla antes de ejecutar el ejemplo.
+
+Empieza por la llamada de la práctica y localiza sus argumentos en la tabla. Después revisa una opción adicional solo cuando necesites resolver un problema concreto. Un parámetro «opcional» no significa que no importe: significa que la biblioteca ya tiene un valor predeterminado.
+
+La palabra `src` suele indicar la entrada; `dst`, un destino opcional; y los nombres de tamaño o posición deben leerse con atención para no intercambiar ancho y alto. Las fichas también indican si una función entrega un arreglo nuevo o modifica la imagen recibida.
+
+Las formas de referencia escritas dentro del texto no siempre son líneas para ejecutar literalmente: muestran nombres de parámetros, no tus variables. Para las prácticas copia los bloques completos de código, no una firma de documentación.
+
 ## 6. Dónde escribir cada cosa
 
 | Lugar | Qué haces ahí |

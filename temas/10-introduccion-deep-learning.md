@@ -66,4 +66,37 @@ Una GPU puede ejecutar muchas operaciones numéricas en paralelo y acelerar el e
 
 Explica qué cambia entre entrenar un detector y cargarlo para analizar una cámara. Describe por qué un modelo que detecta bien todos los ejemplos usados durante entrenamiento puede fallar en un salón distinto.
 
+## Del filtro de la hoja a un detector aprendido
+
+En la primera parte, si retirabas la hoja verde y colocabas una hoja azul, el filtro podía dejar de seleccionarla aunque tuviera la misma forma. La regla preguntaba por valores de color, no por la idea general de «hoja».
+
+Para reconocer objetos con más apariencias, podemos preparar ejemplos etiquetados y ajustar un modelo. Este cambio no elimina todos los problemas: sustituye parte del diseño manual de reglas por una preparación cuidadosa de datos y entrenamiento.
+
+| Enfoque | Qué preparas | Qué utiliza el programa al funcionar |
+| --- | --- | --- |
+| Regla de color | Límites HSV y condiciones geométricas. | Los valores y condiciones que escribiste. |
+| Detector aprendido | Imágenes con clases y cajas; configuración de entrenamiento. | Los pesos ajustados a partir de esos ejemplos. |
+
+Un detector podría encontrar un vaso sin que todos los vasos sean verdes, si sus datos permiten aprender patrones útiles. También puede confundirse con fondos o formas parecidas. No hay una mejora garantizada para cualquier tarea: las pruebas indican qué enfoque funciona en tus condiciones.
+
+## Ejemplo cotidiano: aprender no es evaluar
+
+Imagina una colección de fotografías de vasos y botellas. Durante el entrenamiento, el modelo compara sus predicciones con las cajas y clases correctas. Sus parámetros cambian para reducir el error según la función de pérdida.
+
+Después lo evalúas con fotografías distintas. Si solo acierta en las utilizadas para ajustar parámetros, no ha demostrado que funcione con tu cámara. Esa es la razón de separar los datos y de no medir el resultado final únicamente con lo que ya vio durante entrenamiento.
+
+Las palabras «aprender» y «evaluar» describen operaciones diferentes. No necesitas comprender el cálculo de cada parámetro para seguir el taller; sí necesitas reconocer qué imágenes modifican el modelo y cuáles sirven para comprobarlo.
+
+## Entrenar desde cero o aprovechar un modelo previo
+
+Entrenar desde cero comienza con parámetros sin el aprendizaje previo de otros datos y suele necesitar más recursos y ejemplos. Ajustar pesos preentrenados aprovecha una representación ya aprendida y la adapta a la tarea nueva. Para un taller corto, este segundo enfoque suele ser más práctico.
+
+El modelo inicial y el modelo personalizado pueden reconocer clases distintas. No asumas que cargar cualquier archivo de YOLO ya incluye las clases de tu proyecto. El entrenamiento y el archivo de pesos que finalmente uses deben corresponder a tu tarea.
+
+**Comprueba que lo entendiste:** explica por qué descargar un modelo y entrenar uno no son lo mismo. Después describe qué necesitarías para enseñarle una clase nueva: un nombre escrito en el programa no basta; hacen falta datos anotados y un proceso de ajuste adecuado.
+
+## Para dar el siguiente paso
+
+Si el modelo aprende a partir de ejemplos, **¿qué fotografías debemos reunir y cómo las organizamos para saber si realmente aprende?** En el siguiente capítulo prepararemos un dataset y separaremos los datos que se usan para ajustar del material con el que comprobamos el resultado.
+
 [Anterior](09-detectar-figuras.md) · [Índice](../README.md) · [Siguiente: Dataset](11-que-es-un-dataset.md)

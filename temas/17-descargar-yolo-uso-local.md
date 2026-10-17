@@ -78,5 +78,32 @@ Confirma que descargaste los pesos de la ejecución correcta y que el archivo pu
 
 No lo abras como si fuera un documento de texto. La biblioteca del detector leerá ese archivo desde Python. Tampoco basta con cambiar el nombre de cualquier archivo a `best.pt`: debe ser el modelo producido por el entrenamiento.
 
+## Tres archivos que no debes confundir
+
+| Archivo | Para qué sirve | Qué no sustituye |
+| --- | --- | --- |
+| Notebook `.ipynb` | Guardar instrucciones y documentación del proceso. | No conserva por sí solo todos los datos de una sesión. |
+| Configuración `data.yaml` | Describir las rutas y clases del dataset. | No es el detector entrenado. |
+| Pesos `.pt` | Cargar un modelo guardado compatible. | No es una aplicación de webcam que se ejecute con doble clic. |
+
+Para usar el detector local necesitarás los pesos y un programa que los cargue con una biblioteca compatible. Para repetir el entrenamiento necesitarás además datos y configuración reproducibles.
+
+## Organizar el proyecto en Windows 11
+
+Crea una carpeta para la práctica y conserva dentro el programa y una carpeta para los modelos. Puedes utilizar, por ejemplo, `modelos` para guardar el archivo de pesos. Si hay varias ejecuciones, registra su procedencia antes de cambiarles el nombre.
+
+En el Explorador puedes activar **Ver → Mostrar → Extensiones de nombre de archivo** para comprobar el nombre completo. Evita confundir un archivo con una extensión oculta o agregar por accidente `.txt` al guardar un programa.
+
+No pegues una ruta de Colab como si existiera en Windows. Primero descarga el archivo y después identifica su ubicación local. Una ruta relativa del programa debe coincidir con su directorio de trabajo o resolverse explícitamente respecto a su ubicación.
+
+## Comprobación de transferencia
+
+Confirma que la descarga terminó, que el archivo no está vacío y que corresponde a la ejecución elegida. Después verifica que cargue con la biblioteca local y que las clases sean las esperadas antes de conectar la cámara.
+
+Si entrenaste en una versión distinta de Ultralytics, conserva esa información para revisar compatibilidad. La GPU de Colab no se descarga: el rendimiento local depende del hardware de Windows.
+
+## Para dar el siguiente paso
+
+El modelo ya está en nuestra computadora y puede cargarse. **¿Cómo hacemos que analice las imágenes nuevas que recibe la cámara, una tras otra?** Integraremos captura, inferencia y visualización en la aplicación final.
 
 [Anterior](16-entrenar-yolo-gpu.md) · [Índice](../README.md) · [Siguiente: YOLO y webcam](18-detectar-objeto-webcam-yolo.md)

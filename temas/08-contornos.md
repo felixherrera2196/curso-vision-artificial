@@ -380,6 +380,75 @@ Todavía no aparecen nombres como «triángulo» o «cuadrado». Este programa e
 - ¿Para qué utilizamos `.copy()` antes de dibujar?
 - ¿Por qué encontrar tres contornos no prueba por sí solo que haya tres objetos físicos?
 
+## Consulta: funciones nuevas para analizar contornos
+
+La captura, `inRange`, `erode` y `dilate` se detallan en los temas anteriores. Aquí empezamos a trabajar con fronteras como conjuntos de puntos, no solamente con imágenes.
+
+### `cv2.findContours`: obtener las fronteras
+
+Forma habitual en OpenCV 4: `cv2.findContours(image, mode, method, offset=(0, 0))`. La interfaz también permite destinos opcionales; en el curso utilizamos los resultados devueltos directamente.
+
+| Parámetro | Necesidad | Significado y opciones habituales |
+| --- | --- | --- |
+| `image` | Obligatorio. | Imagen de entrada. Para el modo utilizado, una máscara de un canal de ocho bits. Los valores distintos de cero se tratan como primer plano. |
+| `mode` | Obligatorio. | Qué contornos recuperar: `RETR_EXTERNAL` para fronteras externas, `RETR_LIST` para recuperarlos sin jerarquía anidada completa o `RETR_TREE` para relaciones de anidamiento. |
+| `method` | Obligatorio. | Cómo guardar puntos: `CHAIN_APPROX_SIMPLE` reduce redundancias; `CHAIN_APPROX_NONE` conserva todos los puntos de la cadena. |
+| `offset` | Opcional; `(0, 0)`. | Desplazamiento que se suma a los puntos. Es útil al analizar un recorte y necesitar coordenadas respecto a una imagen mayor. |
+
+**Devuelve dos resultados:** colección de contornos y jerarquía. Por eso escribimos `contours, _ = ...`: conservamos las fronteras y no consultamos la jerarquía en esta práctica.
+
+Para cada contorno, la jerarquía puede describir el siguiente, el anterior, el primer hijo y el padre; un valor `-1` indica que esa relación no existe. No significa que cada contorno corresponda a un objeto independiente.
+
+**Combinación habitual del taller:** `RETR_EXTERNAL` y `CHAIN_APPROX_SIMPLE`. La primera opción evita estudiar agujeros interiores al empezar; la segunda evita guardar puntos redundantes. Son decisiones diferentes. Cambiar a `CHAIN_APPROX_NONE` no hace que el programa reconozca mejor una figura automáticamente.
+
+En OpenCV 4, esta función no modifica la imagen de entrada. Eso no significa que cualquier otra operación posterior conserve todas sus variables: las asignaciones de `erode` y `dilate` del programa sí sustituyen a qué imagen se refiere `mask`.
+
+### `.copy()`: conservar un fotograma sin dibujos
+
+`frame` es un arreglo de NumPy. Su método `frame.copy()` se utiliza sin argumentos en el curso y **devuelve otro arreglo con una copia de los datos**. La operación no pertenece a `cv2`, aunque la imagen provenga de OpenCV.
+
+Su opción adicional habitual es `order`, que controla la organización de datos en memoria; no necesitamos cambiarla para el dibujo. `result = frame` no copia los píxeles: solo crea otro nombre para el mismo arreglo. Usa `.copy()` cuando quieras separar el original de la imagen donde escribirás o dibujarás.
+
+### `cv2.contourArea`: medir el área geométrica
+
+Forma: `cv2.contourArea(contour, oriented=False)`.
+
+| Parámetro | Necesidad | Uso común |
+| --- | --- | --- |
+| `contour` | Obligatorio. | Secuencia de puntos del contorno que vas a medir. |
+| `oriented` | Opcional; `False`. | Con `False`, área no negativa. Con `True`, área con signo según la orientación del recorrido de los puntos. |
+
+**Devuelve:** un número de área en unidades de píxel al cuadrado. Para filtrar regiones pequeñas se utiliza habitualmente el valor sin signo, como en la práctica.
+
+No entrega centímetros cuadrados ni cuenta exactamente todos los píxeles blancos. En contornos degenerados o con cruces, su interpretación puede ser problemática. El filtro de área es una regla de selección, no una certificación de que una frontera sea válida ni de que el objeto sea real.
+
+### `cv2.drawContours`: dibujar fronteras
+
+Forma de referencia de Python:
+
+`cv2.drawContours(image, contours, contourIdx, color, thickness=1, lineType=cv2.LINE_8, hierarchy=None, maxLevel=..., offset=(0, 0))`.
+
+Los puntos suspensivos indican que omitimos aquí el valor numérico grande predeterminado de `maxLevel`; esta es una referencia de lectura, no una llamada para copiar.
+
+| Parámetro | Necesidad | Qué significa y qué se utiliza comúnmente |
+| --- | --- | --- |
+| `image` | Obligatorio. | Imagen sobre la que dibujar: `result` en el curso. |
+| `contours` | Obligatorio. | Colección de contornos, por ejemplo `[contour]`. |
+| `contourIdx` | Obligatorio. | Índice del contorno a dibujar; `-1` pide todos los de la colección. |
+| `color` | Obligatorio. | Color o intensidad del dibujo. En imagen BGR, `(0, 255, 0)` es verde. |
+| `thickness` | Opcional; `1`. | Grosor positivo en píxeles. La práctica usa 3. Un valor negativo, como `FILLED`, rellena las regiones en lugar de dibujar solo el borde. |
+| `lineType` | Opcional; `LINE_8`. | Tipo de línea. `LINE_AA` permite suavizado en imágenes adecuadas, como las de ocho bits. |
+| `hierarchy` | Opcional. | Relaciones entre contornos para controlar niveles de dibujo. Se omite en esta práctica. |
+| `maxLevel` | Opcional. | Profundidad de niveles que se dibuja al utilizar jerarquía. No es el número máximo de objetos que puede detectar. |
+| `offset` | Opcional; `(0, 0)`. | Desplazamiento aplicado al dibujar los puntos. |
+
+**Modifica la imagen entregada** y también la devuelve en la interfaz Python. El programa no necesita reasignar esa salida: el dibujo ya está en `result`. Esta diferencia importa al comparar con funciones como `cvtColor`, cuya salida guardamos por separado.
+
+La llamada del curso utiliza los cuatro argumentos obligatorios y el grosor: imagen, colección, índice, color y grosor. `[contour]` contiene una sola frontera y `-1` solicita todas las de esa lista. Si cambiaras la colección por `contours`, `-1` dibujaría todas sus fronteras, incluso aquellas que no pasaron el filtro individual de área si las incluyeras sin filtrar.
+
+**Error frecuente:** entregar una sola secuencia de puntos sin envolverla como espera el argumento de colección. Otro error es usar un color RGB suponiendo que el fotograma está en RGB. Conserva BGR para los dibujos de OpenCV.
+
+
 ## Para dar el siguiente paso
 
 Ya podemos localizar y dibujar los contornos de las regiones verdes. **¿Cómo podemos hacer que el programa sepa si uno de esos contornos podría corresponder a un rectángulo? ¿Qué características tendríamos que revisar?**

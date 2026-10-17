@@ -82,5 +82,33 @@ Localiza el workspace, el proyecto y la versión que vas a utilizar. Comprueba q
 
 Si el instructor comparte un proyecto ya preparado, no necesitas crear otro para descargarlo: primero comprueba que tienes permiso para acceder a esa versión. Las etiquetas de botones pueden cambiar, pero debes reconocer las mismas etapas: proyecto, anotaciones, versión y exportación.
 
+## Qué hace cada herramienta en esta parte del curso
+
+| Herramienta | Para qué la utilizarás |
+| --- | --- |
+| Roboflow | Organizar imágenes, revisar anotaciones y preparar una versión exportable. |
+| Colab | Ejecutar las instrucciones en un equipo remoto y solicitar GPU cuando esté disponible. |
+| Ultralytics | Cargar, entrenar y utilizar un detector compatible. |
+| OpenCV en Windows | Recibir la cámara y mostrar los resultados locales. |
+
+No necesitas hacer todo en la misma página. Cada herramienta cubre una etapa. Tener el dataset en Roboflow no significa que ya esté descargado en Colab, y haber entrenado en Colab no coloca automáticamente los pesos en Windows.
+
+## Antes de generar una versión
+
+Revisa el tipo de tarea y las clases; observa cajas sobre varias imágenes; comprueba las divisiones. Después decide si necesitas redimensionar y si los aumentos representan cambios razonables para tu escena.
+
+Si recortas o giras imágenes, las cajas deben seguir describiendo los objetos en la imagen transformada. Una exportación puede efectuar esa conversión, pero debes revisar el resultado, no asumir que todas las transformaciones mejoran tus datos.
+
+Una versión facilita identificar qué preparación utilizaste. Si después corriges etiquetas, selecciona o genera una versión coherente con esas correcciones y confirma cuál descarga el notebook. Registra su número para que otra persona pueda repetir la misma práctica.
+
+## Acceso y datos de tu proyecto
+
+El workspace es el espacio de trabajo, el proyecto identifica la colección y la versión identifica su preparación. Si las instrucciones de descarga necesitan una clave de API, utiliza un mecanismo de secretos en el notebook y evita incluir la clave en archivos públicos o capturas.
+
+Los identificadores de un ejemplo ajeno no apuntan a tus datos. Comprueba que los nombres visibles y los identificadores de la exportación corresponden al proyecto que tienes autorizado para la práctica. Si compartes un dataset existente, revisa también sus condiciones de uso.
+
+## Para dar el siguiente paso
+
+Las imágenes ya están organizadas en un proyecto. **¿Cómo llevamos una versión concreta al entorno donde entrenaremos, sin perder sus clases y anotaciones?** En el siguiente capítulo revisaremos la descarga y los archivos del dataset.
 
 [Anterior](12-etiquetado-bounding-boxes.md) · [Índice](../README.md) · [Siguiente: Descargar dataset](14-descargar-dataset-roboflow.md)
