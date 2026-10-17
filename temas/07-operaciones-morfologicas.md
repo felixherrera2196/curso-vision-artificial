@@ -84,7 +84,7 @@ Busca tres defectos distintos: puntos fuera del objeto, huecos dentro del objeto
 
 ## Preparación de la práctica
 
-Utiliza como entrada la máscara del [filtro verde HSV del tema 05](05-filtros-color.md), con un único intervalo. Conserva una vista de la máscara sin procesar. Practica primero cada operación por separado y después la secuencia indicada a continuación.
+Utiliza como entrada la máscara del [filtro verde HSV del tema 06](06-modelos-color.md), con un único intervalo. Conserva una vista de la máscara sin procesar. Practica primero cada operación por separado y después la secuencia indicada a continuación.
 
 ## Ejercicio guiado sin programar
 
@@ -102,7 +102,7 @@ Estas son analogías para entender la dirección del cambio. En el programa, el 
 
 ## Orden de las prácticas del laboratorio
 
-Guarda los tres programas en archivos diferentes: `erosion_verde.py`, `dilatacion_verde.py` y `erosion_dilatacion_verde.py`. Cierra cada ejecución con ESC antes de abrir la siguiente. Utiliza la misma hoja verde y el mismo intervalo HSV del tema 05.
+Guarda los tres programas en archivos diferentes: `erosion_verde.py`, `dilatacion_verde.py` y `erosion_dilatacion_verde.py`. Cierra cada ejecución con ESC antes de abrir la siguiente. Utiliza la misma hoja verde y el mismo intervalo HSV del tema 06.
 
 ## Práctica 1. Erosión sola
 

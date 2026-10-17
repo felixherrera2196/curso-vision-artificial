@@ -95,7 +95,7 @@ Imagina una máscara con tres círculos blancos separados: uno grande y dos punt
 
 ## Recorrido de la práctica con hojas verdes
 
-Usaremos la misma selección verde del tema 05 y la erosión seguida de dilatación del tema 07. No necesitas aprender otro color ni agregar un segundo intervalo.
+Usaremos la misma selección verde HSV del tema 06 y la erosión seguida de dilatación del tema 07. No necesitas aprender otro color ni agregar un segundo intervalo.
 
 | Etapa | Qué recibe | Qué produce |
 | --- | --- | --- |
@@ -304,7 +304,7 @@ mask = cv2.inRange(
 )
 ```
 
-Después se convierte a HSV y se crea una máscara con el mismo intervalo verde del tema 05. Si calibraste otros límites para tus hojas, utiliza aquí esos valores. Solo hay una llamada a `inRange`: no se combinan dos máscaras.
+Después se convierte a HSV y se crea una máscara con el mismo intervalo verde del tema 06. Si calibraste otros límites para tus hojas, utiliza aquí esos valores. Solo hay una llamada a `inRange`: no se combinan dos máscaras.
 
 La limpieza aplica primero erosión y después dilatación. Observa que ambas instrucciones guardan su resultado en `mask`. Eso significa que el nombre pasa a referirse a la imagen procesada: cuando empieza la dilatación, `mask` ya contiene el resultado erosionado. Cuando empieza la búsqueda de contornos, contiene el resultado final de ambos pasos.
 

@@ -39,8 +39,8 @@ Comenzarás con imágenes como arreglos numéricos y después utilizarás una c�
 | 02 | [¿Qué es una Imagen?](temas/02-que-es-una-imagen.md) | Interpretar píxeles, canales, dimensiones y coordenadas. |
 | 03 | [Instalación de Python y bibliotecas a utilizar](temas/03-instalacion-python-bibliotecas.md) | Preparar y comprobar el entorno de trabajo. |
 | 04 | [Obtener video de una cámara con Python](temas/04-video-camara-python.md) | Capturar fotogramas, mostrarlos y liberar la cámara. |
-| 05 | [Filtros de color](temas/05-filtros-color.md) | Comparar BGR directo y HSV para seleccionar verde con un solo intervalo. |
-| 06 | [Modelos de color](temas/06-modelos-color.md) | Distinguir BGR, RGB, grises y HSV. |
+| 05 | [Filtros de color](temas/05-filtros-color.md) | Seleccionar verde directamente en BGR y calibrar sus límites con barras. |
+| 06 | [Modelos de color](temas/06-modelos-color.md) | Comparar representaciones y rangos; seleccionar y calibrar verde en HSV. |
 | 07 | [Operaciones morfológicas](temas/07-operaciones-morfologicas.md) | Practicar erosión, dilatación y erosión seguida de dilatación. |
 | 08 | [Contornos](temas/08-contornos.md) | Analizar fronteras, áreas, perímetros y centros. |
 | 09 | [Detectar figuras](temas/09-detectar-figuras.md) | Proponer clases geométricas y reconocer los límites de las reglas. |

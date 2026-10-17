@@ -284,7 +284,7 @@ cv2.destroyAllWindows()
 
 ### 1. Repasar el recorrido que ya funciona
 
-Las primeras instrucciones importan las herramientas, abren la cámara y crean el kernel de 5 × 5. Dentro del `while`, cada lectura válida produce un fotograma. El programa convierte a HSV y selecciona verde mediante **un solo intervalo y una sola máscara**, como en los temas 05 a 08.
+Las primeras instrucciones importan las herramientas, abren la cámara y crean el kernel de 5 × 5. Dentro del `while`, cada lectura válida produce un fotograma. El programa convierte a HSV y selecciona verde mediante **un solo intervalo y una sola máscara**, como en los temas 06 a 08.
 
 Después aplica erosión y dilatación en ese orden. Ambas guardan su salida en `mask`, de modo que la segunda recibe el resultado de la primera. El mismo nombre conserva ahora la máscara procesada, no la original sin limpiar.
 
