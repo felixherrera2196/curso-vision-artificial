@@ -10,21 +10,16 @@ Al terminar, podremos descargar las imágenes y sus etiquetas en **formato YOLO*
 
 Los nombres y la ubicación de los botones pueden variar según la versión de la interfaz. Sigue el orden de estos pasos y busca la opción equivalente si cambia algún texto.
 
-### 1. Capturar las fotografías
+### 1. Preparar las imágenes de tu dataset
 
-Descarga [muestreo.py](https://raw.githubusercontent.com/felixherrera2196/curso-vision-artificial/main/ejemplos/muestreo.py), el mismo programa de captura del capítulo de datasets. Si el navegador muestra el código como texto, guárdalo con **Ctrl + S** y comprueba que el nombre termine en `.py`, no en `.txt`.
+Utiliza **la carpeta con fotografías que creaste en el [capítulo de datasets](11-que-es-un-dataset.md)**, por ejemplo `mi_dataset_imagenes`. No necesitas descargar ni ejecutar otro programa de captura para este tutorial.
 
-Ejecuta el archivo con el Python y OpenCV de las prácticas anteriores:
+1. Localiza esa carpeta en tu computadora y abre algunas imágenes para comprobar su contenido.
+2. Revisa que los objetos se vean con claridad y que haya variación de posiciones, distancias, fondos e iluminación.
+3. Elimina las imágenes borrosas o dañadas y evita conservar muchas fotografías casi idénticas.
+4. Conserva la carpeta a mano: en el paso 4 seleccionarás sus imágenes para subirlas a Roboflow.
 
-```bash
-python muestreo.py
-```
-
-El programa captura fotografías automáticamente cada **0.5 segundos**. Puedes cambiar ese tiempo en `INTERVALO_SEGUNDOS`, tomar una foto adicional con **espacio** y terminar con **ESC**. Haz clic en la ventana de cámara para que reciba las teclas. Las fotografías se guardan en la carpeta indicada en `OUTPUT_DIR`.
-
-Para esta práctica, reúne **al menos 100 imágenes variadas** como punto de partida. Si el tiempo lo permite, apunta a **unas 300 imágenes** para ampliar la colección. Un conjunto de **500 a 1000 imágenes** puede ser una meta para un proyecto más completo, pero queda fuera del objetivo inicial del curso. Estas cantidades son referencias de trabajo: **ninguna garantiza por sí sola una buena detección**.
-
-Cambia posición, distancia, fondo e iluminación y utiliza distintos ejemplares de tus clases. Si trabajarás con varias clases, procura reunir suficientes ejemplos de cada una. Evita alcanzar la cantidad repitiendo casi la misma foto; la variedad y el etiquetado correcto importan más que acumular archivos.
+Para esta práctica, parte de **al menos 100 imágenes variadas**. Si tu colección todavía no cubre las condiciones que necesitas, puedes ampliarla con el programa del capítulo de datasets. Unas **300 imágenes** son una meta para ampliar la práctica si hay tiempo; **500–1000 imágenes** pueden ser una referencia para un proyecto más completo, sin ser un requisito de este curso. Ninguna cantidad garantiza por sí sola una buena detección: importan la variedad, los ejemplos de cada clase y el etiquetado correcto.
 
 ### 2. Crear una cuenta
 
@@ -43,7 +38,7 @@ Cambia posición, distancia, fondo e iluminación y utiliza distintos ejemplares
 
 1. Abre la sección para cargar imágenes del proyecto, normalmente **Upload Data**.
 2. Asigna un nombre al **batch**, es decir, al lote de imágenes. Por ejemplo, `09/29/26-1`: una fecha y un número para identificar esa sesión. Puedes usar la fecha de tu propia captura.
-3. Selecciona todas las imágenes de la colección que vas a etiquetar y espera a que terminen de cargarse.
+3. Selecciona las imágenes de la carpeta que preparaste en el capítulo de datasets y espera a que terminen de cargarse.
 4. Pulsa **Save and Continue**.
 5. Selecciona el modo de **etiquetado manual** cuando la plataforma te pregunte cómo quieres anotarlas.
 
