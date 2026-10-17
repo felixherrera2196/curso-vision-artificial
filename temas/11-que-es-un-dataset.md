@@ -103,6 +103,119 @@ Abre algunas imágenes de cada sesión. Comprueba que se ven los objetos, que la
 
 Al terminar, escribe una frase que describa tu objetivo: «detectar estas clases, con esta cámara y bajo estas condiciones». Esa frase ayuda a decidir qué ejemplos faltan y qué pruebas harán falta después.
 
+## Práctica: recolectar imágenes con la cámara web
+
+Este programa abre la cámara principal y guarda fotografías JPG automáticamente, con un intervalo inicial de **0.5 segundos**. También permite tomar una fotografía adicional con la **barra espaciadora** y terminar con **ESC**. Guarda el fotograma original; los textos de ayuda solo aparecen en la ventana de vista previa.
+
+Las imágenes se guardan en una carpeta local con nombres como `objeto_0.jpg`, `objeto_1.jpg` y `objeto_2.jpg`. Al iniciar, busca las imágenes que coinciden con el prefijo y continúa después del número mayor cuando los nombres tienen el formato esperado. Conserva ese formato si deseas continuar una colección.
+
+### Preparar y ejecutar
+
+1. En tu equipo Windows, utiliza el Python y OpenCV preparados para las prácticas de cámara. `os`, `time` y `glob` forman parte de Python y no requieren instalación adicional.
+2. Cierra otros programas que estén usando la cámara. Guarda el código completo como `recolectar_imagenes.py` en la carpeta de tu proyecto.
+3. Ajusta las tres opciones de configuración antes de ejecutarlo:
+
+| Opción | Valor inicial | Para qué cambiarla |
+| --- | --- | --- |
+| `OUTPUT_DIR` | `"mi_dataset_imagenes"` | Elegir la carpeta de esta colección o sesión. Si no existe, se crea. Una ruta relativa se resuelve desde el directorio de trabajo al ejecutar el programa. |
+| `IMAGE_PREFIX` | `"objeto"` | Elegir el comienzo del nombre de los archivos, por ejemplo `"vaso_sesion01"`. Es un nombre de archivo, no una etiqueta de entrenamiento. |
+| `INTERVALO_SEGUNDOS` | `0.5` | Cambiar el tiempo entre capturas automáticas. Utiliza un número positivo; por ejemplo, `2.0` para dejar aproximadamente dos segundos entre fotos. |
+
+4. Ejecútalo localmente desde VS Code o la terminal:
+
+```bash
+python recolectar_imagenes.py
+```
+
+5. Selecciona la ventana «Captura Roboflow» para que reciba las teclas. La captura automática comienza al ejecutar el programa; no necesitas pulsar espacio para iniciarla.
+6. Mueve el objeto y cambia las condiciones de la escena entre fotografías. Pulsa **espacio** cuando quieras una toma manual adicional; esto no pausa la captura automática.
+7. Pulsa **ESC** para terminar, liberar la cámara y cerrar la ventana. Abre la carpeta de salida para comprobar que los JPG se guardaron y se ven correctamente.
+
+### Código completo
+
+```python
+import cv2
+import os
+import time
+import glob
+
+# --- CONFIGURACIÓN ---
+OUTPUT_DIR = "mi_dataset_imagenes"
+IMAGE_PREFIX = "objeto"
+INTERVALO_SEGUNDOS = 0.5  # <--- Modifica este número para cambiar el tiempo de captura automática
+# ---------------------
+
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
+
+# Buscar qué imágenes ya existen para saber en qué número continuar
+existing_files = glob.glob(os.path.join(OUTPUT_DIR, f"{IMAGE_PREFIX}_*.jpg"))
+if existing_files:
+    try:
+        # Extrae el número del final del archivo (quitando la extensión)
+        numbers = [int(os.path.splitext(os.path.basename(f))[0].split('_')[-1]) for f in existing_files]
+        img_counter = max(numbers) + 1
+    except ValueError:
+        img_counter = len(existing_files)
+else:
+    img_counter = 0
+
+print(f"[INFO] Continuando desde la imagen número: {img_counter}")
+print(f"[INFO] Captura automática configurada cada {INTERVALO_SEGUNDOS} segundos.")
+
+cap = cv2.VideoCapture(0)
+last_capture_time = time.time()
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Guardar una foto automáticamente según el intervalo configurado
+    current_time = time.time()
+    if current_time - last_capture_time >= INTERVALO_SEGUNDOS:
+        img_name = os.path.join(OUTPUT_DIR, f"{IMAGE_PREFIX}_{img_counter}.jpg")
+        cv2.imwrite(img_name, frame)
+        print(f"[AUTO] Guardada: {img_name}")
+        img_counter += 1
+        last_capture_time = current_time
+
+    # Mostrar info en pantalla
+    display_frame = frame.copy()
+    cv2.putText(display_frame, f"Siguiente ID: {img_counter}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+    cv2.putText(display_frame, f"[ESPACIO] Manual | [ESC] Salir | Auto: {INTERVALO_SEGUNDOS}s", (10, 60),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+    cv2.imshow("Captura Roboflow", display_frame)
+
+    key = cv2.waitKey(1) & 0xFF
+
+    # Salir con la tecla ESC
+    if key == 27:
+        print("[INFO] Cerrando capturador...")
+        break
+
+    # Captura manual con la barra ESPACIADORA
+    elif key == ord(' '):
+        img_name = os.path.join(OUTPUT_DIR, f"{IMAGE_PREFIX}_{img_counter}.jpg")
+        cv2.imwrite(img_name, frame)
+        print(f"[MANUAL] Guardada: {img_name}")
+        img_counter += 1
+
+cap.release()
+cv2.destroyAllWindows()
+print(f"[FIN] Proceso terminado. Siguiente ID libre en carpeta: {img_counter}")
+```
+
+### Cómo utilizar las fotos para tu dataset
+
+El programa facilita reunir imágenes, pero la diversidad depende de cómo prepares las escenas. Cambia orientación, distancia, fondo e iluminación; incluye distintos ejemplares de cada clase y algunas escenas sin los objetos objetivo. No necesitas que los objetos sean verdes: esta recolección servirá para el detector que entrenarás después.
+
+Con un intervalo corto puedes reunir muchas fotografías casi idénticas. Si no tienes tiempo de cambiar la escena, aumenta el intervalo o termina y prepara otra sesión. Usa carpetas distintas para identificar sesiones y conserva esa información al separar entrenamiento, validación y prueba. Evita repartir fotos casi iguales de la misma secuencia entre esas divisiones.
+
+Después revisa las imágenes, descarta las desenfocadas o dañadas y reduce repeticiones innecesarias. **Este código solo recolecta fotografías:** no dibuja cajas, no asigna clases, no divide el dataset y no sube archivos a Roboflow, aunque la ventana tenga ese nombre. En los capítulos siguientes organizarás las fotos y anotarás todas las instancias correspondientes.
+
 ## Para dar el siguiente paso
 
 Ya tenemos fotografías, pero el modelo no sabe qué queremos que encuentre. **¿Cómo le indicamos qué objeto hay y dónde está dentro de cada imagen?** En el siguiente capítulo dibujaremos cajas y asignaremos clases para construir las etiquetas.
