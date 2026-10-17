@@ -342,6 +342,80 @@ Los programas contemplan salida por ESC y por lectura fallida. Como en las prác
 - ¿Por qué una región borrada por erosión no tiene que reaparecer al dilatar?
 - ¿Por qué debes comprobar la selección verde antes de ajustar el kernel?
 
+## Consulta: parámetros de las operaciones morfológicas
+
+### `np.ones`: construir la plantilla
+
+Forma de uso: `np.ones(shape, dtype=np.uint8)`.
+
+| Parámetro | Necesidad | Explicación |
+| --- | --- | --- |
+| `shape` | Obligatorio. | Dimensiones del arreglo. `(5, 5)` significa cinco filas y cinco columnas. |
+| `dtype` | Opcional. | Tipo numérico. Elegimos `np.uint8` para una plantilla sencilla de enteros de ocho bits. |
+
+**Devuelve:** un arreglo lleno de unos. Sin `dtype`, NumPy suele crear números decimales de doble precisión. Los unos no representan la intensidad blanca de la máscara: indican las posiciones activas del kernel.
+
+Para estos ejemplos se usan tamaños cuadrados impares, como 3 × 3 y 5 × 5. Así hay una posición central fácil de identificar. Un tamaño mayor actúa sobre detalles de mayor escala; no es necesariamente mejor.
+
+### `cv2.erode`: reducir las regiones del primer plano
+
+Una forma habitual de la interfaz de Python es:
+
+`cv2.erode(src, kernel, dst=None, anchor=(-1, -1), iterations=1, borderType=cv2.BORDER_CONSTANT, borderValue=valor_predeterminado)`.
+
+Esta línea es una referencia de parámetros, no un bloque para copiar literalmente: `valor_predeterminado` representa el valor especial de borde que OpenCV utiliza si no lo indicas.
+
+| Parámetro | ¿Se indica en la práctica? | Para qué sirve y qué se usa comúnmente |
+| --- | --- | --- |
+| `src` | Sí: `mask`. | Imagen de entrada. Aquí una máscara de 0 y 255. |
+| `kernel` | Sí: `kernel`. | Posiciones vecinas que se examinan; aquí una plantilla de unos de 5 × 5. |
+| `dst` | No. | Arreglo de destino compatible. Habitualmente se omite y se asigna el resultado devuelto. |
+| `anchor` | No. | Punto del kernel que se coloca sobre la posición evaluada. `(-1, -1)` selecciona el centro. |
+| `iterations` | Sí: `1`. | Número de veces que se repite la erosión sobre su resultado. Son habituales una o dos pasadas para explorar, según la escena. |
+| `borderType` | No. | Cómo se trata lo que queda fuera de la imagen al examinar vecinos de un borde. El predeterminado es `BORDER_CONSTANT`; otra opción en tareas concretas es `BORDER_REPLICATE`. |
+| `borderValue` | No. | Valor usado fuera de la imagen cuando corresponde al modo de borde. El predeterminado de morfología es especial; no debes asumir que equivale a escribir 0. |
+
+En esta forma suministramos imagen y kernel. OpenCV también admite `None` como kernel para utilizar una plantilla rectangular predeterminada de 3 × 3; en el curso lo creamos explícitamente para saber qué forma y tamaño estamos comparando.
+
+**Devuelve:** una imagen erosionada con tamaño y tipo compatibles con la entrada. No devuelve un contorno ni el número de objetos. Con una máscara de un canal, el resultado sigue siendo una máscara de un canal.
+
+**Lo más utilizado en estas prácticas:** `src`, `kernel` e `iterations`. Los demás se dejan predeterminados. Así, `mask_eroded = cv2.erode(mask, kernel, iterations=1)` se puede leer como «erosionar esta máscara con esta plantilla una vez y guardar el resultado».
+
+### Qué significan realmente anclaje y borde
+
+Con un kernel de 5 × 5, el anclaje central corresponde a la posición interna `(2, 2)`, contando desde cero. No es una coordenada del objeto en el video: es una posición dentro de la plantilla. `(-1, -1)` es la señal de OpenCV para elegir ese centro automáticamente.
+
+Cerca del borde exterior de la imagen, parte de la plantilla puede quedar fuera del fotograma. Los parámetros de borde resuelven ese caso. No es lo mismo que el borde entre la hoja y el fondo, donde ambos lados sí están dentro de la imagen y sus valores son conocidos.
+
+Para aprender el efecto básico, mantén la hoja lejos de los extremos del video y deja estos parámetros predeterminados. Cambiar el valor exterior puede afectar objetos que tocan el límite de la imagen; no sirve para calibrar el tono verde.
+
+### `cv2.dilate`: expandir las regiones del primer plano
+
+Utiliza los mismos parámetros generales: `src`, `kernel`, `dst`, `anchor`, `iterations`, `borderType` y `borderValue`. Sus papeles son los de la tabla anterior; cambia la operación sobre los vecinos: se toma el máximo en vez del mínimo.
+
+**Devuelve:** la imagen dilatada. La llamada de la práctica es `cv2.dilate(mask, kernel, iterations=1)`. Para la secuencia, recibe `mask_eroded`, de modo que expande lo que sobrevivió a la erosión.
+
+Las opciones de kernel y anclaje se eligen del mismo modo. No debes reutilizar sin pensar un valor de borde fijado manualmente para erosión: por ser operaciones distintas, un valor constante puede tener efectos diferentes. Mantener el tratamiento predeterminado evita introducir ese problema al empezar.
+
+### Tres cambios habituales y cómo interpretarlos
+
+| Cambio | Qué puedes esperar | Qué necesitas comprobar |
+| --- | --- | --- |
+| Kernel de 5 × 5 a 3 × 3 | Menor alcance espacial con estos kernels cuadrados. | Si se conserva mejor un detalle sin dejar demasiado ruido. |
+| Una iteración a dos | La misma operación se repite sobre el resultado. | Si la hoja se borra al erosionar o se une a otra al dilatar. |
+| Una operación aislada a una secuencia | La segunda utiliza la imagen que produjo la primera. | Que la entrada del segundo paso sea el resultado correcto. |
+
+`iterations=2` en una erosión significa erosionar dos veces. No significa «erosión y dilatación». Para esa secuencia necesitas las dos llamadas, en el orden del tercer programa.
+
+### Otra forma de crear el kernel, como referencia
+
+`cv2.getStructuringElement(shape, ksize, anchor=(-1, -1))` devuelve una plantilla morfológica. Los dos primeros parámetros son necesarios en esta forma: `shape` puede ser `MORPH_RECT`, `MORPH_ELLIPSE` o `MORPH_CROSS`; `ksize` indica **ancho y alto**.
+
+Atención al orden: `np.ones` recibe una forma de arreglo, filas y columnas; `getStructuringElement` recibe ancho y alto. En un cuadrado 5 × 5 no se nota la diferencia, pero en una plantilla rectangular sí.
+
+No necesitas añadir esta herramienta al programa. Está aquí para que reconozcas otras formas de kernel si las encuentras. En el laboratorio conservamos `np.ones`, y los únicos programas son erosión, dilatación y erosión seguida de dilatación.
+
+
 ## Para dar el siguiente paso
 
 Ahora tenemos una máscara más limpia, pero el programa todavía trabaja con píxeles blancos y negros. **¿Cómo podemos obtener el borde de cada región para analizarla por separado y medir su tamaño?**

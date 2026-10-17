@@ -86,5 +86,38 @@ Visualiza las cajas sobre varias imágenes y comprueba que sus clases coincidan 
 
 Imagina que aparecen dos vasos y una botella: necesitas tres cajas, no una sola caja gigante para los tres. Si solo anotas un vaso, el ejemplo queda incompleto para la tarea. Antes de continuar con muchas imágenes, revisa unas pocas con el instructor para confirmar que todos aplican el mismo criterio.
 
+## Cómo se guarda la caja del ejemplo
+
+Retoma la imagen de 800 × 600 y la caja ya calculada en esta sección. Si su clase es 0, una línea de etiqueta de detección YOLO sería:
+
+```text
+0 0.375 0.5 0.25 0.5
+```
+
+No es un programa que debas ejecutar. Es un registro de datos: clase, centro horizontal, centro vertical, ancho y alto. Los archivos utilizan **punto decimal**, aunque al explicar los cálculos en español aparezca coma decimal.
+
+| Campo | Valor | Qué describe |
+| --- | --- | --- |
+| Clase | 0 | Primer nombre del mapa de clases, por ejemplo vaso. |
+| Centro x | 0.375 | Posición horizontal relativa al ancho. |
+| Centro y | 0.5 | Posición vertical relativa al alto. |
+| Ancho | 0.25 | Caja que ocupa un cuarto del ancho de la imagen. |
+| Alto | 0.5 | Caja que ocupa la mitad del alto de la imagen. |
+
+Si la imagen se llama `foto_01.jpg`, su archivo de etiquetas suele llamarse `foto_01.txt` en la carpeta de etiquetas de la misma división. Dos objetos requieren dos líneas. El orden de las líneas no representa un seguimiento de identidades entre imágenes.
+
+## Revisión en parejas
+
+Una persona etiqueta y otra revisa una muestra con las cajas superpuestas. Comprueben tres cosas: no faltan instancias que deban anotarse, el nombre corresponde a la clase correcta y las cajas siguen la misma política.
+
+Busquen especialmente un caso parcialmente oculto y otro pegado al borde. Si las dos personas dibujarían cajas muy diferentes, primero acuerden el criterio. Repetir un desacuerdo en cien fotos no lo corrige.
+
+También revisen imágenes negativas. No deben contener objetos de las clases de interés sin anotar, salvo los casos que una política explícita de la tarea trate de otra forma. Para el taller utilizaremos una política sencilla y consistente definida con el instructor.
+
+**Resultado esperado:** una colección de imágenes acompañadas por etiquetas que se puedan interpretar y verificar visualmente. No necesitas escribir a mano todos los archivos si la plataforma los exporta, pero entender el formato te permite reconocer errores.
+
+## Para dar el siguiente paso
+
+Ya entendemos qué información necesita una etiqueta. **¿Dónde podemos organizar muchas imágenes, revisar sus cajas y preparar una versión que después podamos descargar?** Conoceremos Roboflow y el papel que tiene en el proyecto.
 
 [Anterior](11-que-es-un-dataset.md) · [Índice](../README.md) · [Siguiente: Roboflow](13-que-es-roboflow.md)

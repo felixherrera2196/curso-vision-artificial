@@ -19,7 +19,7 @@ Si necesitas preparar tu equipo, comienza por los tutoriales de [instalación de
 ## Cómo seguir la guía
 
 1. Si es tu primera experiencia programando, comienza por [Antes de empezar](temas/00-antes-de-empezar.md). Después abre los capítulos desde el índice y avanza en orden. Cada uno explica qué aprenderás y termina con actividades o comprobaciones.
-2. Relaciona las explicaciones con la práctica de clase. Identifica qué datos recibe cada operación y qué resultado produce.
+2. Relaciona las explicaciones con la práctica de clase. Consulta las fichas de funciones nuevas: qué hacen, argumentos necesarios, parámetros opcionales y resultado. Identifica qué datos recibe cada operación y qué resultado produce.
 3. Para ejecutar un ejemplo, copia su bloque de código en un archivo `.py`, guárdalo con el nombre sugerido y ejecútalo con el intérprete de tu proyecto.
 4. Realiza las prácticas de cámara en tu computadora. Colab es un entorno remoto y no accede a la webcam mediante el mismo procedimiento local.
 5. Guarda tus observaciones: parámetros, condiciones de iluminación, resultados y situaciones en las que el método falla.
@@ -60,6 +60,22 @@ Después estudiarás cómo preparar imágenes etiquetadas, utilizar un dataset y
 | 16 | [Entrenar modelo YOLO usando GPU](temas/16-entrenar-yolo-gpu.md) | Comprender parámetros, métricas y selección de pesos. |
 | 17 | [Descargar YOLO entrenado para uso local](temas/17-descargar-yolo-uso-local.md) | Trasladar el modelo y comprobar su carga en tu equipo. |
 | 18 | [Detectar objeto con cámara web usando YOLO](temas/18-detectar-objeto-webcam-yolo.md) | Integrar captura, predicción y visualización. |
+
+## Cómo recorrer la parte de Deep Learning y YOLO
+
+En esta parte seguirás dos entornos: **Colab** para preparar el entrenamiento y **Windows 11 con Python 3.12.10** para utilizar la cámara local. Colab administra su propia versión de Python; no necesitas cambiarla para que coincida con la del laboratorio.
+
+| Etapa | Temas | Resultado que debes poder explicar |
+| --- | --- | --- |
+| Comprender el aprendizaje | 10 | Diferencia entre entrenar y hacer predicciones. |
+| Preparar los ejemplos | 11 y 12 | Qué imágenes, clases y cajas necesita el detector. |
+| Organizar y trasladar los datos | 13 y 14 | Proyecto, versión, formato y ubicación del dataset. |
+| Preparar el equipo remoto | 15 | Notebook, dependencias y GPU disponible. |
+| Ajustar y evaluar el modelo | 16 | Parámetros, métricas, errores y pesos elegidos. |
+| Trasladar el resultado | 17 | Archivo de pesos correcto y carga local. |
+| Usar la webcam | 18 | Video con detecciones y pruebas de funcionamiento. |
+
+Las actividades utilizan objetos cotidianos como ejemplos de explicación; las clases reales y el dataset deben corresponder a la práctica indicada por el instructor. No necesitas que los objetos sean verdes para YOLO: el filtro verde pertenece a la primera parte del curso.
 
 ## Actividad integradora
 

@@ -79,5 +79,32 @@ Como ejercicio, considera dos clases: «vaso» y «botella». Los nombres son un
 
 No hay una cantidad de imágenes que garantice el éxito. Antes de reunir cientos de fotografías parecidas, revisa qué condiciones de uso faltan. Si una clase no tiene suficientes ejemplos, regístralo en lugar de asumir que el entrenamiento lo resolverá.
 
+## Ejemplo guiado: organizar una colección pequeña
+
+Supongamos, solo para practicar la organización, que reuniste 100 imágenes variadas de vasos y botellas, tomadas en distintas sesiones. Una división ilustrativa sería 70 para entrenamiento, 20 para validación y 10 para prueba. Estos números explican la idea; no son una recomendación de cantidad suficiente para obtener un detector confiable.
+
+Antes de repartirlas, agrupa imágenes de la misma escena o grabación. Si el mismo objeto y fondo aparecen casi idénticos en varios archivos, evita repartirlos entre entrenamiento y evaluación. Revisa que ambas clases y las condiciones importantes queden representadas de manera útil.
+
+| Grupo | Para qué utilizarías sus imágenes | Qué evitar |
+| --- | --- | --- |
+| Entrenamiento | Ajustar los parámetros del detector. | Omitir etiquetas o tener una sola apariencia por clase. |
+| Validación | Comparar ejecuciones y orientar ajustes. | Confundir una mejora de validación con una garantía de uso real. |
+| Prueba | Estimar el desempeño final tras elegir el modelo. | Cambiar repetidamente parámetros para mejorar ese mismo resultado. |
+
+## Fotografías que ayudan y fotografías que repiten
+
+Diez fotos del mismo vaso casi sin mover la cámara aportan menos diversidad que diez vistas con cambios de orientación, fondo y distancia. Eso no vuelve inútil toda repetición, pero explica por qué debes mirar qué situaciones cubres además de contar archivos.
+
+Incluye ejemplos parecidos al laboratorio: objetos sobre mesas, luz del salón y distancias reales de la webcam. También son útiles escenas sin las clases objetivo. No conviertas una escena con un vaso visible sin anotar en un ejemplo negativo por descuido.
+
+## Revisión de datos antes de etiquetar
+
+Abre algunas imágenes de cada sesión. Comprueba que se ven los objetos, que las clases se distinguen y que no hay archivos dañados. Si el objeto es casi imposible de reconocer para una persona, define con el instructor cómo se tratará antes de dibujar cajas.
+
+Al terminar, escribe una frase que describa tu objetivo: «detectar estas clases, con esta cámara y bajo estas condiciones». Esa frase ayuda a decidir qué ejemplos faltan y qué pruebas harán falta después.
+
+## Para dar el siguiente paso
+
+Ya tenemos fotografías, pero el modelo no sabe qué queremos que encuentre. **¿Cómo le indicamos qué objeto hay y dónde está dentro de cada imagen?** En el siguiente capítulo dibujaremos cajas y asignaremos clases para construir las etiquetas.
 
 [Anterior](10-introduccion-deep-learning.md) · [Índice](../README.md) · [Siguiente: Etiquetado](12-etiquetado-bounding-boxes.md)

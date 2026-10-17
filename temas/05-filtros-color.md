@@ -409,6 +409,92 @@ Si la máscara queda negra incluso con un intervalo válido, revisa qué canal e
 El calibrador permite explorar otros tonos cambiando las barras, pero la práctica sigue centrada en verde. Un solo intervalo numérico no representa una región que cruza el final y el inicio de H, como puede suceder con el rojo.
 
 
+## Consulta: funciones nuevas del filtro y del calibrador
+
+Las funciones de cámara y visualización se describen en el [tema 04](04-video-camara-python.md). Aquí nos centraremos en convertir el color, seleccionar píxeles y leer las barras. Las formas de llamada se muestran simplificadas: no necesitas escribir todos los parámetros opcionales.
+
+### `np.array`: construir los límites
+
+Forma habitual en estas prácticas: `np.array(object, dtype=np.uint8)`.
+
+| Parámetro | Necesidad | Qué utiliza el curso |
+| --- | --- | --- |
+| `object` | Obligatorio. | Lista de tres números, como `[35, 80, 60]`. |
+| `dtype` | Opcional en NumPy. | `np.uint8`, enteros sin signo entre 0 y 255, adecuados para estos límites. |
+
+**Devuelve:** un arreglo de NumPy. El orden de sus números depende del modelo de la imagen que filtrarás. La función no sabe que esa lista significa HSV; solo construye números. No convierte grados ni calibra el color automáticamente.
+
+Sin indicar `dtype`, NumPy elige un tipo según los datos. En el curso lo hacemos explícito. No uses números negativos ni mayores que 255 esperando que el tipo los corrija: prepara valores válidos y, para H, respeta además su máximo 179 en esta conversión.
+
+### `cv2.cvtColor`: cambiar la representación del color
+
+Forma frecuente en Python: `cv2.cvtColor(src, code, dst=None, dstCn=0)`. El resultado se asigna a una variable, como `hsv`.
+
+| Parámetro | Necesidad | Significado y opciones comunes |
+| --- | --- | --- |
+| `src` | Obligatorio. | Imagen de entrada, por ejemplo `frame`. |
+| `code` | Obligatorio. | Conversión que corresponde al origen: `COLOR_BGR2HSV`, `COLOR_BGR2GRAY` o `COLOR_BGR2RGB`, según la tarea. |
+| `dst` | Opcional. | Arreglo de destino compatible. Lo omitimos y utilizamos el resultado devuelto. |
+| `dstCn` | Opcional; `0` por defecto. | Número de canales de salida. Con 0 se determina a partir de la conversión. |
+
+**Devuelve:** la imagen convertida. No modifica `frame` cuando guardamos la salida en otra variable sin indicar un destino compartido. Para el filtro elegimos `COLOR_BGR2HSV`; cambiar a `COLOR_RGB2HSV` sería incorrecto si la cámara entregó BGR.
+
+El rango de H de 0 a 179 corresponde a esta conversión de imágenes de ocho bits. Otras variantes, como HSV de rango completo, o imágenes decimales pueden usar escalas distintas. No mezcles sus límites con los del curso.
+
+### `cv2.inRange`: seleccionar por intervalos
+
+Forma: `cv2.inRange(src, lowerb, upperb, dst=None)`.
+
+| Parámetro | Necesidad | Qué representa |
+| --- | --- | --- |
+| `src` | Obligatorio. | Imagen a comparar: BGR en el primer programa o HSV en el segundo. |
+| `lowerb` | Obligatorio. | Límite inferior de cada canal. |
+| `upperb` | Obligatorio. | Límite superior de cada canal. |
+| `dst` | Opcional. | Destino de la máscara. En las prácticas se omite. |
+
+**Devuelve:** una máscara de un canal de ocho bits: 255 donde se cumplen todos los intervalos y 0 donde no. Los límites se incluyen: un píxel que coincide con el mínimo puede ser aceptado.
+
+**Uso común:** filtrar colores con límites calibrados, como `lower_green` y `upper_green`. También permite intervalos sobre otros datos, pero no detecta clases ni separa objetos por sí sola. Un mínimo mayor que su máximo no representa un intervalo circular y no se corrige automáticamente.
+
+### `cv2.namedWindow`: preparar una ventana
+
+Forma: `cv2.namedWindow(winname, flags=cv2.WINDOW_AUTOSIZE)`.
+
+`winname` es el nombre necesario para identificar la ventana. `flags` es opcional: `WINDOW_AUTOSIZE` ajusta la ventana al contenido; `WINDOW_NORMAL` permite redimensionarla. El calibrador elige `WINDOW_NORMAL` para acomodar los controles. **No devuelve una imagen**.
+
+### `cv2.resizeWindow`: proponer el tamaño
+
+En la forma usada recibe `winname`, `width` y `height`: nombre, ancho y alto del área de imagen solicitada, en píxeles. La ventana debe existir y permitir redimensionamiento. El tamaño exterior final también depende de controles, bordes y sistema operativo. Esta función cambia la ventana; **no redimensiona el arreglo de la imagen**.
+
+### `cv2.createTrackbar`: agregar una barra
+
+Forma de Python: `cv2.createTrackbar(trackbarname, winname, value, count, onChange)`.
+
+| Parámetro | Qué debes entregar |
+| --- | --- |
+| `trackbarname` | Nombre de la barra; debe identificarla dentro de la ventana. |
+| `winname` | Nombre de una ventana que ya exista. |
+| `value` | Posición inicial, como 35 para H mínimo. |
+| `count` | Posición máxima: 179 para H o 255 para S y V. |
+| `onChange` | Función que recibirá la posición al mover la barra, aquí `al_cambiar`. |
+
+Esta forma necesita esos cinco argumentos. La barra recorre valores enteros desde 0 hasta `count`; no significa que necesites arrastrarla hasta ambos extremos para calibrar. Su posición se lee por separado.
+
+`onChange` es una función de aviso o *callback*: OpenCV la llama cuando corresponde. En el curso contiene `pass` porque consultamos todas las posiciones dentro del ciclo. Entregamos el nombre de la función, sin paréntesis. Crear una barra no cambia por sí solo los límites del filtro: el programa debe leerla y reconstruirlos.
+
+### `cv2.getTrackbarPos`: leer una barra
+
+Necesita `trackbarname` y `winname`, con los mismos nombres utilizados al crearla. **Devuelve:** la posición entera actual. La consultamos cada fotograma para que el filtro responda al movimiento. No devuelve los seis límites juntos: cada llamada lee una barra.
+
+### `np.zeros`: crear el panel o una máscara negra
+
+Forma de uso del curso: `np.zeros(shape, dtype=np.uint8)`. `shape` indica las dimensiones necesarias y `dtype` es opcional; si lo omites, NumPy suele utilizar números decimales de doble precisión, no ocho bits.
+
+**Devuelve:** un arreglo lleno de ceros. Con forma `(100, 700, 3)` creamos un panel de color negro de alto 100 y ancho 700. Con `frame.shape[:2]` creamos una imagen negra de un canal con el alto y ancho de la cámara. No confíes en que una imagen negra indique siempre que no hay verde: el calibrador también la utiliza al avisar que los límites son inválidos.
+
+El dibujo de valores utiliza `putText`, cuya ficha completa está en el [tema 09](09-detectar-figuras.md). `.copy()` se detalla en el [tema 08](08-contornos.md). En el calibrador sirven para escribir números sobre una copia del video; no modifican la selección HSV ya calculada.
+
+
 ## Para dar el siguiente paso
 
 Conseguimos seleccionar la hoja, pero los límites cambian de significado cuando usamos BGR o HSV. **¿Por qué una misma imagen se puede representar de distintas maneras y cómo elegimos la más útil para encontrar un color?**

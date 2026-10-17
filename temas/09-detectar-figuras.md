@@ -392,6 +392,109 @@ Si una hoja no se detecta, revisa en este orden: captura, máscara verde, efecto
 
 Con esta práctica completas el recorrido de reglas de OpenCV: **capturar → seleccionar color → limpiar → encontrar fronteras → medir → decidir → dibujar**.
 
+## Consulta: funciones nuevas para describir y marcar figuras
+
+Las herramientas de captura, filtro, limpieza y búsqueda de contornos ya están explicadas en los capítulos anteriores. Estas fichas se centran en los pasos que añadimos para analizar una figura. Las formas mostradas son las de uso frecuente en Python con OpenCV 4.
+
+### `cv2.arcLength`: calcular longitud de una curva
+
+Forma: `cv2.arcLength(curve, closed)`.
+
+| Parámetro | Necesidad | Qué significa |
+| --- | --- | --- |
+| `curve` | Obligatorio. | Secuencia de puntos, como `contour`. No recibe la máscara completa. |
+| `closed` | Obligatorio. | `True` incluye la unión del último punto con el primero; `False` trata el recorrido como abierto. |
+
+**Devuelve:** una longitud numérica en unidades de píxel. Para el perímetro de la silueta utilizamos `True`. Para una línea abierta, como un recorrido que no quieres cerrar, utilizarías `False`.
+
+No determina por sí sola si una figura es un rectángulo. Tampoco mide la longitud física de los lados de la hoja sin una relación de escala o calibración adicional. El resultado depende del contorno que recibió; un borde ruidoso puede aumentar la longitud.
+
+### `cv2.approxPolyDP`: simplificar una curva con menos vértices
+
+Forma habitual: `cv2.approxPolyDP(curve, epsilon, closed)`; la interfaz también permite un destino opcional.
+
+| Parámetro | Necesidad | Uso en la práctica y significado |
+| --- | --- | --- |
+| `curve` | Obligatorio. | Contorno que vamos a aproximar. |
+| `epsilon` | Obligatorio. | Tolerancia de distancia entre la curva y su aproximación, expresada en las mismas unidades que sus coordenadas. |
+| `closed` | Obligatorio. | `True` para una aproximación cerrada; `False` para una curva abierta. |
+
+**Devuelve:** una nueva secuencia de puntos. En este programa representa un polígono aproximado y se guarda en `approx`. No devuelve el nombre de una figura ni altera automáticamente la máscara o el fotograma.
+
+**Cómo suele elegirse epsilon:** como una fracción del perímetro, por ejemplo `0.02 * perimeter` o `0.04 * perimeter`, ajustada según el ruido y la tarea. Son valores para probar, no constantes universales. El programa parte de 0.04 para mantener la regla de la práctica.
+
+Un valor menor tiende a conservar más detalles. Uno mayor permite una simplificación más fuerte. No se interpreta como porcentaje de aciertos ni como porcentaje exacto de puntos eliminados. Una tolerancia negativa no es válida.
+
+Si la máscara está incompleta, no aumentes epsilon esperando que invente la parte oculta. La función aproxima la curva recibida. Para una figura pequeña, un cambio de pocos píxeles puede cambiar el número de vértices de forma notable.
+
+### `len`: contar los elementos de la aproximación
+
+`len(objeto)` es una función de Python, no de OpenCV. Necesita un objeto que tenga longitud y **devuelve un entero**. En `len(approx)` cuenta los elementos de la secuencia de vértices; no calcula el área ni los lados físicos del papel.
+
+No necesita otros parámetros para este uso. Escribe `len(approx)`, no `approx.len()`. El nombre `corners` es una variable elegida para guardar ese resultado y no una función que descubra esquinas por su cuenta.
+
+### `cv2.boundingRect`: obtener una caja alineada con los ejes
+
+Forma: `cv2.boundingRect(array)`.
+
+`array` es el único parámetro necesario en esta forma. Puede representar puntos como los de un contorno; la función también admite una imagen de un canal de ocho bits para obtener la caja de sus píxeles no nulos. En el programa entregamos el contorno individual.
+
+**Devuelve cuatro enteros:** `x`, `y`, `w` y `h`. La esquina superior izquierda es `(x, y)` y el tamaño es ancho `w` y alto `h`. Si necesitas extraer una región mediante cortes del arreglo, la forma habitual sería usar filas de `y` a `y + h` y columnas de `x` a `x + w`, recordando que el extremo final de un corte de Python queda excluido.
+
+El punto `(x + w, y + h)` se utiliza en el dibujo de la práctica como extremo de referencia de la caja. No confundas ancho y alto con las coordenadas máximas ni con una lista de vértices del objeto. Esta caja siempre está alineada con la imagen, aunque la hoja esté girada.
+
+### `cv2.rectangle`: dibujar una caja
+
+Forma habitual: `cv2.rectangle(img, pt1, pt2, color, thickness=1, lineType=cv2.LINE_8, shift=0)`.
+
+| Parámetro | Necesidad | Opciones comunes y uso del taller |
+| --- | --- | --- |
+| `img` | Obligatorio. | Imagen que recibirá el dibujo; aquí `frame`. |
+| `pt1` | Obligatorio. | Primera esquina de la caja, `(x, y)`. |
+| `pt2` | Obligatorio. | Esquina opuesta, basada en `(x + w, y + h)`. |
+| `color` | Obligatorio. | Color BGR de la línea. No es un intervalo de detección. |
+| `thickness` | Opcional; `1`. | Grosor positivo. La práctica usa 3. Un valor negativo como `FILLED` rellena el rectángulo. |
+| `lineType` | Opcional; `LINE_8`. | Tipo de línea; `LINE_AA` suaviza el dibujo en imágenes compatibles. |
+| `shift` | Opcional; `0`. | Número de bits fraccionarios en las coordenadas para representar posiciones subpíxel. En el taller lo dejamos en 0. |
+
+**Modifica `img` y la devuelve.** Por eso no hace falta escribir una nueva asignación para ver el dibujo en `frame`. Solo dibuja la caja que le indicas: no busca rectángulos ni comprueba ángulos.
+
+El relleno es útil en otras tareas, pero aquí taparía el interior de la hoja y dificultaría observarla. Conserva un grosor positivo para estudiar el contorno y la caja.
+
+### `cv2.putText`: escribir información sobre la imagen
+
+Forma de referencia: `cv2.putText(img, text, org, fontFace, fontScale, color, thickness=1, lineType=cv2.LINE_8, bottomLeftOrigin=False)`.
+
+| Parámetro | Necesidad | Significado y opciones habituales |
+| --- | --- | --- |
+| `img` | Obligatorio. | Imagen donde aparecerá el texto. |
+| `text` | Obligatorio. | Texto, por ejemplo `"Cuadrilatero verde"` o un texto con valores insertados. |
+| `org` | Obligatorio. | Posición de referencia de la línea base del texto, en coordenadas `(x, y)`. No es la esquina superior izquierda de las letras. |
+| `fontFace` | Obligatorio. | Tipo de letra. Se utiliza habitualmente `FONT_HERSHEY_SIMPLEX` para mensajes sencillos. |
+| `fontScale` | Obligatorio. | Factor de escala respecto al tamaño base de esa fuente. Se prueban valores como 0.5, 0.6 u 0.8 según la resolución. |
+| `color` | Obligatorio. | Color BGR del texto. Conviene que contraste con la imagen. |
+| `thickness` | Opcional; `1`. | Grosor de los trazos; en la práctica se usa 2. |
+| `lineType` | Opcional; `LINE_8`. | `LINE_AA` es frecuente si quieres suavizar las letras en una imagen de ocho bits. |
+| `bottomLeftOrigin` | Opcional; `False`. | Convención de origen para colocar el texto. El taller conserva la habitual de las imágenes. |
+
+**Modifica la imagen y la devuelve.** No imprime en la terminal: para eso se utiliza `print`. Cambiar el texto no cambia la decisión geométrica; escribir «Rectángulo» no verifica que lo sea.
+
+`fontScale` no es un tamaño en píxeles, una probabilidad ni una puntuación del detector. La posición `org` se interpreta respecto a la imagen completa. Si queda fuera o muy cerca de un borde, las letras pueden cortarse. Para esta práctica basta centrar la hoja y dejar espacio alrededor.
+
+Las fuentes básicas de OpenCV tienen un repertorio limitado: utilizamos rótulos sin acentos en los programas. Para sistemas de escritura o tipografías más completas se necesita otra solución de dibujo, que no es necesaria para el taller.
+
+### Cómo elegir qué parámetro modificar
+
+| Si observas esto | Revisa antes | Evita confundirlo con |
+| --- | --- | --- |
+| No se selecciona la hoja | Intervalo HSV e iluminación. | Grosor o color de la caja. |
+| Región pequeña descartada | Umbral de área y distancia. | Escala de la fuente. |
+| Demasiados o pocos vértices | Máscara, kernel y epsilon. | Tamaño de letra de la etiqueta. |
+| Caja o texto poco visible | Color, grosor, escala y posición del dibujo. | Parámetros del filtro de color. |
+
+Esta separación es útil para depurar: algunas funciones **calculan información** y otras solo **la muestran**. Cambia un parámetro del paso donde se origina el problema, no todos al mismo tiempo.
+
+
 ## Para dar el siguiente paso
 
 Las reglas de color y número de esquinas nos sirven para esta práctica con hojas. **¿Qué haríamos si quisiéramos reconocer una taza o una mochila con distintos colores, posiciones y fondos, sin escribir una regla para cada apariencia?**

@@ -86,5 +86,30 @@ Si no hay video, revisa la captura. Si hay video pero no cajas, revisa pesos, cl
 
 Al terminar, pulsa ESC con la ventana seleccionada y vuelve a abrir el programa para confirmar que la cámara quedó libre.
 
+## Diferencias con el programa de hojas verdes
+
+En los ejemplos anteriores convertimos a HSV y seleccionamos un intervalo porque esa era nuestra regla. Un detector aprendido compatible con la interfaz de imágenes de OpenCV puede recibir el fotograma de color para realizar su propia preparación.
+
+No conserves el filtro verde como paso obligatorio antes de YOLO. Si eliminas todos los píxeles que no son verdes, puedes quitar la información que el modelo necesita. Respeta el formato de entrada de la API y el preprocesamiento del flujo de entrenamiento e inferencia.
+
+El detector devuelve cajas, clases y puntuaciones; OpenCV sigue siendo útil para capturar y mostrar. El archivo de pesos se carga una vez antes del ciclo, no en cada fotograma. Las predicciones nuevas sí se calculan sobre las imágenes que va entregando la cámara.
+
+## Interpretar una etiqueta sin confundirla con una certeza
+
+Una etiqueta como «vaso» con puntuación 0.80 expresa una salida del modelo bajo su configuración. No asegura que ocho de cada diez predicciones concretas de ese tipo sean correctas en cualquier escena. Comprueba resultados con ejemplos reales y observa cómo cambia el desempeño al ajustar el umbral.
+
+Una clase inesperada puede indicar que cargaste otros pesos. Una caja ausente puede deberse a objeto pequeño, mala luz, datos insuficientes o filtro de confianza, entre otras causas. No todos los fallos se corrigen bajando el umbral.
+
+## Registro sencillo de pruebas
+
+Para cada escena anota objetos presentes, objetos correctamente detectados, objetos omitidos y falsas alarmas. Incluye una escena sin las clases objetivo y otra con dos instancias. Después cambia iluminación y distancia, de una en una.
+
+También comprueba funcionamiento: que el video continúe sin detecciones, que las etiquetas sean legibles y que al terminar la cámara quede disponible. No sumes las cajas de cada fotograma para estimar cuántos objetos diferentes pasaron delante: esa tarea requiere una lógica adicional de seguimiento y conteo.
+
+## Cierre de la actividad integradora
+
+Presenta una demostración de OpenCV y otra de YOLO. Explica qué información preparaste para cada una, en qué condiciones responde bien y qué pruebas mostraron sus límites. Conserva los archivos necesarios y una explicación para que otra persona del grupo pueda repetir tu procedimiento.
+
+Una conclusión útil puede ser «funciona en estas escenas y falla en estas otras», acompañada por ejemplos. Eso comunica mejor el resultado que afirmar que el programa reconoce cualquier objeto en cualquier situación.
 
 [Anterior](17-descargar-yolo-uso-local.md) · [Índice del curso](../README.md)
