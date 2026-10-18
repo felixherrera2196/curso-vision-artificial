@@ -24,6 +24,10 @@ La **interpretación** utiliza esas transformaciones para responder algo sobre l
 
 Esta diferencia evita una confusión frecuente: obtener una imagen con bordes no significa que el programa ya sepa qué objetos hay. Los bordes también aparecen en sombras, texturas y reflejos.
 
+![Ejemplo de captura de una pelota roja, creación de una máscara binaria e interpretación con una caja y etiqueta.](../imagenes/01-introduccion/de-imagen-a-respuesta.png)
+
+*La máscara selecciona píxeles; identificar la pelota requiere interpretar esa selección según la tarea. Es un esquema ilustrativo, no la salida de un programa ejecutado.*
+
 ## 3. El recorrido de una aplicación
 
 1. **Captura:** obtener una imagen desde un archivo, una cámara o un video.
@@ -42,6 +46,10 @@ Cada etapa puede fallar de una manera diferente. Si la cámara no entrega imáge
 **YOLO** es una familia de modelos de detección de objetos. En lugar de indicar manualmente todas las reglas visuales, se entrenan parámetros a partir de imágenes etiquetadas. Un detector aprende patrones asociados con las clases del dataset. Esto puede permitir reconocer objetos con distintos colores y apariencias, aunque exige datos adecuados y una evaluación cuidadosa.
 
 Las herramientas pueden trabajar juntas: OpenCV captura el video y muestra los resultados; YOLO predice clases y cajas sobre cada fotograma. Entrenar y usar el modelo son momentos diferentes del proceso.
+
+![Comparación entre seleccionar una hoja verde con reglas de color y contornos en OpenCV, y entrenar YOLO con imágenes etiquetadas para detectar vasos y botellas.](../imagenes/01-introduccion/opencv-y-yolo.png)
+
+*Arriba: reglas de color y geometría. Abajo: aprendizaje con imágenes etiquetadas y uso del modelo sobre una imagen nueva. Las dos herramientas pueden combinarse en una aplicación.*
 
 ## 5. Cómo evaluar un primer resultado
 
