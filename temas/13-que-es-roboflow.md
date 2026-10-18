@@ -24,8 +24,9 @@ Para esta práctica, parte de **al menos 100 imágenes variadas**. Si tu colecci
 ### 2. Crear una cuenta
 
 1. Entra a [Roboflow](https://app.roboflow.com/login).
-2. Crea tu cuenta o inicia sesión si ya tienes una.
-3. Entra a tu espacio de trabajo (*workspace*) para crear el proyecto.
+2. Regístrate o inicia sesión **con tu cuenta de Gmail**, usando **Continue with Google**, **Sign in with Google** o el botón equivalente de Google.
+3. Selecciona tu cuenta de Gmail y completa los pasos que te muestre la plataforma. Utiliza la misma cuenta para volver a entrar al proyecto.
+4. Entra a tu espacio de trabajo (*workspace*) para crear el proyecto.
 
 ### 3. Crear un proyecto de detección
 
@@ -65,9 +66,18 @@ Si capturaste secuencias de fotos casi idénticas, mantenlas en la misma divisi�
 ### 7. Crear una versión
 
 1. Abre **Versions** y comienza la creación de una nueva versión, con **Create New Version** o la opción equivalente.
-2. Revisa el preprocesamiento y pulsa **Continue**.
-3. Revisa los aumentos de datos y pulsa **Continue**. Para esta primera práctica, conserva los ajustes indicados por el instructor; no necesitas agregar transformaciones para completar el etiquetado.
-4. Revisa el resumen, pulsa **Create** y espera a que termine la generación.
+2. En **Train/Test Split**, ajusta el reparto de imágenes entre entrenamiento, prueba y validación. Esta opción modifica cuántas imágenes se destinan a cada uso; no es el balance de clases. Para esta práctica configura:
+
+   | División | Porcentaje | Para qué se utiliza |
+   | --- | --- | --- |
+   | **Train** — entrenamiento | **70 %** | Para que el modelo aprenda de las imágenes y sus etiquetas. |
+   | **Test** — prueba | **20 %** | Para evaluar el resultado final con imágenes que no se usaron para entrenar ni elegir ajustes. |
+   | **Valid** — validación | **10 %** | Para revisar el desempeño durante el entrenamiento y orientar los ajustes. |
+
+   Comprueba los nombres de los campos antes de escribir los valores: si aparecen en el orden **Train / Valid / Test**, introduce **70 / 10 / 20**. Los porcentajes deben sumar **100 %**. Conserva juntas las imágenes casi idénticas de una misma sesión para evitar repartirlas entre entrenamiento y evaluación. Confirma el reparto y pulsa **Continue**.
+3. Revisa el preprocesamiento y pulsa **Continue**.
+4. Revisa los aumentos de datos y pulsa **Continue**. Para esta primera práctica, conserva los ajustes indicados por el instructor; no necesitas agregar transformaciones para completar el etiquetado.
+5. Revisa el resumen, pulsa **Create** y espera a que termine la generación.
 
 Una versión es una preparación del dataset lista para descargar. Si después corriges etiquetas, genera una nueva versión que incluya esas correcciones.
 
