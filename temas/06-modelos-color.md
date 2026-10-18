@@ -10,6 +10,8 @@ Puedes describir una ubicación con una dirección o con coordenadas. Sigue sien
 
 BGR habla de cantidades de azul, verde y rojo. HSV separa tono, saturación y brillo en su representación. Cambiar a HSV no hace que la cámara capture una escena mejor; facilita expresar algunas reglas. Relaciona este capítulo con los filtros que ya ejecutaste, sin intentar memorizar todas las escalas antes de observarlos.
 
+Recuerda el [capítulo sobre imágenes](02-que-es-una-imagen.md): cada píxel de color contiene tres valores. Ahora veremos **qué significa cada uno según la representación que elijamos**. El píxel no cambia de posición; cambiamos cómo describimos su color.
+
 ## 1. Una misma imagen, distintas coordenadas de color
 
 Un modelo de color define cómo expresar numéricamente un color. Cambiar de RGB a HSV se parece a describir la misma posición con otro sistema de coordenadas: cambia la representación y facilita ciertas operaciones, pero no elimina automáticamente los problemas de iluminación o ruido.
@@ -23,6 +25,17 @@ RGB describe un color combinando intensidades de rojo, verde y azul. Es una repr
 BGR contiene los mismos componentes en orden inverso. OpenCV suele trabajar con BGR al leer imágenes de color. No significa que vea colores distintos; significa que el primer canal debe interpretarse como azul. Herramientas de visualización que esperan RGB necesitan la conversión correspondiente.
 
 RGB o BGR son útiles para mostrar imágenes y para muchas operaciones. Sin embargo, si quieres detectar un color, los tres canales pueden cambiar conjuntamente con la iluminación. Un intervalo construido en una escena puede fallar en otra.
+
+### El mismo naranja escrito de dos maneras
+
+![Un píxel naranja con sus tres canales y la comparación entre los órdenes RGB y BGR.](../imagenes/02-imagen/pixel-color-canales.png)
+
+| Representación | Valores del mismo píxel naranja | Cómo leerlos |
+| --- | --- | --- |
+| RGB | `[255, 128, 0]` | Rojo 255, verde 128, azul 0. |
+| BGR | `[0, 128, 255]` | Azul 0, verde 128, rojo 255. |
+
+Cambiar de RGB a BGR **reordena los canales**. No convierte un naranja en otro color cuando cada herramienta interpreta el orden correcto. Si entregas los números RGB a una herramienta que espera BGR sin reordenarlos, intercambiarás rojo y azul en la interpretación.
 
 ## 3. Escala de grises
 
@@ -39,6 +52,24 @@ HSV representa el color mediante tres componentes:
 - **Hue o tono:** indica la familia cromática, como rojo, verde o azul.
 - **Saturation o saturación:** expresa cuánta intensidad cromática tiene el color frente a un gris.
 - **Value o valor:** corresponde al máximo de los componentes RGB en la definición habitual, y se utiliza como medida de brillo en esta representación.
+
+![Los tres componentes de HSV: H recorre las familias de color, S pasa de blanco a verde saturado y V pasa de negro a verde brillante manteniendo los otros componentes fijos.](../imagenes/06-color/hsv-tono-saturacion-valor.png)
+
+*En cada fila cambia un solo componente. Esto ayuda a entender qué controla cada barra del calibrador.*
+
+### Leer HSV sin memorizar fórmulas
+
+Piensa en un píxel verde y cambia una sola cosa:
+
+| Si cambias… | Manteniendo… | Qué observas |
+| --- | --- | --- |
+| **H: tono** | S y V altos | Cambia la familia: rojo, amarillo, verde, cian, azul… |
+| **S: saturación** | H verde y V = 255 | Pasa de blanco a verde intenso. |
+| **V: valor** | H verde y S = 255 | Pasa de negro a verde brillante. |
+
+Por eso **verde oscuro** y **verde pálido** no son el mismo caso. Un verde oscuro tiene menor V; un verde pálido puede tener V alto y S baja. En ambos puede mantenerse el tono verde.
+
+En general, S = 0 da un gris cuyo nivel depende de V; en la ilustración aparece blanco porque V está en 255. Con V = 0 el resultado es negro, aunque cambies H. Cuando no hay saturación, H deja de describir un tono visible.
 
 En imágenes de 8 bits convertidas con la conversión HSV habitual de OpenCV, el tono se representa de 0 a 179. Es una escala reducida del círculo de aproximadamente 360 grados. Saturación y valor se representan de 0 a 255. Otras conversiones o tipos de dato pueden tener rangos distintos; no hay que mezclar sus límites.
 
@@ -109,6 +140,10 @@ En ambos casos deben cumplirse **todos los canales**, incluidos los extremos. Lo
 | `[10, 45, 12]` | `[58, 198, 45]` | Rechaza | Rechaza | En HSV queda por debajo del brillo mínimo. |
 | `[180, 255, 180]` | `[60, 75, 255]` | Rechaza | Rechaza | B y R son altos en BGR; S es menor que 80 en HSV. |
 | `[255, 255, 0]` | `[90, 255, 255]` | Rechaza | Rechaza | Es cian: H queda fuera del intervalo verde. |
+
+![Tres muestras de verde con el mismo tono y saturación aproximados, pero distinto brillo; comparación de aceptación con los filtros BGR y HSV del curso.](../imagenes/06-color/comparacion-filtros-bgr-hsv.png)
+
+*Observa el segundo verde: G baja de 100 en BGR, pero su tono HSV sigue dentro del intervalo y V todavía supera 60. El tercero también es verde, pero queda por debajo del brillo mínimo del filtro HSV.*
 
 HSV facilita diagnosticar el rechazo. Para el verde oscuro del segundo renglón no necesitamos ampliar H: ya cumple el tono. Para el verde pálido, bajar V mínimo no ayuda: el problema es S. Si bajas S mínimo para recuperarlo, comprueba si también empiezan a entrar superficies poco coloreadas del fondo.
 

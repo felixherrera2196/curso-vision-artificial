@@ -1,66 +1,136 @@
-# 02. ¿Qué es una Imagen?
+# 02. ¿Qué es una imagen?
 
-## Qué aprenderás
+## La idea principal
 
-Entenderás cómo se representa una imagen digital, qué es un píxel, cómo se organizan sus canales y por qué importan las coordenadas y el tipo de dato. Estas ideas explican muchos errores habituales al utilizar OpenCV.
+**Una imagen digital es una cuadrícula de píxeles cuyos valores se guardan como números.** Nosotros vemos una fotografía; la computadora trabaja con esos números.
 
-## La idea en palabras sencillas
+Un **píxel** es una posición de esa cuadrícula. Una **matriz** es una tabla organizada en filas y columnas. Al mostrar la imagen en pantalla, los valores de cada posición determinan el color o la intensidad que vemos.
 
-Amplía mucho una fotografía y empezarás a distinguir pequeños cuadros: los píxeles. Para la computadora, la imagen es una tabla de números que describe esos cuadros. Una imagen de color tiene varios números por posición para representar sus componentes.
+## 1. De los cuadritos a los números
 
-Piensa en una hoja cuadriculada: para localizar un cuadro necesitas saber su fila y su columna. En el curso hablaremos también de x e y para marcar posiciones. Antes de utilizar esos números, recuerda esta idea: una imagen visible en pantalla es, al mismo tiempo, información que el programa puede medir y comparar.
+Imagina una imagen diminuta de **4 píxeles de ancho y 3 de alto**. Tiene 4 columnas y 3 filas: **12 píxeles en total**. En este primer ejemplo usaremos escala de grises, así que cada píxel guarda un solo número.
 
-## 1. Una imagen como cuadrícula de datos
+![Una imagen de 3 filas y 4 columnas en escala de grises y su matriz de valores, con el píxel de la fila 1 y columna 2 señalado.](../imagenes/02-imagen/pixeles-y-matriz.png)
 
-Una imagen digital está formada por una cuadrícula de **píxeles**. Cada píxel representa una muestra de la escena en una posición. La cantidad de columnas es el ancho y la cantidad de filas es el alto. Una imagen de 640 × 480 tiene 640 columnas, 480 filas y 307 200 posiciones.
+*La cuadrícula de tonos y la matriz numérica representan la misma imagen: cada casilla ocupa la misma posición en ambas.*
 
-La resolución describe cuántas posiciones hay, no garantiza que la imagen sea nítida. Una imagen grande puede estar desenfocada, sobreexpuesta o comprimida. Aumentar sus dimensiones por interpolación agrega muestras calculadas; no recupera automáticamente detalles que la cámara no capturó.
+Estos son los valores del ejemplo, escritos por filas:
 
-## 2. Intensidad y canales
+```text
+  0    64   128   255
+ 32    96   160   224
+ 64   128   192   255
+```
 
-En una imagen de escala de grises hay, normalmente, un valor de intensidad por píxel. En la representación de 8 bits más común, 0 corresponde a negro y 255 a blanco; los valores intermedios representan distintos niveles de gris.
+En la representación habitual de **8 bits por canal**:
 
-Una imagen de color suele tener tres canales. RGB representa rojo, verde y azul. Cada píxel es una combinación de intensidades y no una etiqueta como «azul» o «amarillo». Un rojo intenso ideal en RGB se representa por valores altos de rojo y bajos de verde y azul, pero una superficie roja real cambia con la luz, las sombras y la cámara.
+| Valor | Qué se muestra |
+| --- | --- |
+| **0** | Negro. |
+| **64** | Gris oscuro. |
+| **128** | Gris intermedio. |
+| **255** | Blanco. |
 
-OpenCV suele entregar imágenes en **BGR** al leer archivos de color o fotogramas de una cámara: azul, verde y rojo. La información es equivalente a RGB, pero el orden es diferente. Si otra herramienta interpreta una matriz BGR como RGB, algunos colores se mostrarán intercambiados.
+Entre 0 y 255 hay **256 valores posibles**. Cuanto mayor es el número, más clara se muestra esa posición en esta escala. Un píxel no guarda la palabra «gris»: guarda su valor numérico.
 
-## 3. Forma del arreglo y coordenadas
+**Cambiar los números cambia la imagen.** Si reemplazas el 160 del ejemplo por 0, ese píxel se verá negro. Las demás posiciones conservarán sus valores. Así empezamos a entender el procesamiento de imágenes: modificar o comparar los datos de sus píxeles.
 
-En el caso habitual de una imagen de color, la forma del arreglo es **alto × ancho × canales**. Para una imagen de 640 × 480, la forma sería 480 × 640 × 3. Esta convención explica por qué el primer número de la forma no es el ancho.
+## 2. ¿Cómo localizamos un píxel?
 
-Hay dos formas de referirse a una posición que debes mantener separadas:
+Para encontrar una casilla necesitas su **fila y su columna**. En los arreglos de Python comenzamos a contar desde **0**.
 
-- En una matriz se accede primero a la **fila** y después a la **columna**.
-- En una coordenada geométrica se expresa primero **x** y después **y**.
+En la ilustración:
 
-La columna corresponde a x y la fila a y. Por lo general, el origen está en la esquina superior izquierda: x aumenta hacia la derecha y y hacia abajo. En una imagen de ancho 640, las columnas válidas van de 0 a 639.
+- Las filas son **0, 1 y 2**, de arriba hacia abajo.
+- Las columnas son **0, 1, 2 y 3**, de izquierda a derecha.
+- La posición **fila 1, columna 2** contiene el valor **160**.
 
-## 4. Tipo de dato y rango
+Si ese arreglo se llama `imagen_gris`, podemos consultar esa posición así:
 
-El tipo `uint8` representa enteros sin signo entre 0 y 255. Muchas operaciones de lectura y visualización trabajan con este formato. Sin embargo, otras operaciones utilizan números decimales; algunas esperan intensidades entre 0 y 1 y otras conservan el rango original.
+```python
+imagen_gris[1, 2]
+```
 
-Por eso no basta con conocer el contenido visual: hay que conocer la forma, el tipo y la escala del arreglo. Restar o sumar directamente en un arreglo de enteros sin signo puede causar desbordamientos según la operación. Las funciones de OpenCV y las operaciones de NumPy no siempre manejan esos casos de la misma manera.
+El primer índice es la fila y el segundo es la columna. Es una consulta a una imagen ya creada, no un programa completo.
 
-Una **máscara binaria** utiliza dos estados para indicar pertenencia a una selección. En OpenCV es común usar 0 para fondo y 255 para primer plano. Ese 255 no mide la confianza de una clasificación; simplemente marca los píxeles incluidos.
+Al dibujar usamos también coordenadas **(x, y)**: **x corresponde a la columna** y **y a la fila**. El mismo píxel está en **(x = 2, y = 1)**. El origen está en la esquina superior izquierda; x aumenta hacia la derecha e y hacia abajo.
 
-## 5. Fotogramas y video
+| Forma de señalar el mismo píxel | Orden | Ejemplo |
+| --- | --- | --- |
+| Acceso al arreglo | Fila, columna | `imagen_gris[1, 2]` |
+| Coordenadas para dibujar | x, y | `(2, 1)` |
 
-Un video es una secuencia de imágenes ordenadas en el tiempo. Cada imagen se llama **fotograma**. Trabajar con una cámara consiste, en buena parte, en repetir el mismo análisis sobre fotogramas nuevos.
+## 3. Un píxel de color guarda varios valores
 
-Una frecuencia de 30 fotogramas por segundo implica aproximadamente 33,3 milisegundos entre imágenes. Si el procesamiento de cada una tarda mucho más, el programa deberá trabajar a menor velocidad, descartar imágenes o acumular retraso, dependiendo de cómo capture el video.
+En escala de grises usamos un número por píxel. En una imagen de color **RGB** usamos tres: las intensidades de **rojo (R), verde (G) y azul (B)**. Cada componente es un **canal**.
 
-## 6. Por qué cambiar de tamaño afecta el resultado
+![Un píxel naranja se representa con rojo 255, verde 128 y azul 0; RGB y BGR guardan el mismo color en distinto orden.](../imagenes/02-imagen/pixel-color-canales.png)
 
-Reducir la resolución disminuye el trabajo de procesamiento, pero también puede hacer desaparecer objetos pequeños. Si un objeto ocupa apenas unos píxeles, será difícil medir su contorno o detectarlo de manera estable. Además, las medidas de área y longitud cambian al redimensionar: reducir ancho y alto a la mitad reduce aproximadamente el área a una cuarta parte.
+*Los tres valores pertenecen a un solo píxel. No son tres píxeles de la fotografía.*
 
-Si dibujas una caja calculada sobre una imagen reducida en la imagen original, debes transformar sus coordenadas. Este problema reaparecerá cuando revisemos bounding boxes.
+Por ejemplo, un píxel naranja puede tener:
 
-## Actividad de comprensión
+```text
+RGB = [255, 128, 0]
+        R    G   B
+```
 
-Para una imagen de 800 × 600 con tres canales, identifica ancho, alto, forma del arreglo y coordenadas de la esquina inferior derecha. Explica qué ocurriría al mostrarla con un orden de canales incorrecto y por qué una máscara de un solo canal no tiene la misma forma que la imagen de color.
+Combina rojo al máximo, verde en un nivel intermedio y azul en cero. Otros ejemplos ideales en RGB son:
 
-## Aplicación en la siguiente práctica
+| Color | Valores RGB |
+| --- | --- |
+| Rojo | `[255, 0, 0]` |
+| Verde | `[0, 255, 0]` |
+| Azul | `[0, 0, 255]` |
+| Blanco | `[255, 255, 255]` |
+| Negro | `[0, 0, 0]` |
 
-En el [tema 04](04-video-camara-python.md) capturarás fotogramas reales. Relaciona cada imagen de la cámara con los conceptos de esta sección: alto, ancho, canales BGR y coordenadas. Esta relación te ayudará a interpretar las máscaras del tema 05.
+**OpenCV normalmente entrega las imágenes de color en BGR**: azul, verde y rojo. El mismo naranja se guarda como **`[0, 128, 255]`**. El color es el mismo si interpretamos los canales en el orden correcto.
+
+Podemos imaginar una imagen de color como **tres matrices alineadas**: una por canal. En cada fila y columna tomamos los tres valores para formar un píxel. En NumPy se organiza habitualmente como un arreglo de **alto × ancho × canales**.
+
+## 4. Ancho, alto y cantidad de datos
+
+Una cámara que entrega imágenes de **640 × 480** produce:
+
+| Concepto | Valor |
+| --- | --- |
+| Ancho: columnas | 640 |
+| Alto: filas | 480 |
+| Cantidad de píxeles | 640 × 480 = **307 200** |
+| Valores si está en grises | **307 200**: uno por píxel. |
+| Valores si tiene tres canales | 640 × 480 × 3 = **921 600**. |
+
+En una imagen de color con ese tamaño, la forma del arreglo es **`(480, 640, 3)`**: primero alto, después ancho y finalmente canales. No son 921 600 píxeles: son 307 200 píxeles con tres valores cada uno.
+
+Los índices empiezan en 0, así que el último píxel está en **fila 479, columna 639**.
+
+La representación de ocho bits que usamos habitualmente se llama **`uint8`**: cada valor es un entero de 0 a 255. Otras imágenes pueden usar diferentes tipos y escalas; por eso debemos conocer cómo están representadas antes de operar con sus números.
+
+## 5. ¿Qué hace el programa con estos valores?
+
+Con esta idea podemos entender varias operaciones del curso:
+
+- **Filtrar un color:** comparar los valores de cada píxel con unos límites.
+- **Convertir a grises:** calcular una intensidad a partir de los canales de color.
+- **Crear una máscara:** marcar con 255 los píxeles seleccionados y con 0 los demás.
+- **Cambiar el tamaño:** calcular una cuadrícula con otras dimensiones.
+
+Una máscara también es una matriz, pero sus valores expresan **selección**. Un 255 significa «este píxel cumple la regla», no «el modelo está completamente seguro». A diferencia de ella, una imagen gris puede tener muchos niveles intermedios.
+
+Tener más píxeles no garantiza nitidez. Ampliar una fotografía calcula nuevos valores, pero no recupera automáticamente detalles que la cámara no capturó.
+
+## 6. ¿Y un video?
+
+Un video es una **secuencia de imágenes**, llamadas **fotogramas**. Cada fotograma tiene su propia matriz de valores. Al procesar la cámara, repetiremos las operaciones sobre una imagen nueva en cada vuelta del programa.
+
+## Comprueba que lo entendiste
+
+1. En la matriz de la primera ilustración, ¿qué valor está en la fila 0, columna 3? ¿Qué color representa?
+2. ¿Por qué un píxel RGB necesita tres números y uno gris solo uno?
+3. ¿Cuántos píxeles tiene una imagen de 800 × 600? ¿Cuántos valores tiene si usa tres canales?
+4. ¿Qué ocurre si interpretas `[255, 0, 0]` como RGB y después como BGR?
+
+**Idea que debes conservar:** una imagen no es solo algo que vemos; es un arreglo de números que podemos consultar, comparar y transformar. En [Modelos de color](06-modelos-color.md) veremos otras maneras de describir el color de esos mismos píxeles.
 
 [Anterior](01-introduccion-vision-artificial.md) · [Índice](../README.md) · [Siguiente: Instalación](03-instalacion-python-bibliotecas.md)
