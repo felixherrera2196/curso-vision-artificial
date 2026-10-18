@@ -1,114 +1,167 @@
 # 16. Entrenar modelo YOLO usando GPU
 
-## Qué aprenderás
+## Entrenaremos con nuestro propio dataset
 
-Comprenderás los parámetros básicos del entrenamiento, cómo interpretar resultados y cómo seleccionar pesos sin confundir el desempeño sobre datos conocidos con el desempeño sobre escenas nuevas.
+En esta práctica entrenaremos **YOLO con el dataset que preparaste y obtuviste de Roboflow**: tus fotografías y las etiquetas que indican qué objetos aparecen y dónde están. Durante el entrenamiento, el modelo utilizará esos ejemplos para ajustar sus parámetros y aprender a detectar las clases de tu proyecto.
 
-## La idea en palabras sencillas
+Para entrenar utilizaremos **Google Colab**, que permite ejecutar código desde el navegador en una computadora remota y puede proporcionarnos una **GPU**. El entrenamiento se realizará en los recursos de Colab, por lo que no necesitas tener una tarjeta gráfica dedicada en tu computadora. La asignación de GPU depende de su disponibilidad; comprobaremos que esté activa antes de empezar.
 
-Entrenar significa mostrar ejemplos al modelo y ajustar sus parámetros cuando se equivoca. Verás pasar grupos de imágenes y varias vueltas de entrenamiento. No necesitas interpretar todas las cifras para empezar: primero comprueba que se están utilizando los datos correctos y que el proceso avanza.
+### ¿Por qué utilizamos una GPU?
 
-Después observaremos qué objetos detecta, cuáles omite y qué falsas alarmas produce. Una puntuación alta no sustituye mirar los resultados. Al terminar guardarás los pesos, que son el archivo que necesitará la siguiente práctica para utilizar lo aprendido.
+Para una computadora, una imagen es un conjunto de números organizado en **matrices**: cada posición representa un píxel y una imagen de color suele tener tres canales. Por ejemplo, una imagen de 640 × 480 píxeles tiene 307 200 posiciones y, con tres canales, contiene 921 600 valores.
 
-## 1. Qué cambia al entrenar
+Al entrenar, la red realiza muchísimas operaciones con esos números y con sus parámetros: procesa las imágenes, compara sus predicciones con las etiquetas y calcula cómo ajustar lo aprendido. Este trabajo se repite con muchos ejemplos durante varias vueltas de entrenamiento.
 
-Durante el entrenamiento se ajustan los parámetros del detector para relacionar imágenes con clases y cajas. En un flujo de transferencia de aprendizaje, el punto inicial son pesos preentrenados compatibles con el modelo elegido.
+Una **GPU** puede realizar muchas de estas operaciones en paralelo, lo que suele acelerar considerablemente el entrenamiento frente a una CPU. **La GPU no hace que el modelo aprenda mejor por sí sola: permite realizar los cálculos más rápido.** La calidad del resultado sigue dependiendo de las imágenes, las etiquetas y la configuración del entrenamiento.
 
-El archivo de datos describe las clases nuevas y las rutas. El archivo de pesos inicial describe una red y sus parámetros. Son recursos diferentes: pasar el YAML del dataset no equivale a cargar un detector, y cargar pesos preentrenados no define por sí solo tus clases personalizadas.
+## Pasos para entrenar en Google Colab
 
-## 2. Parámetros que debes entender
+### Paso 1. Abrir sesión y crear un Jupyter Notebook en Google Colab
 
-| Parámetro habitual | Propósito | Consecuencia práctica |
-| --- | --- | --- |
-| `data` | Configuración del dataset. | Una ruta o clases incorrectas invalidan el experimento. |
-| `epochs` | Número máximo de pasadas de entrenamiento. | Más entrenamiento puede ayudar o favorecer sobreajuste. |
-| `imgsz` | Tamaño de entrada de entrenamiento. | Influye en detalle, costo y memoria. |
-| `batch` | Ejemplos por paso. | Un valor grande puede superar la memoria de GPU. |
-| `device` | Dispositivo de cómputo. | Debe corresponder a un recurso disponible. |
-| `project` y `name` | Organización de resultados. | Ayudan a identificar la ejecución y sus archivos. |
+1. Entra a [Google Colab](https://colab.research.google.com/) e inicia sesión con tu **cuenta de Google**, solicitada en los requisitos obligatorios del curso.
+2. Haz clic en **Nuevo Notebook** o **Nuevo cuaderno**, según el idioma de la interfaz. Colab creará un cuaderno de Jupyter Notebook.
+3. En la parte superior, haz clic en el nombre inicial, normalmente `Untitled0.ipynb`, y cámbialo por uno que identifique tu práctica, por ejemplo **`curso.ipynb`**. Conserva la extensión **`.ipynb`**, que identifica este tipo de cuaderno.
 
-Los nombres, tipos y opciones exactas dependen de la versión instalada. Consulta la documentación de tu versión para confirmar los argumentos admitidos y registra los valores que utilices en tu experimento.
+Si no ves el encabezado donde aparece el nombre, utiliza la flecha de la esquina superior derecha para desplegarlo. Su orientación puede cambiar según esté oculto o visible.
 
-## 3. Elegir un primer experimento
+Un notebook permite escribir y ejecutar código Python por bloques llamados **celdas**. Esto facilita experimentar: puedes ejecutar una parte, observar el resultado y continuar con la siguiente sin ejecutar todo el programa de nuevo.
 
-Para un taller, empieza con un modelo pequeño compatible y parámetros moderados. El objetivo inicial es comprobar que datos, etiquetas y entrenamiento forman un flujo válido. No necesita ser el mejor detector posible.
+En una celda de código escribe:
 
-Después modifica un aspecto a la vez y conserva el resultado anterior. Si cambias simultáneamente dataset, arquitectura, tamaño de entrada y épocas, será difícil explicar qué produjo una mejora o empeoramiento.
+```python
+x = "curso vision"
+print(x)
+```
 
-## 4. Leer la pérdida
+Ejecuta la celda con el botón **▶** situado a su izquierda o con **Shift + Enter**. Debajo aparecerá:
 
-El entrenamiento suele informar pérdidas relacionadas con localización y clasificación; sus componentes exactos varían entre modelos. Una tendencia descendente puede indicar que el modelo se adapta a entrenamiento, pero no basta para evaluar generalización.
+```text
+curso vision
+```
 
-Compara con validación y revisa ejemplos visuales. Una pérdida que baja mientras las métricas de validación se estancan o empeoran puede señalar sobreajuste. También puede haber ruido en mediciones de conjuntos pequeños; evita conclusiones basadas en una sola época.
+Las celdas comparten variables mientras se conserve la sesión. Ejecútalas en orden: si una celda utiliza una variable creada en otra, primero debes ejecutar la que la define.
 
-## 5. Precision, recall e IoU
+### Paso 2. Activar la GPU
 
-La **precision** mide qué proporción de las detecciones aceptadas corresponde a objetos correctos, bajo los criterios de evaluación. Si aparecen muchas detecciones falsas, disminuye.
+En el menú del notebook, sigue esta ruta:
 
-El **recall** mide qué proporción de los objetos anotados se detectó correctamente. Si el modelo omite muchas instancias, disminuye.
+**Entorno de ejecución → Cambiar tipo de entorno de ejecución → Acelerador por hardware → GPU → Guardar**.
 
-La **IoU** es la intersección entre dos cajas dividida por su unión. Mide su superposición. Una predicción necesita una clase correcta y una localización suficientemente coincidente según el criterio utilizado. También debe considerarse el emparejamiento entre predicciones e instancias: varias cajas sobre el mismo objeto no representan varios aciertos independientes.
+Según la versión de Colab, puede aparecer un modelo concreto, como **T4 GPU**, en lugar de una opción llamada solo «GPU». Selecciona la GPU disponible para la práctica y guarda el cambio. La asignación depende de la disponibilidad y de los límites de tu cuenta.
 
-## 6. AP y mAP
+Haz este cambio antes de preparar los datos y entrenar, porque puede reiniciar o reemplazar la sesión. A continuación comprobaremos que la GPU esté realmente disponible.
 
-La **AP** resume la relación entre precision y recall al variar umbrales, según un protocolo de evaluación. La **mAP** promedia AP entre clases y, según la métrica, entre criterios de IoU.
+### Paso 3. Comprobar que Colab asignó una GPU
 
-`mAP50` utiliza un criterio de IoU de 0,50. `mAP50-95` considera varios umbrales desde 0,50 hasta 0,95 y exige también localización más precisa. Sus valores no deben compararse como si fueran la misma métrica.
+Crea una celda de código con **+ Código**, copia el siguiente bloque y ejecútalo:
 
-Revisa resultados por clase. Un promedio alto puede esconder una clase con desempeño pobre. También examina ejemplos de objetos pequeños, iluminación difícil y fondos parecidos a los del uso real.
+```python
+import torch
 
-## 7. Archivos de resultados
+print("CUDA disponible:", torch.cuda.is_available())
 
-Ultralytics suele guardar curvas, métricas y pesos en una carpeta de ejecución. En los flujos habituales aparece `last.pt` para el estado final y `best.pt` para el seleccionado según el criterio de validación del entrenador. El criterio exacto depende de la versión y configuración.
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+    print("CUDA:", torch.version.cuda)
+else:
+    print("No hay GPU disponible")
+```
 
-El último archivo no es necesariamente el mejor. El mejor de validación tampoco garantiza buen desempeño fuera del dataset. Registra el archivo elegido y verifica dónde se guardó realmente; ejecuciones repetidas pueden generar carpetas con nombres distintos.
+`torch` es PyTorch, la biblioteca de cálculo que utiliza Ultralytics para trabajar con YOLO. **CUDA** permite utilizar las GPU NVIDIA para estos cálculos.
 
-## 8. Problemas y ajustes
+Si aparece **`CUDA disponible: True`**, PyTorch puede utilizar una GPU. También verás su nombre y la versión de CUDA con la que se compiló PyTorch; esta última no es necesariamente la versión del controlador de la GPU.
 
-**Memoria insuficiente:** prueba un batch menor y revisa tamaño de entrada o modelo. **Entrenamiento en CPU:** comprueba GPU y dispositivo seleccionado. **Sin etiquetas válidas:** revisa exportación y rutas. **Métricas bajas:** revisa ejemplos, etiquetas, diversidad y clases antes de aumentar épocas indiscriminadamente.
+Si aparece **`CUDA disponible: False`** y «No hay GPU disponible», vuelve al paso 2 y comprueba el acelerador seleccionado. Si Colab no puede asignarte una GPU, espera a que haya disponibilidad o sigue las indicaciones del instructor antes de continuar con el entrenamiento. Elegir GPU en el menú no basta: esta celda confirma que PyTorch puede acceder a ella.
 
-No optimices reiteradamente sobre el conjunto de prueba. Usa validación para decisiones y reserva prueba para una estimación final. Si ajustas decisiones a partir de prueba, deja de ser una evaluación independiente.
+### Paso 4. Instalar Roboflow
 
-## Actividad de comprensión
+Agrega una nueva celda con **+ Código**, escribe el siguiente comando y ejecútalo:
 
-Compara dos modelos hipotéticos: uno detecta casi todos los objetos pero genera muchas falsas alarmas; el otro detecta pocos, aunque suele acertar. Relaciona cada caso con precision y recall y explica cuál preferirías según una tarea concreta.
+```python
+!pip install roboflow
+```
 
-## Registro del experimento
+Este comando instala la biblioteca de Roboflow en la sesión de Colab. La utilizaremos para descargar nuestro dataset desde el notebook. El signo `!` permite ejecutar un comando de terminal dentro de una celda.
 
-Anota el modelo inicial, la versión del dataset y los valores de los parámetros antes de entrenar. Al terminar, conserva la carpeta de resultados, revisa métricas por clase y registra qué pesos seleccionaste. Utiliza imágenes nuevas para examinar errores que los promedios pueden ocultar.
+Espera a que termine la instalación antes de ejecutar la siguiente celda. Si Colab crea una nueva sesión, puede ser necesario volver a instalarla.
 
-## Leer el entrenamiento sin perderte entre cifras
+### Paso 5. Descargar tu dataset desde Roboflow
 
-Durante una ejecución, empieza por tres preguntas: ¿está usando el dataset correcto?, ¿avanzan las épocas?, ¿dónde se guardarán los resultados? Después revisa las medidas.
+En una nueva celda, pega y ejecuta el **código de descarga de tu dataset**, que aprendiste a obtener en el capítulo anterior. Tendrá una estructura como esta, con tus propios datos:
 
-Piensa en una imagen con diez objetos anotados. Si el detector encuentra correctamente ocho y no añade falsas alarmas, omitió dos. Si encuentra esos ocho pero también marca cuatro lugares sin objeto, además produjo cuatro falsas alarmas. Este ejemplo ilustra por qué necesitamos observar tanto objetos omitidos como detecciones incorrectas; no son el mismo problema.
+```python
+from roboflow import Roboflow
 
-Los valores de entrenamiento reales utilizan criterios de clase, localización y emparejamiento, explicados en esta sección. Para comenzar, observa imágenes anotadas con las predicciones y busca esos dos tipos de error. No interpretes cada número como un porcentaje de «inteligencia» del modelo.
+rf = Roboflow(api_key="TU_API_KEY")
+project = rf.workspace("TU_WORKSPACE").project("TU_PROYECTO")
+version = project.version(1)
+dataset = version.download("yolov11")
+```
 
-Al terminar, anota la carpeta de resultados y el archivo de pesos elegido. Si cambias parámetros para una nueva prueba, registra qué modificaste. No mezcles resultados de ejecuciones diferentes como si pertenecieran al mismo experimento.
+Espera a que termine la descarga antes de continuar.
 
-## Ejemplo numérico: errores distintos, medidas distintas
+### Paso 6. Indicar la ruta de `data.yaml`
 
-Supón que una evaluación tiene diez instancias anotadas. Bajo su criterio de coincidencia, el modelo acierta ocho y añade dos detecciones falsas. Tendría ocho aciertos, dos objetos omitidos y dos falsas alarmas. Su precision sería 8 / 10 = 0.8 y su recall también 8 / 10 = 0.8 en este ejemplo simplificado.
+Al terminar de ejecutar la celda de descarga, los archivos de tu dataset aparecerán en el panel **Archivos**, a la izquierda de Colab. Ábrelo con el icono de carpeta y, si todavía no ves los archivos, pulsa **Actualizar**.
 
-Si ahora conserva esos ocho aciertos pero añade seis falsas alarmas, su precision pasa a 8 / 14, aproximadamente 0.57, mientras el recall permanece en 0.8. Eso muestra por qué detectar muchos objetos y evitar falsas alarmas son objetivos relacionados pero diferentes.
+Busca `data.yaml` dentro de la carpeta del dataset descargado. Suele estar directamente en esa carpeta, junto a las carpetas de imágenes de entrenamiento, validación y prueba. La descarga normalmente queda dentro de `/content/`, en una carpeta cuyo nombre identifica el proyecto y la versión.
 
-En una evaluación real también cuentan la clase, el emparejamiento y la localización según IoU. No puedes contar dos cajas del mismo objeto como dos instancias correctas por conveniencia. Las herramientas realizan esa evaluación bajo un protocolo definido.
+El archivo **`data.yaml`** indica dónde están las imágenes y cuáles son las clases del dataset. Para utilizarlo en el entrenamiento necesitamos su ruta completa:
 
-## Ejemplo de configuración que debes poder explicar
+1. Localiza `data.yaml` en el panel de archivos.
+2. Haz clic en los **tres puntos** que aparecen a la derecha del archivo.
+3. Selecciona **Copiar ruta de acceso**.
+4. En una nueva celda, pega esa ruta entre comillas y guárdala en `data_path`.
 
-Si una práctica utiliza 20 épocas y un batch de 8, significa un máximo de veinte pasadas por entrenamiento y grupos de ocho ejemplos por paso, con los detalles del cargador de datos y la configuración. No significa veinte fotografías ni que solo se admitan ocho clases.
+Por ejemplo:
 
-Estos números ilustran los conceptos; no fijan los parámetros del experimento del taller. El tamaño de imagen y el batch deben caber en la memoria disponible. Una GPU más rápida no vuelve correctas las anotaciones equivocadas.
+```python
+data_path = "/content/mi_detector_objetos-1/data.yaml"
+```
 
-## Cómo decidir si repetir un entrenamiento
+**Utiliza la ruta de tu propio proyecto**, no la del ejemplo. Ejecuta la celda para guardar esa dirección en la variable `data_path`; la usaremos al iniciar el entrenamiento.
 
-Antes de aumentar épocas, inspecciona imágenes con predicciones: ¿falla una clase concreta?, ¿son objetos muy pequeños?, ¿faltan condiciones del laboratorio?, ¿hay etiquetas incorrectas? Esos hallazgos indican si necesitas corregir datos, reunir variación o ajustar la configuración.
+### Paso 7. Instalar Ultralytics
 
-Conserva el experimento anterior y cambia una decisión identificable. Compara en validación y evita elegir cambios mirando repetidamente el conjunto final de prueba. Después revisa también la cámara real: las métricas del dataset no describen automáticamente cualquier entorno.
+En una nueva celda, ejecuta:
 
-## Para dar el siguiente paso
+```python
+!pip install -q ultralytics
+```
 
-El entrenamiento produjo archivos y métricas. **¿Cuál de esos archivos debemos conservar para utilizar el detector en la computadora de Windows?** En el siguiente capítulo seleccionaremos y trasladaremos los pesos.
+Este comando instala **Ultralytics**, la biblioteca que utilizaremos para cargar YOLO y entrenarlo con nuestro dataset. La opción `-q` reduce los mensajes de la instalación. Espera a que termine antes de continuar.
 
-[Anterior](15-colab-gpu-ultralytics.md) · [Índice](../README.md) · [Siguiente: Descargar modelo](17-descargar-yolo-uso-local.md)
+### Paso 8. Cargar el modelo YOLO
+
+En una nueva celda, escribe y ejecuta:
+
+```python
+from ultralytics import YOLO
+model = YOLO("yolo11s.pt")
+```
+
+La primera línea importa la herramienta `YOLO` de Ultralytics. La segunda carga **YOLO11s**, la variante pequeña (*small*) de YOLO11, y guarda el modelo en la variable `model`.
+
+El archivo `yolo11s.pt` contiene **pesos preentrenados**: parámetros que el modelo ya aprendió con otro conjunto de imágenes. Los utilizaremos como punto de partida para entrenar con nuestras propias clases, en lugar de comenzar desde cero. Si el archivo no está disponible en Colab, Ultralytics lo descargará automáticamente; espera a que termine.
+
+**Esta celda carga el modelo, pero todavía no lo entrena con tu dataset.** Ese será el siguiente paso.
+
+### Paso 9. Entrenar el modelo
+
+En una nueva celda, ejecuta:
+
+```python
+results = model.train(
+    data=data_path,
+    epochs=15,
+    imgsz=640
+)
+```
+
+- **`data=data_path`**: utiliza la ruta de tu archivo `data.yaml`, que indica las imágenes y las clases de tu dataset.
+- **`epochs=15`**: realiza 15 vueltas de entrenamiento sobre el conjunto de imágenes destinado a entrenar.
+- **`imgsz=640`**: establece 640 píxeles como tamaño de referencia para preparar las imágenes de entrada al modelo. No modifica tus archivos originales.
+
+Espera a que termine el entrenamiento antes de continuar con la descarga del modelo.
+
+[Anterior](15-colab-gpu-ultralytics.md) · [Índice](../README.md) · [Siguiente: Descargar el modelo](17-descargar-yolo-uso-local.md)
