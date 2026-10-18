@@ -20,6 +20,10 @@ Utilizaremos una **hoja verde, preferentemente mate y de color intenso**, para q
 
 La elección de verde simplifica los ejemplos; no garantiza una selección perfecta en cualquier cámara. Los intervalos son puntos de partida para calibrar en el laboratorio.
 
+![Una escena con una hoja verde y su máscara binaria: la hoja seleccionada aparece blanca y los demás píxeles negros.](../imagenes/05-filtros/imagen-y-mascara.png)
+
+*La máscara conserva las posiciones de la imagen: blanco significa seleccionado y negro significa no seleccionado.*
+
 ## 2. Práctica: filtro sencillo en BGR
 
 OpenCV entrega normalmente la imagen en **BGR**: azul, verde y rojo, en ese orden. No necesitamos convertirla a RGB. Para esta primera aproximación pediremos bastante verde y cantidades más bajas de azul y rojo.

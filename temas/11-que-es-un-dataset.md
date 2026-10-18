@@ -10,6 +10,10 @@ Para entrenar un detector, las fotografías también necesitan **etiquetas**: el
 
 **Más fotos no siempre significa un mejor dataset.** Cien fotografías casi iguales aportan menos variedad que imágenes de distintos objetos y situaciones. Busca ejemplos parecidos a las condiciones donde utilizarás tu detector.
 
+![Comparación de una colección de vasos casi idénticos con otra que varía objetos, ángulos, distancias, fondos e iluminación.](../imagenes/11-dataset/variedad-de-imagenes.png)
+
+*La diversidad no consiste solo en reunir archivos: busca situaciones distintas y representativas de la cámara que usarás.*
+
 ## Práctica: recolectar tus propias imágenes
 
 El siguiente programa abre la cámara y guarda fotografías JPG automáticamente cada **0.5 segundos**. También puedes tomar una foto adicional con **espacio** y salir con **ESC**.

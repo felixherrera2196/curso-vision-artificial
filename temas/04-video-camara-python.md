@@ -55,6 +55,10 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
+![Ciclo de captura: abrir la cámara una vez, leer y mostrar fotogramas, consultar ESC y liberar recursos al terminar.](../imagenes/04-camara/ciclo-captura.png)
+
+*El ciclo vuelve a leer una imagen mientras no pulses ESC; la cámara se abre una sola vez.*
+
 ## 2. Explicación de cada bloque
 
 ### Importar la biblioteca

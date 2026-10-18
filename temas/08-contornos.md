@@ -16,6 +16,10 @@ Una máscara responde si cada posición pertenece al primer plano. Un **contorno
 
 Un contorno no equivale necesariamente a un objeto real. Una máscara fragmentada puede producir varios contornos para el mismo objeto; dos objetos conectados pueden generar un contorno compartido. La calidad de la segmentación determina qué regiones analizaremos.
 
+![Diferencia entre una máscara rellena, el contorno de su frontera y una caja rectangular que la contiene; área frente a perímetro.](../imagenes/08-contornos/mascara-contorno-caja.png)
+
+*La máscara guarda la selección, el contorno describe su frontera y la caja solo la encierra. Área y perímetro miden cosas diferentes.*
+
 ## 2. Entrada de la búsqueda
 
 ```python

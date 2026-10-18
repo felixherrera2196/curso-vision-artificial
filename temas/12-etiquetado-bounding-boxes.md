@@ -69,6 +69,10 @@ Esta línea es un registro de datos, **no un programa para ejecutar**. Utiliza p
 
 Si una imagen contiene dos objetos, su archivo `.txt` tendrá dos líneas, una por cada caja. No crees un archivo diferente para cada objeto de la misma fotografía.
 
+![Ejemplo de una caja en una imagen de 800 por 600 y su conversión a la etiqueta YOLO 0 0.375 0.5 0.25 0.5.](../imagenes/12-etiquetado/caja-y-formato-yolo.png)
+
+*La caja se dibuja en píxeles, pero se guarda con centro y tamaño relativos. El identificador de clase sigue siendo un número entero.*
+
 ## Qué debes obtener
 
 Las imágenes de tu dataset acompañadas por sus etiquetas: **qué objeto es y dónde está**. Antes de continuar, visualiza algunas cajas sobre sus fotografías y comprueba que las clases y posiciones sean correctas.

@@ -26,6 +26,10 @@ Un kernel pequeño produce cambios locales; uno grande puede borrar objetos pequ
 
 También influye el número de iteraciones. Repetir una operación aumenta su efecto, pero no convierte cualquier kernel en equivalente a otro de forma distinta. Conviene ajustar con la máscara visible y documentar el motivo de cada valor.
 
+![Comparación esquemática de una máscara original, su erosión, su dilatación y una apertura con un kernel de 3 por 3.](../imagenes/07-morfologia/erosion-dilatacion-apertura.png)
+
+*Compara siempre con la máscara original. Erosión y dilatación modifican las regiones blancas; la apertura aplica erosión y después dilatación. El dibujo usa un kernel de 3 × 3 como ejemplo; los programas de la práctica usan 5 × 5.*
+
 ## 3. Erosión
 
 La erosión reduce las regiones del primer plano. De forma intuitiva, un píxel conserva su condición de primer plano cuando el vecindario definido por el kernel cabe dentro de la región, según la operación y sus condiciones de borde.

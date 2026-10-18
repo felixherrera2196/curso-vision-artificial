@@ -10,6 +10,10 @@ Colab permite utilizar una computadora remota desde una página web. En vez de e
 
 La GPU es un recurso de esa computadora que puede acelerar el entrenamiento. No es la cámara ni una biblioteca de Python. Primero prepararás el notebook, luego comprobarás el recurso disponible y finalmente ejecutarás el trabajo. Lo que instalaste en tu laptop no se instala automáticamente en Colab: son dos computadoras distintas.
 
+![La PC de Windows captura imágenes y usa el modelo; Colab entrena con GPU y best.pt se descarga desde Colab a la PC.](../imagenes/15-colab/pc-colab-y-modelo.png)
+
+*Cada equipo tiene sus propios archivos y bibliotecas. El dataset se descarga al entorno donde entrenas y best.pt se descarga a la PC donde usarás la cámara.*
+
 ## 1. Qué es Google Colab
 
 Colab permite ejecutar notebooks desde el navegador en un entorno remoto. Un notebook combina celdas de texto, que documentan el proceso, con celdas ejecutables. Las celdas comparten variables y archivos mientras conservas la sesión.

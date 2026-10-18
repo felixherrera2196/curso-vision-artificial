@@ -38,6 +38,10 @@ Más épocas no garantizan mejores resultados. Si el modelo empieza a adaptarse 
 
 ## 4. Entrenamiento e inferencia
 
+![Entrenamiento con imágenes etiquetadas para obtener best.pt, seguido del uso del modelo con una imagen nueva.](../imagenes/10-aprendizaje/entrenar-y-detectar.png)
+
+*Primero ajustamos el modelo con ejemplos y guardamos sus pesos. Después usamos esos pesos para obtener predicciones sobre imágenes nuevas.*
+
 **Entrenar** modifica los pesos usando datos y etiquetas. **Inferir** utiliza los pesos ya obtenidos para predecir sobre una imagen nueva. Durante la detección normal por cámara web no necesitas etiquetar cada fotograma ni volver a entrenar.
 
 Esta separación permite entrenar con GPU en Colab y ejecutar después en una computadora local. La computadora local necesita cargar el modelo y contar con suficiente capacidad para la velocidad deseada; no necesita repetir el entrenamiento para usarlo.

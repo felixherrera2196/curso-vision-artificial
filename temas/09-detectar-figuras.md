@@ -16,6 +16,10 @@ Un contorno puede contener muchos puntos. Para identificar una figura necesitamo
 
 Este procedimiento reconoce una **silueta geométrica** bajo ciertas condiciones. No identifica automáticamente cualquier objeto con esa forma. Una sombra triangular puede cumplir la regla de triángulo, y una taza vista desde arriba puede generar una región circular.
 
+![Un contorno con muchos puntos se aproxima mediante un polígono; ejemplos con tres, cuatro y cinco vértices.](../imagenes/09-figuras/contorno-vertices.png)
+
+*La aproximación simplifica el borde para contar vértices. Tener cuatro no demuestra por sí solo que la figura sea un rectángulo.*
+
 ## 2. Aproximación poligonal
 
 ```python
