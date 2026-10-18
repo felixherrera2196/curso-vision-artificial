@@ -266,37 +266,11 @@ El tono es circular, como los números de una carátula de reloj. En HSV el rojo
 
 En esta práctica no hay que unir máscaras ni aprender una operación extra para resolver el color. Nos centraremos en observar la selección. El mismo filtro HSV se reutilizará en las operaciones morfológicas.
 
-## 8. Calibrador HSV con seis barras
+## 8. Extra: calibrador HSV
 
-### Para qué sirve
+Esta herramienta auxiliar permite ajustar los límites HSV con barras y ver cómo cambia la máscara en tiempo real. Guarda el código como `calibrar_verde_hsv.py` y ejecútalo en el mismo entorno local de las prácticas. Cierra antes cualquier otro programa que use la cámara.
 
-Los valores iniciales del filtro pueden no ajustarse exactamente a la hoja y a la iluminación del laboratorio. En lugar de editar el archivo y volver a ejecutarlo por cada cambio, esta herramienta permite mover **seis barras** y observar la máscara en el momento.
-
-Tendrás una barra para el mínimo y otra para el máximo de H, S y V. Los números aparecen sobre el video. Cuando el resultado sea adecuado, pulsarás **P** para obtener en la terminal las dos líneas que debes copiar al filtro.
-
-La herramienta sigue usando **un intervalo y una máscara**. No aplica erosión ni dilatación: aquí interesa calibrar primero la selección de color, antes de limpiar sus imperfecciones.
-
-### Entorno de la práctica: Windows 11 y Python 3.12.10
-
-```python
-cv2.namedWindow("Ajustes HSV", cv2.WINDOW_NORMAL)
-cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
-h_min = cv2.getTrackbarPos("H minimo", "Ajustes HSV")
-cv2.imshow("Ajustes HSV", panel)
-key = cv2.waitKey(1) & 0xFF
-```
-
-Las barras utilizan **HighGUI**, la interfaz de ventanas de OpenCV, disponible en la distribución de escritorio `opencv-python` para Windows. No necesitas instalar Qt ni crear una aplicación con otro editor visual. `namedWindow`, `createTrackbar`, `getTrackbarPos`, `imshow` y `waitKey` forman parte de este mismo conjunto de herramientas.
-
-Utiliza **Windows 11, Python 3.12.10 y `opencv-python`** en el equipo local. Las variantes *headless* no incluyen estas ventanas. Evita mezclar varias variantes de OpenCV en el mismo entorno. Ejecuta el archivo `.py` desde VS Code o la consola de Windows, no desde Colab ni WSL para esta práctica.
-
-### Preparación
-
-1. Cierra los demás programas de cámara con ESC.
-2. Crea un archivo llamado `calibrar_verde_hsv.py` y copia el programa completo.
-3. Ejecútalo desde VS Code con el mismo Python, OpenCV y NumPy de las prácticas anteriores.
-4. Coloca la hoja verde frente a la cámara, con la luz y distancia que utilizarás en clase.
-5. Organiza las ventanas para ver simultáneamente las barras, la cámara y la máscara.
+Mueve las barras hasta seleccionar la hoja, pulsa **P** con una ventana de OpenCV seleccionada para imprimir los límites y cópialos al filtro HSV de este capítulo. Pulsa **ESC** para salir. P solo imprime los valores; no modifica el archivo del filtro.
 
 ```python
 import cv2
@@ -418,106 +392,6 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
-### Cómo usar las barras paso a paso
-
-1. Empieza con los valores predeterminados: mínimo `[35, 80, 60]` y máximo `[85, 255, 255]`, en orden **H, S, V**.
-2. Mira la máscara: intenta que la hoja quede mayormente blanca y el fondo mayormente negro.
-3. Ajusta primero **H mínimo y H máximo** para limitar el tono verde. Si seleccionas otros colores, estrecha el intervalo con cuidado.
-4. Ajusta **S mínimo** si aparecen regiones grises o poco coloreadas. Subirlo puede excluirlas, pero también puede quitar reflejos o zonas poco saturadas de la hoja.
-5. Ajusta **V mínimo** para permitir o excluir regiones oscuras. Bajarlo puede recuperar una sombra de la hoja, pero también aceptar fondo oscuro que cumpla los otros límites.
-6. Normalmente puedes dejar **S máximo y V máximo en 255**. También están disponibles por si necesitas restringirlos; reducirlos puede excluir partes muy saturadas o brillantes del objeto.
-7. Mueve suavemente la hoja y comprueba que no desaparezca con pequeñas variaciones de orientación o distancia. Evita calibrar solo para una posición inmóvil.
-8. Cuando la selección sea adecuada, haz clic en una ventana de OpenCV y pulsa **P**. Mira la terminal de VS Code: aparecerán `lower_green` y `upper_green` con los números elegidos.
-9. Copia esas dos líneas. Pulsa ESC para cerrar el calibrador y pégalas en lugar de los límites del programa HSV de este capítulo. No las agregues como una segunda pareja de límites.
-10. Guarda y ejecuta el filtro normal para comprobar el resultado. Utiliza también esos valores en las prácticas posteriores que seleccionan la misma hoja.
-
-La tecla P **no escribe ni modifica archivos automáticamente**. Solo imprime el texto para que lo copies. Si vuelves a abrir el calibrador, empezará otra vez con sus valores iniciales; conserva las líneas obtenidas antes de cerrar la terminal.
-
-### Qué hace cada parte nueva del código
-
-```python
-def al_cambiar(valor):
-    pass
-
-cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
-```
-
-**`def al_cambiar(valor)` y `pass`.** `def` define una función. OpenCV necesita una función para notificar el movimiento de cada barra y le entrega su nueva posición como argumento. En este ejemplo la función no realiza ninguna operación: `pass` significa «no hacer nada». Las posiciones se consultan dentro del ciclo de video. No escribas `al_cambiar()` al crear las barras: se entrega el nombre de la función para que OpenCV pueda llamarla después.
-
-```python
-cv2.namedWindow("Ajustes HSV", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("Ajustes HSV", 700, 180)
-cv2.imshow("Ajustes HSV", panel)
-```
-
-**`namedWindow`.** Crea la ventana antes de colocar controles dentro. `WINDOW_NORMAL` permite cambiar su tamaño. `resizeWindow` propone un tamaño inicial. Mostramos además un panel negro con instrucciones mediante `imshow` antes de crear las barras, para que la ventana tenga contenido visible desde el principio. Ese panel no es otra máscara de color; solo sirve de fondo para la interfaz. Puedes ampliar la ventana si las barras no se ven cómodamente.
-
-```python
-cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
-```
-
-**`createTrackbar`.** Cada llamada indica nombre de la barra, ventana donde aparece, valor inicial, valor máximo y función de aviso. El mínimo de recorrido es 0. H termina en 179 porque esa es la escala de esta conversión HSV de ocho bits; S y V terminan en 255. Los nombres con «mínimo» y «máximo» indican qué límite del filtro controla cada barra, no escalas diferentes.
-
-```python
-h_min = cv2.getTrackbarPos("H minimo", "Ajustes HSV")
-```
-
-**`getTrackbarPos`.** Lee la posición actual de una barra. Se ejecuta en cada fotograma, de modo que al moverla cambia el arreglo de límites y se recalcula la máscara. Los nombres de barra y ventana deben coincidir con los utilizados al crearlas.
-
-**`rango_valido` y `and`.** Comprobamos las tres parejas de límites. `and` exige que todas las comparaciones sean verdaderas. No tiene sentido pedir simultáneamente H mayor o igual que 80 y menor o igual que 40. Si cruzas una pareja, el programa muestra un aviso y una máscara negra hasta que la corrijas. No intercambia números automáticamente: así ves qué valor necesitas ajustar.
-
-```python
-mask = np.zeros(frame.shape[:2], dtype=np.uint8)
-```
-
-**`np.zeros(frame.shape[:2], dtype=np.uint8)`.** Se utiliza únicamente para mostrar una máscara negra cuando el intervalo es inválido. `frame.shape[:2]` toma alto y ancho del fotograma; `zeros` crea una imagen llena de ceros de esas dimensiones. No se combina con otra máscara de color.
-
-```python
-cv2.putText(
-    preview, f"Min HSV: {lower_green.tolist()}",
-    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2
-)
-print(f"lower_green = np.array({lower_green.tolist()}, dtype=np.uint8)")
-```
-
-**`tolist()`, textos y `print`.** `tolist()` permite presentar los valores del arreglo como una lista legible. `putText` los muestra en la cámara y `print` escribe las líneas de Python en la terminal. Los textos que empiezan por `f` insertan los valores actuales dentro del mensaje.
-
-```python
-if key == ord("p") or key == ord("P"):
-```
-
-**`ord("p")`.** Permite comparar la tecla recibida con la letra P. Se aceptan tanto minúscula como mayúscula. Si la terminal tiene el foco, la pulsación puede no llegar a OpenCV: selecciona una ventana de la herramienta antes de pulsarla.
-
-### Comprobación en el equipo Windows del laboratorio
-
-1. En una consola nueva, ejecuta `python --version` y confirma **Python 3.12.10**. Selecciona ese mismo intérprete en VS Code.
-2. Ejecuta el calibrador. Deben aparecer «Ajustes HSV», con sus seis barras, «Camara y valores HSV» y «Mascara calibrada».
-3. Arrastra una barra con el ratón. Comprueba que cambie su número, que el valor sobre el video se actualice y que la máscara responda cuando el cambio afecta a los píxeles de la escena.
-4. Prueba un mínimo mayor que su máximo: debe aparecer el aviso de intervalo inválido. Corrígelo antes de continuar.
-5. Con el intervalo válido, selecciona una ventana de OpenCV y pulsa P. Comprueba que las dos líneas aparezcan en la terminal, sin tener que escribir los números manualmente.
-6. Pulsa ESC con una ventana seleccionada y verifica que las ventanas se cierren. Vuelve a ejecutar para comprobar que la cámara quedó libre.
-
-Si no aparecen ventanas y el mensaje dice que la función no está implementada, revisa si instalaste una variante *headless* o si ejecutas desde otro entorno. Si las ventanas aparecen pero no hay cámara, revisa conexión, otras aplicaciones y los permisos de **Configuración → Privacidad y seguridad → Cámara** de Windows 11, incluido el acceso de aplicaciones de escritorio.
-
-```python
-key = cv2.waitKey(1) & 0xFF
-```
-
-Si las barras no se ven completas, amplía la ventana de ajustes y separa las ventanas en la pantalla. Si P o ESC no responden, haz clic en una ventana de OpenCV antes de pulsarlas; la terminal no debe tener el foco. La atención a estas ventanas se mantiene mediante `waitKey` dentro del ciclo, así que no elimines esa llamada.
-
-Referencia de las funciones utilizadas: [documentación oficial de HighGUI](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html). Para la diferencia entre distribución de escritorio y *headless*, consulta [la página del paquete opencv-python](https://pypi.org/project/opencv-python/).
-
-### Cómo comprobar que copiaste lo correcto
-
-Los tres valores del mínimo deben aparecer juntos en `lower_green`, y los tres del máximo, en `upper_green`. Conserva el orden H, S y V y la indicación `dtype=np.uint8`. No copies los códigos como instrucciones de la terminal: reemplaza las líneas correspondientes **dentro del archivo Python del filtro**.
-
-El programa normal no muestra barras; utiliza los límites que pegaste. Si su selección no coincide con la del calibrador, comprueba que guardaste los cambios, ejecutaste el archivo correcto y mantuviste las condiciones de luz.
-
-Si la máscara queda negra incluso con un intervalo válido, revisa qué canal está excluyendo la hoja. Si queda casi toda blanca, el intervalo acepta demasiados píxeles o el fondo tiene colores similares. No busques una calibración perfecta a costa de perder toda la hoja cuando se mueve ligeramente.
-
-El calibrador permite explorar otros tonos cambiando las barras, pero la práctica sigue centrada en verde. Un solo intervalo numérico no representa una región que cruza el final y el inicio de H, como puede suceder con el rojo.
-
-
 ## 9. Consulta: convertir y filtrar en HSV
 
 ### `cv2.cvtColor`: cambiar la representación del color
@@ -549,13 +423,6 @@ mask = cv2.inRange(hsv, lower_green, upper_green)
 ```
 
 `cvtColor` recibe `frame` en BGR y devuelve otra representación que guardamos en `hsv`. `np.array` construye los límites en orden H, S y V. `inRange` recibe ahora la imagen convertida y devuelve una máscara de un canal: 255 si cumple los tres intervalos y 0 si no. No reemplaces `hsv` por `frame` manteniendo estos límites, porque compararías datos con significados diferentes.
-
-```python
-cv2.createTrackbar("H minimo", "Ajustes HSV", 35, 179, al_cambiar)
-h_min = cv2.getTrackbarPos("H minimo", "Ajustes HSV")
-```
-
-La barra de H termina en 179, mientras las de S y V terminan en 255. `createTrackbar` recibe el nombre, la ventana, el valor inicial, el máximo y la función de aviso. `getTrackbarPos` recupera su posición en cada fotograma. El funcionamiento de ventanas, arreglos y barras se consulta también en las fichas del [calibrador BGR del tema 05](05-filtros-color.md); aquí cambia el significado de sus valores.
 
 ## 10. Comparación guiada en el laboratorio
 

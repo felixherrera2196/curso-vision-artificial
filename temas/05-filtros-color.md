@@ -128,13 +128,11 @@ Haz una sombra suave sobre la hoja. Sus intensidades cambian: una zona verde osc
 
 Un filtro BGR puede funcionar bien en condiciones controladas. La dificultad es que estamos ajustando intensidades de tres componentes, no un tono y su brillo por separado.
 
-## 3. Calibrador BGR: ajustar el filtro sin editar números a mano
+## 3. Extra: calibrador BGR
 
-Este programa aplica el mismo filtro sencillo, pero permite cambiar sus seis límites mientras observas la cámara. Las barras B, G y R controlan **azul, verde y rojo**, en ese orden. Todas recorren valores de **0 a 255**. No convierte el fotograma a otro modelo de color.
+Esta herramienta auxiliar permite ajustar los límites BGR con barras y ver cómo cambia la máscara en tiempo real. Guarda el código como `calibrar_verde_bgr.py` y ejecútalo en el mismo entorno local de las prácticas. Cierra antes cualquier otro programa que use la cámara.
 
-Utiliza **Windows 11, Python 3.12.10, `opencv-python` y NumPy** en el equipo local. Las ventanas HighGUI y sus barras no están disponibles en las variantes *headless*. Ejecuta desde VS Code o la consola de Windows, no desde Colab ni WSL para esta práctica. Cierra cualquier otro programa que use la cámara.
-
-Guarda el siguiente programa completo como `calibrar_verde_bgr.py`. Empieza con los mismos límites del filtro: mínimo `[0, 100, 0]` y máximo `[120, 255, 120]`.
+Mueve las barras hasta seleccionar la hoja, pulsa **P** con una ventana de OpenCV seleccionada para imprimir los límites y cópialos al filtro BGR de este capítulo. Pulsa **ESC** para salir. P solo imprime los valores; no modifica el archivo del filtro.
 
 ```python
 import cv2
@@ -254,67 +252,6 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
-### Cómo calibrar con la hoja
-
-1. Coloca la hoja verde con iluminación uniforme y comprueba que el fondo no sea verde.
-2. Observa «Mascara calibrada»: la hoja debería quedar blanca y el fondo negro.
-3. Si se pierde verde oscuro, prueba bajar **G mínimo**. Si aparecen zonas que no buscas, revierte el cambio y observa qué otros canales cumplen el intervalo.
-4. Si una parte clara de la hoja desaparece, prueba subir **B máximo** o **R máximo**, de uno en uno. Un reflejo puede aumentar los tres componentes y confundirse con superficies claras del fondo.
-5. Cambia distancia y orientación suavemente. No calibres para una única posición de la hoja.
-6. Con un intervalo válido, selecciona una ventana de OpenCV y pulsa **P**. Copia las líneas impresas en la terminal en lugar de `lower_green` y `upper_green` del archivo `filtro_verde_bgr.py`.
-7. Pulsa ESC para liberar la cámara. Ejecuta el filtro sencillo con esos límites y comprueba el resultado.
-
-P no guarda archivos: solo imprime las dos asignaciones para copiarlas. Al reiniciar, las barras vuelven a sus valores iniciales. Conserva las líneas antes de cerrar la terminal. **Los valores obtenidos aquí son BGR**; no los uses como límites HSV en el siguiente capítulo.
-
-### Qué hace cada parte del calibrador
-
-```python
-def al_cambiar(valor):
-    pass
-
-cv2.createTrackbar("G minimo", "Ajustes BGR", 100, 255, al_cambiar)
-```
-
-`al_cambiar` es la función de aviso que OpenCV recibe al crear la barra. Se entrega su nombre sin paréntesis para que OpenCV pueda llamarla cuando cambie la posición. En este ejemplo no realiza operaciones: `pass` deja su cuerpo vacío, porque las posiciones se leen en cada vuelta del video.
-
-```python
-g_min = cv2.getTrackbarPos("G minimo", "Ajustes BGR")
-lower_green = np.array([b_min, g_min, r_min], dtype=np.uint8)
-upper_green = np.array([b_max, g_max, r_max], dtype=np.uint8)
-mask = cv2.inRange(frame, lower_green, upper_green)
-```
-
-`getTrackbarPos` obtiene el valor actual de una barra. `np.array` reúne los tres mínimos o máximos en orden B, G y R. `inRange` compara el fotograma BGR directamente: exige que **los tres canales** estén entre sus límites, incluidos los extremos.
-
-```python
-rango_valido = b_min <= b_max and g_min <= g_max and r_min <= r_max
-mask = np.zeros(frame.shape[:2], dtype=np.uint8)
-```
-
-La primera línea comprueba que ningún mínimo supere su máximo. La segunda se utiliza **en la rama de intervalo inválido**: crea una máscara negra de alto y ancho iguales al fotograma. Si aparece un aviso rojo, corrige las barras antes de buscar un problema de iluminación. No se intercambian límites automáticamente.
-
-```python
-preview = frame.copy()
-cv2.putText(
-    preview, f"Min BGR: {lower_green.tolist()}",
-    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2
-)
-print(f"lower_green = np.array({lower_green.tolist()}, dtype=np.uint8)")
-```
-
-`copy()` permite escribir en una copia del video. `tolist()` presenta los números del arreglo como una lista, `putText` los dibuja sobre la copia y `print` escribe una asignación en la terminal cuando pulsas P. El prefijo `f` inserta los valores actuales en el texto.
-
-```python
-key = cv2.waitKey(1) & 0xFF
-if key == ord("p") or key == ord("P"):
-```
-
-`waitKey` atiende las ventanas y consulta una tecla. `ord` obtiene el código de cada letra para admitir P mayúscula o minúscula. Esta condición pertenece al ciclo del programa completo; la ventana de OpenCV debe tener el foco. ESC termina el ciclo y después se liberan cámara y ventanas.
-
-### Comprobación en Windows
-
-Comprueba que aparezcan «Ajustes BGR», «Camara y valores BGR» y «Mascara calibrada», con seis barras cuyo máximo sea 255. Mueve una barra y verifica que cambien el número y la máscara cuando corresponda. Cruza un mínimo con su máximo: debe aparecer el aviso y la máscara negra. Corrígelo y pulsa P para verificar las dos líneas en la terminal. Sal con ESC y vuelve a ejecutar para comprobar que la cámara quedó libre.
-
 ## 4. Qué dificultad aparece con BGR
 
 Bajar G mínimo puede recuperar una zona verde oscura, pero también ampliar la selección a colores que no deseas. Subir B máximo y R máximo puede recuperar una parte clara de la hoja y, a la vez, aceptar fondo. Las barras ayudan a observarlo, pero no cambian la regla: seguimos comparando tres intensidades independientes.
@@ -338,13 +275,13 @@ En el video verás la hoja verde y en la máscara su región mayormente blanca. 
 - ¿Por qué el orden de los límites es B, G y R aunque normalmente digamos RGB?
 - ¿Qué representan los píxeles blancos de la máscara?
 - ¿Por qué bajar G mínimo puede recuperar sombra y también aceptar más fondo?
-- ¿Qué cambia cuando mueves una barra y qué debes copiar después de pulsar P?
+- ¿Qué valores debes ajustar para cambiar qué píxeles acepta el filtro?
 - ¿Por qué todavía no estamos filtrando directamente por tono?
 
-## Consulta: funciones del filtro y del calibrador BGR
+## Consulta: funciones del filtro BGR
 
 
-Las funciones de cámara y visualización se describen en el [tema 04](04-video-camara-python.md). Aquí nos centraremos en seleccionar píxeles y leer las barras. Las formas de llamada se muestran simplificadas: no necesitas escribir todos los parámetros opcionales.
+Las funciones de cámara y visualización se describen en el [tema 04](04-video-camara-python.md). Aquí nos centraremos en seleccionar píxeles. Las formas de llamada se muestran simplificadas: no necesitas escribir todos los parámetros opcionales.
 
 ### `np.array`: construir los límites
 
@@ -381,65 +318,6 @@ Forma: `cv2.inRange(src, lowerb, upperb, dst=None)`.
 **Devuelve:** una máscara de un canal de ocho bits: 255 donde se cumplen todos los intervalos y 0 donde no. Los límites se incluyen: un píxel que coincide con el mínimo puede ser aceptado.
 
 **Uso común:** filtrar colores con límites calibrados, como `lower_green` y `upper_green`. También permite intervalos sobre otros datos, pero no detecta clases ni separa objetos por sí sola. Un mínimo mayor que su máximo no representa un intervalo circular y no se corrige automáticamente.
-
-### `cv2.namedWindow`: preparar una ventana
-
-```python
-cv2.namedWindow("Ajustes BGR", cv2.WINDOW_NORMAL)
-```
-
-Forma: `cv2.namedWindow(winname, flags=cv2.WINDOW_AUTOSIZE)`.
-
-`winname` es el nombre necesario para identificar la ventana. `flags` es opcional: `WINDOW_AUTOSIZE` ajusta la ventana al contenido; `WINDOW_NORMAL` permite redimensionarla. El calibrador elige `WINDOW_NORMAL` para acomodar los controles. **No devuelve una imagen**.
-
-### `cv2.resizeWindow`: proponer el tamaño
-
-```python
-cv2.resizeWindow("Ajustes BGR", 700, 180)
-```
-
-En la forma usada recibe `winname`, `width` y `height`: nombre, ancho y alto del área de imagen solicitada, en píxeles. La ventana debe existir y permitir redimensionamiento. El tamaño exterior final también depende de controles, bordes y sistema operativo. Esta función cambia la ventana; **no redimensiona el arreglo de la imagen**.
-
-### `cv2.createTrackbar`: agregar una barra
-
-```python
-cv2.createTrackbar("G minimo", "Ajustes BGR", 100, 255, al_cambiar)
-```
-
-Forma de Python: `cv2.createTrackbar(trackbarname, winname, value, count, onChange)`.
-
-| Parámetro | Qué debes entregar |
-| --- | --- |
-| `trackbarname` | Nombre de la barra; debe identificarla dentro de la ventana. |
-| `winname` | Nombre de una ventana que ya exista. |
-| `value` | Posición inicial, como 0 para B mínimo. |
-| `count` | Posición máxima: 255 para B, G y R. |
-| `onChange` | Función que recibirá la posición al mover la barra, aquí `al_cambiar`. |
-
-Esta forma necesita esos cinco argumentos. La barra recorre valores enteros desde 0 hasta `count`; no significa que necesites arrastrarla hasta ambos extremos para calibrar. Su posición se lee por separado.
-
-`onChange` es una función de aviso o *callback*: OpenCV la llama cuando corresponde. En el curso contiene `pass` porque consultamos todas las posiciones dentro del ciclo. Entregamos el nombre de la función, sin paréntesis. Crear una barra no cambia por sí solo los límites del filtro: el programa debe leerla y reconstruirlos.
-
-### `cv2.getTrackbarPos`: leer una barra
-
-```python
-g_min = cv2.getTrackbarPos("G minimo", "Ajustes BGR")
-```
-
-Necesita `trackbarname` y `winname`, con los mismos nombres utilizados al crearla. **Devuelve:** la posición entera actual. La consultamos cada fotograma para que el filtro responda al movimiento. No devuelve los seis límites juntos: cada llamada lee una barra.
-
-### `np.zeros`: crear el panel o una máscara negra
-
-```python
-panel = np.zeros((100, 700, 3), dtype=np.uint8)
-```
-
-Forma de uso del curso: `np.zeros(shape, dtype=np.uint8)`. `shape` indica las dimensiones necesarias y `dtype` es opcional; si lo omites, NumPy suele utilizar números decimales de doble precisión, no ocho bits.
-
-**Devuelve:** un arreglo lleno de ceros. Con forma `(100, 700, 3)` creamos un panel de color negro de alto 100 y ancho 700. Con `frame.shape[:2]` creamos una imagen negra de un canal con el alto y ancho de la cámara. No confíes en que una imagen negra indique siempre que no hay verde: el calibrador también la utiliza al avisar que los límites son inválidos.
-
-El dibujo de valores utiliza `putText`, cuya ficha completa está en el [tema 09](09-detectar-figuras.md). `.copy()` se detalla en el [tema 08](08-contornos.md). En el calibrador sirven para escribir números sobre una copia del video; no modifican la selección BGR ya calculada.
-
 
 ## Para dar el siguiente paso
 
