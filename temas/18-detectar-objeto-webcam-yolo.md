@@ -1,115 +1,95 @@
-# 18. Detectar objeto con cámara web usando YOLO
+# 18. Detectar objetos con tu modelo YOLO y la cámara web
 
-## Qué aprenderás
+## Preparar el modelo en tu computadora
 
-Integrarás conceptualmente el ciclo de cámara con un modelo entrenado. Comprenderás qué significan las predicciones, cómo influyen los umbrales y qué comprobar para evaluar la aplicación final.
+Utilizaremos el archivo **`best.pt` que descargaste de Colab** en el capítulo anterior. Este contiene el modelo entrenado con tus imágenes y tus clases; ahora lo probaremos con la cámara de tu propia PC.
 
-## La idea en palabras sencillas
+1. Abre **Descargas** y localiza `best.pt`.
+2. Muévelo a **tu carpeta de usuario de Windows**, donde guardamos los códigos del curso. Por ejemplo:
 
-La aplicación final combina dos cosas que ya conoces: recibir imágenes de la cámara y pedir predicciones al detector. En cada imagen, el modelo intenta localizar objetos y el programa dibuja sus cajas y nombres.
+   ```text
+   C:\Users\TuUsuario\best.pt
+   ```
 
-La caja es una propuesta, no una garantía. Necesitarás observar cuándo acierta y cuándo se equivoca. Si no hay detecciones, el video debe seguir funcionando. Si salen muchas cajas para el mismo objeto en distintos momentos, no significa que hayan aparecido muchos objetos nuevos: cada fotograma es otra observación.
+   Puedes abrir esa carpeta escribiendo **`%USERPROFILE%`** en la barra de direcciones del Explorador y pulsando Enter.
+3. Comprueba que el archivo se llame exactamente **`best.pt`**, sin números añadidos por la descarga.
 
-## 1. Unir dos componentes ya comprobados
+El programa obtiene automáticamente tu carpeta de usuario y busca ahí `best.pt`. Así no tendrás que escribir una ruta con tu nombre de usuario. **Lo busca directamente en esa carpeta**, no dentro de Descargas ni en subcarpetas, aunque guardes el código en otro lugar.
 
-Antes de integrar, verifica que el programa del tema 04 capture video y que el modelo del tema 17 haga predicciones sobre imágenes. La aplicación final combina ambos: captura un fotograma, lo analiza con el detector y muestra el resultado.
+## Crear y ejecutar el programa
 
-Carga el modelo una sola vez antes del ciclo. Cargar pesos en cada fotograma desperdicia tiempo y puede consumir memoria innecesariamente. La cámara también debe abrirse una vez y liberarse al terminar.
+Crea un archivo nuevo en esa carpeta, con un nombre diferente al de las prácticas anteriores, por ejemplo **`probar_mi_yolo.py`**. Copia el código completo de abajo.
 
-## 2. Flujo por fotograma
+Utiliza el Python local y OpenCV de las prácticas anteriores. También necesitas Ultralytics en ese mismo entorno de Windows; instalarlo en Colab no lo instala en tu PC. Si aún no lo tienes, ejecuta en la terminal de ese entorno:
 
-1. Leer el siguiente fotograma y comprobar el éxito.
-2. Enviar la imagen válida al detector.
-3. Obtener los resultados de detección.
-4. Interpretar cajas, clases y puntuaciones.
-5. Dibujar las detecciones aceptadas.
-6. Mostrar la imagen y atender la condición de salida.
-7. Repetir sin volver a cargar el modelo.
+```bash
+python -m pip install ultralytics
+```
 
-Si no hay objetos detectados, la aplicación debe poder mostrar el fotograma y continuar. Una lista vacía de detecciones es un resultado válido; no equivale a un fallo de captura.
+Cierra otros programas que utilicen la cámara y ejecuta `probar_mi_yolo.py` desde VS Code o con:
 
-## 3. Qué devuelve el detector
+```bash
+python probar_mi_yolo.py
+```
 
-Una predicción de detección suele incluir una caja, un identificador de clase y una puntuación de confianza. La representación exacta depende de la API. En el flujo habitual de Ultralytics existen objetos de resultados que permiten consultar cajas y nombres o generar una imagen anotada.
+## Código completo
 
-Para interpretar una caja, confirma su convención de coordenadas. Si trabajas con coordenadas de esquina, debes dibujar esquinas; si recibes centro y tamaño, hay que convertir. También confirma a qué imagen se refieren las coordenadas antes de redimensionar o recortar.
+```python
+import os
+import cv2
+from ultralytics import YOLO
 
-La confianza es una puntuación del modelo asociada a la predicción. No debe presentarse automáticamente como una probabilidad perfectamente calibrada de que el objeto esté allí. Un valor alto no elimina la posibilidad de error.
+# 1. Buscar el archivo 'best.pt' en tu carpeta de usuario de Windows
+ruta_usuario = os.path.expanduser("~")
+ruta_modelo = os.path.join(ruta_usuario, "best.pt")
 
-## 4. Umbral de confianza
+# 2. Cargar tu modelo de YOLOv11
+model = YOLO(ruta_modelo)
 
-Un umbral determina qué predicciones aceptas. Al subirlo, suelen disminuir detecciones débiles y algunas falsas alarmas, pero también puedes perder objetos reales. Al bajarlo, puedes recuperar objetos omitidos a costa de aceptar más resultados incorrectos.
+# 3. Abrir la cámara web de tu PC
+cap = cv2.VideoCapture(0)
+print("Presiona la tecla 'q' en el teclado para cerrar la ventana.")
 
-El valor adecuado depende del costo de ambos tipos de error. Para una demostración, observa diferentes escenas y registra cómo cambian los resultados. No elijas el umbral con una sola imagen particularmente favorable.
+# 4. Bucle para procesar la cámara en vivo
+while True:
+    success, frame = cap.read()
+    if not success:
+        break
 
-## 5. Cajas superpuestas e IoU
+    # Filtramos por confianza alta y reducimos cuadros duplicados
+    results = model(frame, conf=0.8, iou=0.1, max_det=1)
 
-Los detectores pueden producir varias candidatas relacionadas con una misma instancia. En los flujos que utilizan supresión de detecciones superpuestas, un criterio basado en IoU ayuda a decidir cuáles conservar. Los detalles cambian entre modelos y configuraciones; no hay que asumir que todas las versiones usan el mismo posprocesamiento.
+    # Dibujar los resultados en la imagen
+    annotated_frame = results[0].plot()
 
-El umbral de confianza y el criterio de superposición no son equivalentes. El primero filtra puntuaciones; el segundo participa en el tratamiento de cajas relacionadas. Antes de ajustar estos parámetros, identifica cuáles admite el modelo que utilizas y qué efecto tiene cada uno sobre las detecciones.
+    # Mostrar la imagen en pantalla
+    cv2.imshow("Prueba YOLOv11", annotated_frame)
 
-## 6. Coordenadas y color
+    # Si presionas la 'q', se cierra todo
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-Si redimensionas antes de inferir y dibujas en otra imagen, asegúrate de que las cajas se transformen correctamente. La API puede encargarse de recuperar coordenadas respecto a la imagen que recibió, pero no adivina transformaciones externas posteriores.
+# 5. Apagar cámara y cerrar ventanas
+cap.release()
+cv2.destroyAllWindows()
+```
 
-Del mismo modo, respeta el formato de color esperado por la entrada concreta. Algunas interfaces aceptan arreglos de OpenCV y manejan conversiones; otras requieren una representación distinta. Convertir varias veces sin conocer el flujo puede introducir un error de canales.
+## Cómo funciona y qué debes observar
 
-## 7. Velocidad, latencia y seguimiento
+El programa carga `best.pt` una sola vez, abre la cámara y analiza cada fotograma. Después dibuja las cajas y etiquetas del modelo sobre el video. Acerca uno de los objetos de tus clases y comprueba si lo detecta.
 
-Mide el tiempo del flujo completo, no solamente la inferencia: captura, preparación, predicción, dibujo y visualización también cuentan. Una tasa media alta puede coexistir con retraso si se acumulan fotogramas.
+Esta línea controla las detecciones que se muestran:
 
-Para mejorar rendimiento puedes evaluar un modelo menor, una entrada menor o un dispositivo más rápido. Cada cambio debe comprobarse también sobre objetos pequeños y escenas difíciles. Si procesas solo algunos fotogramas, el resultado se actualiza con menor frecuencia.
+```python
+results = model(frame, conf=0.8, iou=0.1, max_det=1)
+```
 
-Detectar no equivale a **seguir** identidades. Si una caja aparece en dos fotogramas, el detector por sí solo no garantiza que corresponda al mismo objeto físico. Tampoco debes sumar detecciones de cada fotograma como si fueran objetos diferentes para obtener un conteo acumulado.
+- **`conf=0.8`**: filtra las predicciones con puntuación de confianza inferior a 0.8. Puede reducir falsas detecciones, pero también dejar fuera objetos que el modelo detecta con menor puntuación.
+- **`iou=0.1`**: establece un umbral bajo de solapamiento para suprimir cajas repetidas de una misma clase. También puede eliminar cajas de objetos cercanos; no garantiza quitar todos los duplicados.
+- **`max_det=1`**: permite mostrar **como máximo una detección por fotograma**, aunque haya varios objetos presentes.
 
-## 8. Evaluación final del taller
+Para terminar, haz clic en la ventana del video y pulsa **q**. El programa libera la cámara y cierra las ventanas.
 
-Prueba presencia y ausencia de objetos, varias instancias, distintos fondos, distancias y luces. Anota falsos positivos, objetos omitidos y clases confundidas. Compara esas condiciones con el dataset para identificar qué ejemplos faltan.
-
-Verifica también la salida: la tecla elegida debe terminar el ciclo, la cámara debe liberarse y las ventanas deben cerrarse. Las excepciones requieren un mecanismo de limpieza si buscas una aplicación más robusta que el ejemplo inicial.
-
-## Actividad integradora
-
-Realiza dos aplicaciones: una selección por color y forma con OpenCV y una detección aprendida con YOLO. Para cada una describe clases o criterios, datos requeridos, condiciones de prueba, aciertos y fallos. Explica en qué escena prefieres cada enfoque usando lo observado.
-
-## Comprobación de la aplicación
-
-Verifica por separado la captura de cámara y la carga del detector. Al integrarlos, comprueba que las predicciones se actualicen, que el programa siga funcionando sin detecciones y que ESC libere la cámara. Registra velocidad, falsas alarmas y objetos omitidos en las condiciones de uso de tu práctica.
-
-## Primera prueba de la aplicación final
-
-Coloca un solo objeto de una clase aprendida frente a la cámara, con buena luz y un fondo sencillo. Abre el programa y comprueba tres resultados por separado: hay video, el detector propone una caja y el nombre corresponde a la clase esperada.
-
-Después retira el objeto. El video debe continuar aunque ya no haya detecciones. Vuelve a colocarlo, cambia la distancia y agrega otra instancia. Observa si ambas se detectan y si aparecen cajas equivocadas en el fondo.
-
-Si no hay video, revisa la captura. Si hay video pero no cajas, revisa pesos, clases, condiciones de la escena y umbral de confianza. Si la imagen va muy lenta, mide el tiempo y revisa el tamaño del modelo y de la entrada. No vuelvas a entrenar antes de identificar cuál de estos problemas estás observando.
-
-Al terminar, pulsa ESC con la ventana seleccionada y vuelve a abrir el programa para confirmar que la cámara quedó libre.
-
-## Diferencias con el programa de hojas verdes
-
-En los ejemplos anteriores convertimos a HSV y seleccionamos un intervalo porque esa era nuestra regla. Un detector aprendido compatible con la interfaz de imágenes de OpenCV puede recibir el fotograma de color para realizar su propia preparación.
-
-No conserves el filtro verde como paso obligatorio antes de YOLO. Si eliminas todos los píxeles que no son verdes, puedes quitar la información que el modelo necesita. Respeta el formato de entrada de la API y el preprocesamiento del flujo de entrenamiento e inferencia.
-
-El detector devuelve cajas, clases y puntuaciones; OpenCV sigue siendo útil para capturar y mostrar. El archivo de pesos se carga una vez antes del ciclo, no en cada fotograma. Las predicciones nuevas sí se calculan sobre las imágenes que va entregando la cámara.
-
-## Interpretar una etiqueta sin confundirla con una certeza
-
-Una etiqueta como «vaso» con puntuación 0.80 expresa una salida del modelo bajo su configuración. No asegura que ocho de cada diez predicciones concretas de ese tipo sean correctas en cualquier escena. Comprueba resultados con ejemplos reales y observa cómo cambia el desempeño al ajustar el umbral.
-
-Una clase inesperada puede indicar que cargaste otros pesos. Una caja ausente puede deberse a objeto pequeño, mala luz, datos insuficientes o filtro de confianza, entre otras causas. No todos los fallos se corrigen bajando el umbral.
-
-## Registro sencillo de pruebas
-
-Para cada escena anota objetos presentes, objetos correctamente detectados, objetos omitidos y falsas alarmas. Incluye una escena sin las clases objetivo y otra con dos instancias. Después cambia iluminación y distancia, de una en una.
-
-También comprueba funcionamiento: que el video continúe sin detecciones, que las etiquetas sean legibles y que al terminar la cámara quede disponible. No sumes las cajas de cada fotograma para estimar cuántos objetos diferentes pasaron delante: esa tarea requiere una lógica adicional de seguimiento y conteo.
-
-## Cierre de la actividad integradora
-
-Presenta una demostración de OpenCV y otra de YOLO. Explica qué información preparaste para cada una, en qué condiciones responde bien y qué pruebas mostraron sus límites. Conserva los archivos necesarios y una explicación para que otra persona del grupo pueda repetir tu procedimiento.
-
-Una conclusión útil puede ser «funciona en estas escenas y falla en estas otras», acompañada por ejemplos. Eso comunica mejor el resultado que afirmar que el programa reconoce cualquier objeto en cualquier situación.
+Si no aparece ninguna caja, comprueba que usas el `best.pt` correcto y muestra un objeto de las clases que entrenaste, con buena iluminación. Si aparece un error al cargar el modelo, revisa que el archivo esté directamente en tu carpeta de usuario.
 
 [Anterior](17-descargar-yolo-uso-local.md) · [Índice del curso](../README.md)
