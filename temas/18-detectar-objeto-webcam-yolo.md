@@ -48,7 +48,7 @@ model = YOLO(ruta_modelo)
 
 # 3. Abrir la cámara web de tu PC
 cap = cv2.VideoCapture(0)
-print("Presiona la tecla 'q' en el teclado para cerrar la ventana.")
+print("Presiona ESC en el teclado para cerrar la ventana.")
 
 # 4. Bucle para procesar la cámara en vivo
 while True:
@@ -65,8 +65,8 @@ while True:
     # Mostrar la imagen en pantalla
     cv2.imshow("Prueba YOLOv11", annotated_frame)
 
-    # Si presionas la 'q', se cierra todo
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # Si presionas ESC (27), se cierra todo
+    if cv2.waitKey(1) & 0xFF == 27:
         break
 
 # 5. Apagar cámara y cerrar ventanas
@@ -88,7 +88,7 @@ results = model(frame, conf=0.8, iou=0.1, max_det=1)
 - **`iou=0.1`**: establece un umbral bajo de solapamiento para suprimir cajas repetidas de una misma clase. También puede eliminar cajas de objetos cercanos; no garantiza quitar todos los duplicados.
 - **`max_det=1`**: permite mostrar **como máximo una detección por fotograma**, aunque haya varios objetos presentes.
 
-Para terminar, haz clic en la ventana del video y pulsa **q**. El programa libera la cámara y cierra las ventanas.
+Para terminar, haz clic en la ventana del video y pulsa **ESC**. El programa libera la cámara y cierra las ventanas.
 
 Si no aparece ninguna caja, comprueba que usas el `best.pt` correcto y muestra un objeto de las clases que entrenaste, con buena iluminación. Si aparece un error al cargar el modelo, revisa que el archivo esté directamente en tu carpeta de usuario.
 
