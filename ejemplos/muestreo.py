@@ -46,10 +46,8 @@ while True:
 
     # Mostrar info en pantalla
     display_frame = frame.copy()
-    cv2.putText(display_frame, f"Siguiente ID: {img_counter}", (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-    cv2.putText(display_frame, f"[ESPACIO] Manual | [ESC] Salir | Auto: {INTERVALO_SEGUNDOS}s", (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(display_frame, f"Siguiente ID: {img_counter}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+    cv2.putText(display_frame, f"[ESPACIO] Manual | [ESC] Salir | Auto: {INTERVALO_SEGUNDOS}s", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
     cv2.imshow("Captura Roboflow", display_frame)
 

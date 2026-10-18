@@ -19,11 +19,7 @@ Este procedimiento reconoce una **silueta geométrica** bajo ciertas condiciones
 ## 2. Aproximación poligonal
 
 ```python
-approx = cv2.approxPolyDP(
-    contour,
-    epsilon,
-    True
-)
+approx = cv2.approxPolyDP(contour, epsilon, True)
 ```
 
 `approxPolyDP` aproxima una curva por otra con menos vértices, usando una tolerancia llamada epsilon. La idea es conservar la forma global mientras se eliminan variaciones pequeñas del borde.
@@ -123,10 +119,7 @@ if not cap.isOpened():
 
 
 # Creamos el kernel
-kernel = np.ones(
-    (5, 5),
-    np.uint8
-)
+kernel = np.ones((5, 5), np.uint8)
 
 
 # Ciclo principal
@@ -145,10 +138,7 @@ while True:
     # ==========================================
 
     # Convertimos BGR a HSV
-    hsv = cv2.cvtColor(
-        frame,
-        cv2.COLOR_BGR2HSV
-    )
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 
     # ==========================================
@@ -158,11 +148,7 @@ while True:
     lower_green = np.array([35, 80, 60], dtype=np.uint8)
     upper_green = np.array([85, 255, 255], dtype=np.uint8)
 
-    mask = cv2.inRange(
-        hsv,
-        lower_green,
-        upper_green
-    )
+    mask = cv2.inRange(hsv, lower_green, upper_green)
 
 
     # ==========================================
@@ -170,18 +156,10 @@ while True:
     # ==========================================
 
     # Erosión
-    mask = cv2.erode(
-        mask,
-        kernel,
-        iterations=1
-    )
+    mask = cv2.erode(mask, kernel, iterations=1)
 
     # Dilatación del resultado de la erosión
-    mask = cv2.dilate(
-        mask,
-        kernel,
-        iterations=1
-    )
+    mask = cv2.dilate(mask, kernel, iterations=1)
 
 
     # ==========================================
@@ -189,11 +167,7 @@ while True:
     # ==========================================
 
     # Buscamos los contornos de las regiones blancas
-    contours, _ = cv2.findContours(
-        mask,
-        cv2.RETR_EXTERNAL,
-        cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 
     # ==========================================
@@ -209,20 +183,13 @@ while True:
             continue
 
         # Calculamos el perímetro de una curva cerrada
-        perimeter = cv2.arcLength(
-            contour,
-            True
-        )
+        perimeter = cv2.arcLength(contour, True)
 
         # Tolerancia para simplificar el borde
         epsilon = 0.04 * perimeter
 
         # Aproximamos el contorno con un polígono cerrado
-        approx = cv2.approxPolyDP(
-            contour,
-            epsilon,
-            True
-        )
+        approx = cv2.approxPolyDP(contour, epsilon, True)
 
         # Contamos los vértices del polígono aproximado
         corners = len(approx)
@@ -235,35 +202,13 @@ while True:
             x, y, w, h = cv2.boundingRect(contour)
 
             # Dibujamos la caja en el fotograma
-            cv2.rectangle(
-                frame,
-                (x, y),
-                (x + w, y + h),
-                (0, 255, 0),
-                3
-            )
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
 
             # Mostramos la clase que permite afirmar esta regla
-            cv2.putText(
-                frame,
-                "Cuadrilatero verde",
-                (x, y - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (0, 255, 0),
-                2
-            )
+            cv2.putText(frame, "Cuadrilatero verde", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
             # Mostramos el número de esquinas
-            cv2.putText(
-                frame,
-                f"Esquinas: {corners}",
-                (x, y + h + 25),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.6,
-                (0, 255, 0),
-                2
-            )
+            cv2.putText(frame, f"Esquinas: {corners}", (x, y + h + 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
     # Mostramos el resultado y la máscara procesada
     cv2.imshow("Deteccion de figuras verdes", frame)
@@ -289,11 +234,7 @@ Las primeras instrucciones importan las herramientas, abren la cámara y crean e
 Después aplica erosión y dilatación en ese orden. Ambas guardan su salida en `mask`, de modo que la segunda recibe el resultado de la primera. El mismo nombre conserva ahora la máscara procesada, no la original sin limpiar.
 
 ```python
-contours, _ = cv2.findContours(
-    mask,
-    cv2.RETR_EXTERNAL,
-    cv2.CHAIN_APPROX_SIMPLE
-)
+contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 ```
 
 `findContours` busca las fronteras externas de esa máscara. El `for` permite analizar cada una y `continue` salta aquellas cuya área es menor que 500. Ese límite sigue siendo una referencia inicial que debes ajustar a la distancia y resolución de tu escena.
@@ -305,10 +246,7 @@ Hasta aquí, el recorrido coincide con el programa de contornos. Ahora añadimos
 El **perímetro** es la longitud del borde. Imagina recorrer la orilla de la hoja con un hilo y después medir el hilo. Aquí se mide sobre la imagen, por lo que el resultado está expresado en unidades de píxel, no en centímetros.
 
 ```python
-perimeter = cv2.arcLength(
-    contour,
-    True
-)
+perimeter = cv2.arcLength(contour, True)
 ```
 
 `cv2.arcLength(contour, True)` recibe la secuencia de puntos y la indicación de que la curva es cerrada. `True` significa que se incluye el segmento desde el último punto de vuelta al primero. La variable `perimeter` conserva la longitud calculada.
@@ -328,11 +266,7 @@ Relacionarla con el perímetro permite adaptar la escala de la tolerancia al tam
 ### 4. Simplificar el borde con `approxPolyDP`
 
 ```python
-approx = cv2.approxPolyDP(
-    contour,
-    epsilon,
-    True
-)
+approx = cv2.approxPolyDP(contour, epsilon, True)
 ```
 
 `cv2.approxPolyDP(contour, epsilon, True)` recibe el contorno, su tolerancia y la indicación de tratar el resultado como un polígono cerrado. Devuelve una secuencia simplificada de puntos que conservamos en `approx`.
@@ -383,13 +317,7 @@ En el programa se calcula la caja del `contour` original, después de comprobar 
 ### 7. Dibujar el rectángulo y los textos
 
 ```python
-cv2.rectangle(
-    frame,
-    (x, y),
-    (x + w, y + h),
-    (0, 255, 0),
-    3
-)
+cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
 ```
 
 `cv2.rectangle` dibuja sobre `frame` utilizando una esquina en `(x, y)` y la opuesta en `(x + w, y + h)`. Los signos `+` suman ancho y alto a la posición inicial. `(0, 255, 0)` indica verde en BGR y `3` es el grosor de la línea.
@@ -397,15 +325,7 @@ cv2.rectangle(
 A diferencia del tema 08, este ejemplo dibuja directamente sobre `frame`, sin crear `result`. Es adecuado para mostrar el resultado al final de la vuelta, porque la máscara ya se calculó antes de agregar los dibujos. La siguiente lectura entrega otro fotograma: los rectángulos no se van acumulando sobre el video futuro.
 
 ```python
-cv2.putText(
-    frame,
-    "Cuadrilatero verde",
-    (x, y - 10),
-    cv2.FONT_HERSHEY_SIMPLEX,
-    0.8,
-    (0, 255, 0),
-    2
-)
+cv2.putText(frame, "Cuadrilatero verde", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 ```
 
 `cv2.putText` añade texto sobre la imagen. Sus argumentos indican dónde dibujar, qué escribir, la posición, la fuente, la escala, el color y el grosor:

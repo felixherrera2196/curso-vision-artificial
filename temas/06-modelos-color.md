@@ -296,14 +296,8 @@ cv2.resizeWindow("Ajustes HSV", 700, 180)
 
 # Damos contenido a la ventana que alojará las barras en Windows.
 panel = np.zeros((100, 700, 3), dtype=np.uint8)
-cv2.putText(
-    panel, "Mueve las seis barras y observa la mascara.",
-    (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1
-)
-cv2.putText(
-    panel, "P: imprimir valores en terminal | ESC: salir",
-    (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1
-)
+cv2.putText(panel, "Mueve las seis barras y observa la mascara.", (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+cv2.putText(panel, "P: imprimir valores en terminal | ESC: salir", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 cv2.imshow("Ajustes HSV", panel)
 
 # Nombre de la barra, ventana, valor inicial, máximo y función.
@@ -349,14 +343,8 @@ while True:
     # Copiamos la cámara para escribir los valores sin modificar el HSV.
     preview = frame.copy()
 
-    cv2.putText(
-        preview, f"Min HSV: {lower_green.tolist()}",
-        (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2
-    )
-    cv2.putText(
-        preview, f"Max HSV: {upper_green.tolist()}",
-        (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2
-    )
+    cv2.putText(preview, f"Min HSV: {lower_green.tolist()}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+    cv2.putText(preview, f"Max HSV: {upper_green.tolist()}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
     if rango_valido:
         mensaje = "P: copiar valores en terminal | ESC: salir"
@@ -365,10 +353,7 @@ while True:
         mensaje = "Rango invalido: cada minimo debe ser <= a su maximo"
         color = (0, 0, 255)
 
-    cv2.putText(
-        preview, mensaje, (10, 90),
-        cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2
-    )
+    cv2.putText(preview, mensaje, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
     cv2.imshow("Camara y valores HSV", preview)
     cv2.imshow("Mascara calibrada", mask)

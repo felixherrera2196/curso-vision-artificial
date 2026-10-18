@@ -151,11 +151,7 @@ El archivo `yolo11s.pt` contiene **pesos preentrenados**: parámetros que el mod
 En una nueva celda, ejecuta:
 
 ```python
-results = model.train(
-    data=data_path,
-    epochs=15,
-    imgsz=640
-)
+results = model.train(data=data_path, epochs=15, imgsz=640)
 ```
 
 - **`data=data_path`**: utiliza la ruta de tu archivo `data.yaml`, que indica las imágenes y las clases de tu dataset.

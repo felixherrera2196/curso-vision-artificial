@@ -19,11 +19,7 @@ Un contorno no equivale necesariamente a un objeto real. Una máscara fragmentad
 ## 2. Entrada de la búsqueda
 
 ```python
-contours, _ = cv2.findContours(
-    mask,
-    cv2.RETR_EXTERNAL,
-    cv2.CHAIN_APPROX_SIMPLE
-)
+contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 ```
 
 La práctica habitual utiliza una imagen binaria de un canal. Puede ser una máscara de color limpia o el resultado de un umbral. `findContours` interpreta las regiones del primer plano según el modo elegido.
@@ -159,10 +155,7 @@ if not cap.isOpened():
 
 
 # Creamos el kernel
-kernel = np.ones(
-    (5, 5),
-    np.uint8
-)
+kernel = np.ones((5, 5), np.uint8)
 
 
 # Ciclo principal
@@ -181,10 +174,7 @@ while True:
     # ==========================================
 
     # Convertimos BGR a HSV
-    hsv = cv2.cvtColor(
-        frame,
-        cv2.COLOR_BGR2HSV
-    )
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 
     # ==========================================
@@ -194,11 +184,7 @@ while True:
     lower_green = np.array([35, 80, 60], dtype=np.uint8)
     upper_green = np.array([85, 255, 255], dtype=np.uint8)
 
-    mask = cv2.inRange(
-        hsv,
-        lower_green,
-        upper_green
-    )
+    mask = cv2.inRange(hsv, lower_green, upper_green)
 
 
     # ==========================================
@@ -206,18 +192,10 @@ while True:
     # ==========================================
 
     # Erosión
-    mask = cv2.erode(
-        mask,
-        kernel,
-        iterations=1
-    )
+    mask = cv2.erode(mask, kernel, iterations=1)
 
     # Dilatación del resultado de la erosión
-    mask = cv2.dilate(
-        mask,
-        kernel,
-        iterations=1
-    )
+    mask = cv2.dilate(mask, kernel, iterations=1)
 
 
     # ==========================================
@@ -225,11 +203,7 @@ while True:
     # ==========================================
 
     # Buscamos los contornos de las regiones blancas
-    contours, _ = cv2.findContours(
-        mask,
-        cv2.RETR_EXTERNAL,
-        cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 
     # Creamos una copia del frame
@@ -251,27 +225,15 @@ while True:
             continue
 
         # Dibujamos el contorno sobre el video
-        cv2.drawContours(
-            result,
-            [contour],
-            -1,
-            (0, 255, 0),
-            3
-        )
+        cv2.drawContours(result, [contour], -1, (0, 255, 0), 3)
 
 
     # Mostramos la cámara
-    cv2.imshow(
-        "Contornos detectados",
-        result
-    )
+    cv2.imshow("Contornos detectados", result)
 
 
     # También podemos mostrar la máscara
-    cv2.imshow(
-        "Mascara",
-        mask
-    )
+    cv2.imshow("Mascara", mask)
 
 
     # ESC para salir
@@ -297,11 +259,7 @@ ret, frame = cap.read()
 La cámara se abre una vez, antes de `while True`. En cada vuelta, `cap.read()` entrega el indicador `ret` y la imagen `frame`. Si la lectura falla, `break` sale del ciclo y el programa libera los recursos al final. En este ejemplo, ese fallo de lectura no imprime un mensaje adicional.
 
 ```python
-mask = cv2.inRange(
-    hsv,
-    lower_green,
-    upper_green
-)
+mask = cv2.inRange(hsv, lower_green, upper_green)
 ```
 
 Después se convierte a HSV y se crea una máscara con el mismo intervalo verde del tema 06. Si calibraste otros límites para tus hojas, utiliza aquí esos valores. Solo hay una llamada a `inRange`: no se combinan dos máscaras.
