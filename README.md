@@ -1,4 +1,4 @@
-![Logo FIC](imagenes/FIC-01.jpg)
+![Logo FIC](imagenes/FIC-01.jpg) ![Logo IEEEDAY](imagenes/ieee-day-logo-color-rgb.jpg)
 
 # Visión artificial: de OpenCV a Deep Learning con YOLO
 
