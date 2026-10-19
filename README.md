@@ -1,4 +1,4 @@
-![Logo FIC](../FIC-01.jpg)
+![Logo FIC](imagenes/FIC-01.jpg)
 
 # Visión artificial: de OpenCV a Deep Learning con YOLO
 
