@@ -1,3 +1,5 @@
+![Logo FIC](../FIC-01.jpg)
+
 # Visión artificial: de OpenCV a Deep Learning con YOLO
 
 Bienvenido al curso-taller de visión artificial. En esta guía aprenderás a trabajar con imágenes y video en Python, seleccionar colores y analizar figuras con OpenCV, y comprender el proceso de entrenamiento y uso de un detector de objetos con YOLO.
