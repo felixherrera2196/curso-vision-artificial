@@ -1,127 +1,179 @@
-# 15. Google Colab + GPU + Ultralytics
+# 15. Entrenar y descargar un modelo YOLO con GPU en Google Colab
 
-## Qué aprenderás
+En esta práctica crearás un notebook en Google Colab, descargarás tu dataset de Roboflow y entrenarás un modelo YOLO con GPU. Al terminar, descargarás **`best.pt`** para utilizar tu modelo en tu computadora.
 
-Prepararás conceptualmente el entorno remoto de entrenamiento: notebook, paquetes, archivos, GPU y verificaciones. Comprenderás por qué elegir una GPU en la interfaz no basta para demostrar que el entrenamiento la está usando.
+Colab ejecuta el código en una computadora remota. Su GPU permite acelerar los cálculos del entrenamiento; no necesitas tener una GPU dedicada en tu equipo. Su disponibilidad depende de los recursos y los límites de tu cuenta.
 
-## La idea en palabras sencillas
+## Paso 1. Iniciar sesión y crear un Jupyter Notebook
 
-Colab permite utilizar una computadora remota desde una página web. En vez de ejecutar todo en un archivo, trabajas con bloques llamados celdas. Cada celda puede contener instrucciones y mostrar resultados debajo.
+1. Entra a [Google Colab](https://colab.research.google.com/).
+2. Inicia sesión con tu **cuenta de Google**, solicitada en los requisitos obligatorios del curso.
+3. Haz clic en **Nuevo Notebook** o **Nuevo cuaderno**, según el idioma de la interfaz.
+4. En la parte superior, haz clic en el nombre inicial, normalmente `Untitled0.ipynb`, y cámbialo por **`curso.ipynb`**, por ejemplo. Conserva la extensión **`.ipynb`**, que identifica los cuadernos de Jupyter.
 
-La GPU es un recurso de esa computadora que puede acelerar el entrenamiento. No es la cámara ni una biblioteca de Python. Primero prepararás el notebook, luego comprobarás el recurso disponible y finalmente ejecutarás el trabajo. Lo que instalaste en tu laptop no se instala automáticamente en Colab: son dos computadoras distintas.
+Si no aparece el encabezado donde se cambia el nombre, utiliza la flecha de la esquina superior derecha para desplegarlo. Su orientación puede variar según esté oculto o visible.
 
-![La PC de Windows captura imágenes y usa el modelo; Colab entrena con GPU y best.pt se descarga desde Colab a la PC.](../imagenes/15-colab/pc-colab-y-modelo.png)
+Un notebook permite escribir y ejecutar Python por bloques llamados **celdas**. Esto facilita experimentar: puedes ejecutar una parte, ver su resultado y continuar con la siguiente.
 
-*Cada equipo tiene sus propios archivos y bibliotecas. El dataset se descarga al entorno donde entrenas y best.pt se descarga a la PC donde usarás la cámara.*
+En una celda de código, escribe:
 
-## 1. Qué es Google Colab
+```python
+x = "curso vision"
+print(x)
+```
 
-Colab permite ejecutar notebooks desde el navegador en un entorno remoto. Un notebook combina celdas de texto, que documentan el proceso, con celdas ejecutables. Las celdas comparten variables y archivos mientras conservas la sesión.
+Ejecuta la celda con el botón **▶** situado a su izquierda o con **Shift + Enter**. Debajo aparecerá:
 
-El orden de ejecución importa. Si ejecutas una celda que usa una variable antes de la celda que la define, el programa falla aunque ambas aparezcan escritas en el notebook. Para revisar que el proceso sea reproducible, utiliza una sesión limpia y ejecuta de arriba hacia abajo.
+```text
+curso vision
+```
 
-## 2. Elegir y comprobar la GPU
+Para agregar las siguientes celdas, utiliza **+ Código**. Ejecútalas en orden y espera a que termine cada una antes de continuar: las variables creadas en una celda se utilizan en las siguientes.
 
-En la configuración del entorno de ejecución puedes solicitar un acelerador GPU. Su disponibilidad y tipo pueden variar. Colab puede tener límites de uso o no asignar el recurso en un momento determinado.
+## Paso 2. Activar la GPU
+
+En el menú del notebook, sigue esta ruta:
+
+**Entorno de ejecución → Cambiar tipo de entorno de ejecución → Acelerador por hardware → GPU → Guardar**.
+
+Según la interfaz, puede aparecer una opción concreta como **T4 GPU**. Selecciona la GPU disponible para la práctica. Si Colab solicita conectar la sesión, pulsa **Conectar**.
+
+Haz este cambio antes de descargar los datos: cambiar el entorno puede reiniciar la sesión.
+
+## Paso 3. Comprobar que Colab asignó una GPU
+
+En una nueva celda, copia y ejecuta:
 
 ```python
 import torch
 
-print(torch.cuda.is_available())
+print("CUDA disponible:", torch.cuda.is_available())
+
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+    print("CUDA:", torch.version.cuda)
+else:
+    print("No hay GPU disponible")
 ```
 
-Debes comprobar tres cosas: que la sesión tenga GPU asignada, que la biblioteca de cómputo pueda verla y que el entrenamiento utilice ese dispositivo. PyTorch, utilizado por Ultralytics, proporciona mecanismos como `torch.cuda.is_available()` para revisar disponibilidad CUDA en las configuraciones NVIDIA habituales.
+La salida puede ser similar a esta:
 
-Un resultado negativo no se corrige únicamente cambiando un argumento del entrenamiento. Puede significar que no se asignó GPU o que la instalación no tiene el soporte necesario. Primero identifica el nivel que falla.
+```text
+CUDA disponible: True
+GPU: Tesla T4
+CUDA: 12.6
+```
 
-## 3. Qué instala Ultralytics
+**El nombre de la GPU y la versión de CUDA pueden ser distintos.** Lo que debes comprobar es que aparezca **`CUDA disponible: True`**. PyTorch, la biblioteca de cálculo utilizada por YOLO, puede acceder a la GPU. CUDA permite realizar estos cálculos en las GPU NVIDIA; `torch.version.cuda` indica la versión con la que se compiló PyTorch.
 
-Ultralytics proporciona una interfaz para cargar, entrenar, validar y usar modelos compatibles. El paquete también requiere otras bibliotecas. La instalación puede descargar dependencias y tardar más que un paquete pequeño.
+Si aparece `False`, revisa la configuración del paso 2. Si Colab no puede asignarte una GPU, espera a que haya disponibilidad antes de continuar con este entrenamiento.
 
-Para reproducir el curso, registra la versión de Ultralytics y de las dependencias relevantes, especialmente PyTorch y Python. No necesitas actualizar todo en cada celda. Si cambias una biblioteca ya cargada, puede ser necesario reiniciar la sesión para que el intérprete utilice la versión nueva.
+## Paso 4. Instalar Roboflow y descargar el dataset
 
-La familia o versión del modelo debe corresponder al archivo de pesos y a la API del ejemplo. Un nombre de modelo válido en un tutorial no es universal para cualquier instalación.
-
-## 4. Archivos remotos y persistencia
-
-La sesión tiene su propio sistema de archivos. Subir una imagen desde tu laptop crea una copia remota; escribir un nombre de archivo local de Windows en una celda no lo hace disponible.
-
-Las carpetas temporales de Colab pueden desaparecer cuando termina o se reinicia el entorno. Google Drive puede utilizarse para guardar artefactos persistentes, pero debe montarse y sus rutas deben comprobarse. Guardar en Drive y descargar a la laptop son acciones distintas.
-
-Antes de entrenar, decide dónde quedarán dataset, resultados y pesos. La estrategia puede ser entrenar en almacenamiento temporal y copiar resultados después, pero necesitas hacerlo antes de perder la sesión.
-
-## 5. Colab no es el escritorio de tu computadora
+Pega en una nueva celda el **código de descarga que guardaste en el capítulo anterior**. Incluye la instalación de Roboflow y ejecútalo completo:
 
 ```python
-cap = cv2.VideoCapture(0)
+!pip install roboflow
+
+from roboflow import Roboflow
+
+rf = Roboflow(api_key="TU_API_KEY")
+project = rf.workspace("objdetection-j3gr3").project("cocacola-mchfa")
+version = project.version(1)
+dataset = version.download("yolov11")
 ```
 
-Las funciones de ventana de OpenCV no funcionan igual que en un programa local. Tampoco puedes asumir que `VideoCapture(0)` accede a la webcam del navegador. Para el flujo de este curso, Colab prepara y entrena; la aplicación de cámara se ejecuta localmente después.
+Este ejemplo corresponde al dataset público de Coca-Cola de la práctica. **Utiliza el código generado por Roboflow para el dataset que elegiste**, con tu clave de acceso y los identificadores correctos. `TU_API_KEY` es un marcador que debes sustituir; mantén tu clave privada cuando compartas el notebook.
 
-Esto evita mezclar un problema de acceso remoto a la cámara con un problema del detector. Primero obtendremos un modelo y verificaremos predicciones sobre imágenes; después usaremos el dispositivo físico local.
+`!pip install roboflow` instala la biblioteca en la sesión y `version.download("yolov11")` descarga las imágenes, las etiquetas y la configuración del dataset. Espera a que termine antes de avanzar.
 
-## 6. Orden recomendado del notebook
+Los archivos quedarán en **Colab**, no en la carpeta Descargas de tu computadora.
 
-1. Documentar objetivo, clases y versión de los datos.
-2. Comprobar GPU y entorno.
-3. Instalar o verificar las bibliotecas necesarias.
-4. Descargar o copiar el dataset.
-5. Revisar YAML e imágenes anotadas.
-6. Cargar el modelo inicial.
-7. Entrenar y revisar resultados.
-8. Validar el modelo seleccionado.
-9. Guardar y descargar los pesos y la configuración.
+## Paso 5. Indicar la ruta de `data.yaml`
 
-Las rutas y variables definidas en un paso se usan en los siguientes. Mantener ese orden facilita identificar dónde se produjo un fallo.
+El archivo **`data.yaml`** indica dónde están las imágenes de entrenamiento, validación y prueba, y cuáles son las clases que aprenderá el modelo.
 
-## Actividad de comprensión
+1. Abre el panel **Archivos**, a la izquierda de Colab, con el icono de carpeta.
+2. Pulsa **Actualizar** si todavía no aparecen los datos descargados.
+3. Busca `data.yaml` dentro de la carpeta del dataset, normalmente en `/content/nombre-del-proyecto/`.
+4. Haz clic en los **tres puntos** a la derecha de `data.yaml` y selecciona **Copiar ruta de acceso**.
+5. En una nueva celda, guarda esa ruta entre comillas en la variable `data_path` y ejecuta la celda.
 
-Explica qué perderías al reiniciar la sesión: variables, archivos temporales y bibliotecas instaladas durante la sesión pueden requerir preparación nuevamente. Distingue esos recursos del notebook guardado y de los archivos que ya conservaste en almacenamiento persistente.
+Por ejemplo, si esa es la ubicación real de tu archivo:
 
-## Comprobación del entorno
+```python
+data_path = "/content/CocaCola-1/data.yaml"
+```
 
-Antes de iniciar el entrenamiento, confirma la disponibilidad de GPU, la versión de Ultralytics y la ruta del dataset. Ejecuta las celdas en orden desde una sesión limpia y comprueba que las variables y archivos requeridos existan. Decide también dónde guardarás los pesos al terminar.
+**Sustituye la ruta del ejemplo por la que copiaste de tu sesión.** El nombre de la carpeta depende del proyecto y de su versión. No utilices una ruta de Windows: el entrenamiento se ejecutará en el sistema de archivos de Colab.
 
-## Abrir y utilizar un notebook por primera vez
+## Paso 6. Instalar Ultralytics
 
-1. Entra a [Google Colab](https://colab.research.google.com/) e inicia sesión con tu cuenta de Google.
-2. Abre el notebook indicado por el instructor o crea uno nuevo. Ponle un nombre que puedas reconocer después.
-3. Si el notebook es compartido y necesitas conservar cambios propios, guarda una copia en tu Drive.
-4. Busca **Entorno de ejecución → Cambiar tipo de entorno de ejecución**. Selecciona GPU si está disponible y guarda. Los nombres de las opciones pueden variar según el idioma y la interfaz.
-5. Conecta la sesión y ejecuta las celdas de preparación en el orden de la práctica.
-6. Para ejecutar una celda, pulsa su botón de reproducción o **Shift + Enter**. Espera a que termine antes de avanzar si la siguiente depende de ella.
-7. Lee el resultado debajo de la celda: puede ser un mensaje, una tabla, una imagen o un error.
-8. Si reinicias o cambias el entorno, vuelve a ejecutar la preparación. Que una salida vieja siga visible no significa que las variables sigan existiendo.
+En una nueva celda, ejecuta:
 
-No necesitas pulsar muchas veces el botón de una celda que está trabajando. Una instalación o un entrenamiento puede tardar. Busca el indicador de ejecución y los mensajes de avance.
+```python
+!pip install -q ultralytics
+```
 
-**Notebook y sesión son diferentes:** guardar el notebook conserva sus instrucciones y, según el guardado, sus salidas. No conserva automáticamente todos los archivos temporales ni el estado de la computadora remota. Copia los pesos antes de terminar.
+**Ultralytics** es la biblioteca que utilizaremos para cargar y entrenar YOLO. La opción `-q` reduce los mensajes de instalación. Espera a que termine.
 
-## Orden de trabajo y ubicación de cada paso
+## Paso 7. Cargar el modelo inicial
 
-| Acción | Dónde ocurre | Qué debes observar |
-| --- | --- | --- |
-| Abrir el notebook | Navegador de tu computadora. | El documento con sus celdas. |
-| Ejecutar una celda | Equipo remoto de Colab. | Salida o error debajo de la celda. |
-| Descargar datos desde una celda | Almacenamiento remoto de la sesión. | Carpeta del dataset en Colab. |
-| Descargar pesos mediante el navegador | Transferencia del remoto a Windows. | Archivo en tu equipo al finalizar. |
+En una nueva celda, ejecuta:
 
-**Python 3.12.10 es la versión del equipo Windows del curso.** Colab administra la versión de su entorno remoto y puede utilizar otra. No reemplaces su Python para que el número coincida: primero verifica que las bibliotecas del notebook sean compatibles con la sesión disponible.
+```python
+from ultralytics import YOLO
 
-## Si aparece un error, identifica la etapa
+model = YOLO("yolo11s.pt")
+```
 
-Si una celda no encuentra una variable, comprueba que ejecutaste la que la define. Si no encuentra un archivo, revisa dónde está descargado. Si no hay GPU disponible, revisa el acelerador asignado y las comprobaciones de la biblioteca. Un error de acceso al dataset no se corrige eligiendo otra GPU.
+La primera línea importa `YOLO`. La segunda carga **YOLO11s**, la variante pequeña (*small*) de YOLO11, y la guarda en la variable `model`.
 
-La selección del acelerador puede reiniciar o reemplazar la sesión. Por eso conviene configurarlo antes de preparar datos y ejecutar el entrenamiento. Si la sesión se pierde, vuelve a ejecutar la preparación en orden y no supongas que una salida guardada representa el estado actual.
+`yolo11s.pt` contiene **pesos preentrenados**, es decir, parámetros aprendidos previamente con otras imágenes. Los usaremos como punto de partida para aprender las clases de nuestro dataset. Si el archivo no existe en la sesión, Ultralytics lo descargará automáticamente.
 
-## Antes de pulsar entrenar
+Esta celda prepara el modelo; el entrenamiento con tus imágenes comienza en el siguiente paso.
 
-Comprueba datos y clases, GPU disponible y utilizada, biblioteca compatible y destino de resultados. Guarda el notebook con un nombre reconocible. Espera a que termine cada paso del que dependa el siguiente.
+## Paso 8. Entrenar el modelo con GPU
 
-No necesitas que cada celda sea un programa independiente: algunas preparan variables que usan las siguientes. Esta es la diferencia práctica entre ejecutar un notebook en orden y copiar una celda suelta en cualquier lugar.
+En una nueva celda, ejecuta:
 
-## Para dar el siguiente paso
+```python
+results = model.train(
+    data=data_path,
+    epochs=30,
+    imgsz=640,
+    device=0
+)
+```
 
-Ya tenemos entorno, datos y recursos preparados. **¿Cómo indicamos al modelo que aprenda de este dataset y cómo sabremos si mejora?** En el siguiente capítulo revisaremos el entrenamiento y sus resultados.
+- **`data=data_path`** utiliza el archivo `data.yaml` que localizaste.
+- **`epochs=30`** realiza 30 vueltas de entrenamiento sobre las imágenes destinadas a aprender. Más épocas requieren más tiempo y no garantizan un mejor resultado.
+- **`imgsz=640`** establece 640 píxeles como tamaño de referencia de entrada. No modifica tus archivos originales.
+- **`device=0`** selecciona la primera GPU visible para PyTorch. Utilízalo después de comprobar que CUDA está disponible.
+
+Al comenzar, revisa que la salida del entrenamiento indique un dispositivo **CUDA** y el nombre de la GPU. Verás el avance de las épocas y resultados de validación, que permiten evaluar el modelo con imágenes que no utiliza para ajustar directamente sus parámetros.
+
+Espera a que terminen las **30 épocas**. El tiempo depende de la GPU, la cantidad de imágenes y el modelo. Evita volver a ejecutar la celda mientras esté trabajando. Si aparece un error, resuélvelo antes de continuar; comprueba especialmente la ruta de `data.yaml` y la disponibilidad de GPU.
+
+## Paso 9. Descargar el modelo entrenado: `best.pt`
+
+Al finalizar, Ultralytics mostrará la carpeta donde guardó los resultados. El archivo **`best.pt`** contiene los pesos seleccionados por su mejor desempeño en validación durante el entrenamiento.
+
+1. Abre el panel **Archivos** de Colab y pulsa **Actualizar**.
+2. Busca la carpeta de resultados indicada al finalizar. Normalmente está en **`/content/runs/detect/train/`**.
+3. Abre la subcarpeta **`weights`** y localiza **`best.pt`**. Su ruta habitual es:
+
+   ```text
+   /content/runs/detect/train/weights/best.pt
+   ```
+
+4. Haz clic en los **tres puntos** a la derecha de `best.pt` y selecciona **Descargar**.
+5. Espera a que termine la descarga y guarda el archivo en la carpeta del proyecto de tu computadora.
+
+Si realizaste varios entrenamientos, la carpeta puede llamarse `train2`, `train3`, etc. Descarga el `best.pt` correspondiente al entrenamiento que quieres conservar. `last.pt`, si aparece junto a él, corresponde a la última época y puede ser distinto del mejor modelo.
+
+**Descarga `best.pt` antes de terminar la sesión de Colab**, porque sus archivos temporales pueden perderse. Guardar el notebook conserva el código, pero no guarda automáticamente el modelo entrenado en tu computadora.
+
+Al terminar tendrás tu notebook **`curso.ipynb`** y el archivo **`best.pt`** descargado. Este último es el modelo que utilizaremos después para detectar objetos desde nuestra computadora.
 
 [Anterior](14-descargar-dataset-roboflow.md) · [Índice](../README.md) · [Siguiente: Entrenamiento](16-entrenar-yolo-gpu.md)

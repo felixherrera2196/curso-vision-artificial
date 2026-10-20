@@ -1,125 +1,110 @@
 # 14. Descargar un dataset de Roboflow
 
-## Qué aprenderás
+En este tutorial obtendrás el **código para descargar un dataset etiquetado** desde Roboflow. Puedes utilizar las imágenes que etiquetaste en tu proyecto o el dataset de ejemplo de Coca-Cola. Elige una de las dos opciones del paso 1; después, continúa con el paso 2.
 
-Comprenderás cómo pasar de una versión preparada en Roboflow a archivos utilizables por el entrenamiento. Aprenderás a comprobar la estructura, la configuración y las rutas antes de consumir tiempo de GPU.
+Un **dataset** contiene las imágenes y sus etiquetas. Una **versión** es una preparación concreta de esos datos, con su división y sus ajustes. Crear una versión permite descargar el mismo conjunto después para repetir el entrenamiento.
 
-## La idea en palabras sencillas
+## 1. Preparar o elegir el dataset
 
-Descargar el dataset significa llevar las imágenes y sus etiquetas al lugar donde vas a entrenar. Si trabajas en Colab, ese lugar es una computadora remota. La descarga no aparece automáticamente en la carpeta Descargas de tu laptop.
+### Opción A. Crear una versión de tu propio dataset
 
-Además de las fotografías suele haber un archivo de configuración, como `data.yaml`. Puedes verlo como un índice: indica dónde buscar imágenes y cómo se llaman las clases. Antes de entrenar, abre algunas imágenes con sus cajas para comprobar que descargaste los datos correctos.
+Si ya subiste tus imágenes y etiquetaste los objetos que quieres detectar, abre tu proyecto en Roboflow y haz clic en **Versions**. Si todavía no tienes una versión, selecciona la opción para crear una, que puede aparecer como **Create New Version**.
 
-## 1. Qué se descarga
+Durante la preparación encontrarás cinco secciones. Revísalas en este orden:
 
-La descarga debe corresponder a una **versión específica** y a un **formato de exportación** compatible con el detector. Según el formato, puede contener carpetas de imágenes, archivos de etiquetas y un archivo de configuración del dataset.
+#### 1. Source Images: revisar las imágenes
 
-No basta con que el archivo termine de descargarse. Debe ser la tarea correcta, incluir las clases deseadas y conservar parejas válidas de imagen y anotación. Un dataset de clasificación no se convierte en detección por cambiar el nombre de una carpeta.
+Comprueba que estén las imágenes que quieres utilizar y que sus etiquetas sean correctas. Revisa que las cajas rodeen los objetos y que los nombres de las clases sean consistentes. Por ejemplo, evita utilizar dos nombres distintos para el mismo tipo de objeto.
 
-## 2. Seleccionar el formato correcto
+#### 2. Train/Test Split: dividir los datos
 
-Para entrenar un detector YOLO con Ultralytics, utiliza el formato de detección que sea compatible con la versión y el ejemplo del curso. En las exportaciones habituales, las imágenes y etiquetas se organizan por divisiones y existe un archivo como `data.yaml` que describe rutas y clases.
+Haz clic en **Rebalance** para ajustar cómo se repartirán las imágenes entre tres grupos:
 
-La denominación de la opción de exportación puede cambiar entre versiones de la plataforma. Comprueba el identificador del formato que aparece en las instrucciones de exportación de tu proyecto y verifica que sea compatible con la versión de Ultralytics utilizada para entrenar.
+| Grupo | Para qué sirve | Qué ocurre si cambias su proporción |
+| --- | --- | --- |
+| **Train — entrenamiento** | Son las imágenes con las que el modelo aprende a reconocer los objetos. | Más imágenes variadas pueden ayudarle a aprender, pero si asignas casi todo aquí, quedarán pocas para evaluar el resultado. |
+| **Valid — validación** | Permite revisar cómo funciona el modelo durante el entrenamiento con imágenes que no usa para aprender directamente. | Con muy pocas imágenes, los resultados pueden variar mucho y ser poco representativos. Aumentarlo deja menos imágenes para entrenar. |
+| **Test — prueba** | Sirve para evaluar el modelo al final con imágenes reservadas que no se usaron para ajustar el entrenamiento. | Un grupo mayor puede dar una evaluación más representativa, pero reduce los datos disponibles para entrenamiento y validación. |
 
-## 3. Descarga manual y mediante SDK
+Como punto de partida, puedes utilizar **70 % para entrenamiento, 20 % para validación y 10 % para prueba**. No es una regla fija: lo importante es que los tres grupos tengan suficientes ejemplos y representen las clases que quieres detectar.
 
-Una descarga manual suele generar un archivo comprimido que se descomprime en el entorno de trabajo. La descarga mediante SDK utiliza los identificadores de workspace, proyecto y versión para solicitar los datos desde Python.
+Evita colocar imágenes idénticas o casi iguales en grupos distintos. Por ejemplo, varias fotos consecutivas del mismo video pueden ser tan parecidas que el resultado de evaluación parezca mejor de lo que será con imágenes nuevas.
 
-En ambos casos, el resultado útil son los archivos locales del entorno en el que vas a entrenar. Si ejecutas el SDK en Colab, la descarga queda en el sistema remoto de Colab; no aparece automáticamente en tu laptop.
+#### 3. Preprocessing: conservar los ajustes iniciales
 
-La carpeta donde termina la descarga puede depender de la configuración y de la versión del SDK. Es preferible leer la ubicación informada por la operación y comprobarla, en lugar de asumir una ruta copiada de otro notebook.
+Esta sección aplica preparaciones a las imágenes, como corregir su orientación o ajustar su tamaño. Para esta práctica, **deja los valores predeterminados**.
 
-## 4. Qué describe el YAML
+#### 4. Augmentation: conservar los ajustes iniciales
 
-El archivo de configuración suele indicar dónde están entrenamiento, validación y, si existe, prueba, además del mapa de nombres de clase. Algunas configuraciones incluyen una ruta base y rutas relativas; otras utilizan rutas absolutas.
+El aumento de datos permite generar variaciones de las imágenes de entrenamiento, por ejemplo con cambios de brillo o giros. Puede ayudar al modelo a reconocer objetos en distintas condiciones. Por ahora, **deja esta sección como está**, sin agregar transformaciones.
 
-El YAML no contiene los pesos entrenados ni todas las anotaciones. Funciona como un mapa que le dice al entrenador dónde encontrar los datos y cómo interpretar los identificadores de clase.
+#### 5. Create: generar la versión
 
-Si cambias la ubicación de carpetas, las referencias pueden quedar inválidas. Evita corregir una ruta al azar: primero identifica la ruta base y cómo el entrenador resuelve las rutas relativas.
+Conserva las opciones predeterminadas de esta sección y haz clic en **Create**. Espera a que Roboflow termine de generar la versión.
 
-## 5. Revisión antes del entrenamiento
+Ya tienes una versión preparada de tu dataset. Ábrela si es necesario y haz clic en **Download Dataset**. Continúa con el paso 2.
 
-1. Localiza la carpeta descargada y el YAML utilizado.
-2. Confirma que existen imágenes para entrenamiento y validación.
-3. Revisa los nombres e identificadores de clases.
-4. Comprueba que las etiquetas corresponden a la tarea de detección.
-5. Visualiza imágenes anotadas de cada división.
-6. Busca cajas desplazadas, clases incorrectas y archivos ausentes.
-7. Registra proyecto, versión y formato para el informe.
+### Opción B. Utilizar el dataset de ejemplo de Coca-Cola
 
-Comprobar unas pocas imágenes no garantiza que todas estén bien, pero detecta errores de formato y conversiones sistemáticas. Si encuentras un patrón de cajas mal ubicadas, revisa el conjunto antes de entrenar.
+Si todavía no has etiquetado tus propias imágenes, puedes practicar con un dataset público que ya contiene anotaciones:
 
-## 6. Problemas frecuentes
+[Dataset de Coca-Cola en Roboflow Universe](https://universe.roboflow.com/objdetection-j3gr3/cocacola-mchfa/dataset/1)
 
-**Acceso rechazado:** revisa autorización del recurso y credencial; no lo confundas con un problema del modelo. **Proyecto o versión inexistente:** comprueba identificadores exactos. **Ruta no encontrada:** revisa carpeta de descarga, extracción y YAML. **Dataset vacío o distinto:** confirma versión y formato. **Etiquetas inesperadas:** verifica tipo de tarea y mapa de clases.
+1. Abre el enlace y haz clic en **Dataset**.
+2. Selecciona la versión que utilizarás, si la página te lo solicita.
+3. Haz clic en **Download Dataset**.
+4. Si aparece una ventana con distintas formas de utilizar los datos, selecciona la última opción, **Download Dataset**, y pulsa **Continue**.
 
-Si el error aparece antes de iniciar las épocas, suele corresponder a acceso, formato o rutas. Si el entrenamiento comienza pero el resultado es malo, revisa también diversidad y calidad de las etiquetas.
+Si Roboflow solicita iniciar sesión, utiliza tu cuenta para continuar. Los nombres o el orden de algunas opciones pueden variar según la interfaz.
 
-## 7. Conservación del dataset
+Lo que obtendrás son **imágenes etiquetadas para entrenar**, no un modelo que ya detecte objetos. El entrenamiento lo realizaremos más adelante.
 
-Los archivos de la sesión de Colab son temporales. Si necesitas conservar exactamente la versión utilizada, guarda una copia o registra un mecanismo reproducible de descarga. Respeta las condiciones del dataset si compartes el material con otras personas.
+## 2. Obtener el código de descarga
 
-## Actividad de comprensión
+Desde la ventana de descarga del dataset que elegiste:
 
-Explica por qué un YAML existente puede fallar después de mover las carpetas. Identifica qué información necesitas para repetir la misma descarga y cómo comprobarías que el mapa de clases coincide con los archivos de etiquetas.
+1. En **Image and Annotation Format**, selecciona **YOLOv11**. Este formato organiza las imágenes y las anotaciones para el entrenamiento con YOLO que utilizaremos en el curso.
+2. En **Download Options**, selecciona **Show Download Code**.
+3. Haz clic en **Continue**.
+4. Roboflow mostrará un bloque de código. Cópialo y guárdalo temporalmente para utilizarlo después en tu Jupyter Notebook de Google Colab.
 
-## Antes de continuar
+Para el dataset de ejemplo, el código tendrá una estructura similar a esta:
 
-Anota la ruta de descarga y localiza el archivo de configuración del dataset. Revisa sus clases y abre imágenes anotadas de entrenamiento y validación. Conserva el identificador de la versión para poder repetir la descarga en otra sesión de Colab.
+```python
+!pip install roboflow
 
-## Recorrido de descarga y comprobación
-
-1. Abre la versión del proyecto indicada para la práctica.
-2. Busca la opción de descargar o exportar el dataset.
-3. Selecciona un formato de **detección** compatible con la versión de YOLO que utilizarás.
-4. Elige el método de descarga de la práctica: archivo comprimido o instrucciones para el notebook.
-5. Si recibes un comprimido, extráelo. Si lo descargaste en tu laptop y entrenarás en Colab, aún necesitas llevar esos archivos a Colab; son lugares diferentes.
-6. Localiza el archivo de configuración, generalmente `data.yaml`, y revisa clases y rutas.
-7. Examina imágenes y anotaciones antes de iniciar el entrenamiento.
-
-**Qué debes poder señalar al terminar:** la carpeta con tus datos, la configuración que utilizará el entrenador y los nombres de las clases. Si no puedes encontrar esos tres elementos, detente y revisa la descarga.
-
-No copies literalmente las rutas del equipo de otra persona. Una ruta es una dirección de archivo: debe corresponder al lugar donde están tus datos en la sesión actual.
-
-## Reconocer una estructura de archivos de detección
-
-Una exportación puede tener una organización similar a esta. Es un esquema didáctico, no una ruta obligatoria ni un comando:
-
-```text
-dataset/
-    data.yaml
-    train/
-        images/
-        labels/
-    valid/
-        images/
-        labels/
-    test/
-        images/
-        labels/
+from roboflow import Roboflow
+rf = Roboflow(api_key="TU_API_KEY")
+project = rf.workspace("objdetection-j3gr3").project("cocacola-mchfa")
+version = project.version(1)
+dataset = version.download("yolov11")
 ```
 
-`images` guarda imágenes y `labels` sus anotaciones. `train` corresponde a entrenamiento, `valid` a validación y `test` a prueba si esa división existe. Los nombres y las rutas pueden variar; el archivo de configuración debe señalar la organización real.
+**Copia el código que genere Roboflow para tu dataset.** La clave, el espacio de trabajo, el proyecto y el número de versión pueden ser distintos de los del ejemplo. Si seleccionaste otra versión, conserva el número que aparezca en tu código.
 
-Por ejemplo, una imagen `train/images/foto_01.jpg` suele asociarse con `train/labels/foto_01.txt`. Abre una imagen y su anotación visualizada para comprobar la correspondencia. No basta con encontrar carpetas con esos nombres.
+### ¿Qué hace cada parte?
 
-## Cómo leer el archivo de configuración sin programar
+- **`!pip install roboflow`** instala la biblioteca de Roboflow en el entorno del notebook. El signo `!` permite ejecutar un comando de terminal desde una celda.
+- **`from roboflow import Roboflow`** importa la herramienta que se comunica con Roboflow.
+- **`api_key`** es la clave que autoriza el acceso desde el código. `TU_API_KEY` es un marcador de ejemplo: el código real debe utilizar tu clave. No la publiques en GitHub ni en capturas compartidas.
+- **`workspace(...).project(...)`** identifica el espacio de trabajo y el proyecto que contienen los datos.
+- **`project.version(1)`** selecciona la versión del dataset que se descargará; en el ejemplo, la versión 1.
+- **`version.download("yolov11")`** descarga las imágenes, sus etiquetas y la configuración en el formato seleccionado. La variable `dataset` permite consultar información sobre esa descarga.
 
-Busca las entradas que señalan entrenamiento, validación y prueba, si se incluye, y la relación entre identificadores y nombres de clase. Puedes abrir el YAML como texto para consultarlo; no es un documento de pesos ni un programa de cámara.
+**El código no es el dataset en sí: son las instrucciones para descargarlo.** Los archivos se descargarán cuando lo ejecutes en el notebook. Si utilizas Google Colab, quedarán en el almacenamiento de la sesión de Colab, no en la carpeta Descargas de tu computadora.
 
-Una ruta absoluta empieza desde la raíz del sistema; una relativa depende de una base. Colab suele usar rutas de su sistema remoto, distintas de las de Windows. Copiar una dirección de Descargas de Windows en el notebook no traslada los archivos.
+## 3. Guardar el código para el entrenamiento
 
-Si el entrenamiento informa que falta una ruta, localiza primero los archivos y después revisa la configuración. No cambies todas las referencias por nombres inventados. Si exportaste una versión distinta, revisa también que las clases sigan siendo las esperadas.
+Por ahora, conserva el bloque de descarga en una nota privada. Más adelante lo pegarás en una celda de código del notebook y lo ejecutarás después de preparar el entorno.
 
-## Qué conservar de esta etapa
+Cuando lo ejecutes, obtendrás las imágenes, sus archivos de etiquetas y un archivo llamado **`data.yaml`**, que indica dónde están los datos y cuáles son las clases. Utilizaremos ese archivo para iniciar el entrenamiento.
 
-Registra workspace, proyecto, versión, formato, carpeta descargada y configuración utilizada. Esos datos permiten repetir el entrenamiento y comparar resultados sin confundir cambios de datos con cambios de modelo.
+Antes de continuar, comprueba que:
 
-**Comprobación final:** señala una imagen de entrenamiento, su etiqueta, la división de validación y el archivo de configuración. Si no puedes encontrarlos, resuelve la descarga antes de usar GPU.
+- El código corresponde al proyecto y la versión que elegiste.
+- El formato de descarga es `yolov11`.
+- Guardaste el bloque completo y mantuviste privada tu clave de acceso.
 
-## Para dar el siguiente paso
-
-Ya podemos localizar imágenes, etiquetas y configuración. **¿Dónde ejecutaremos el entrenamiento si la computadora del laboratorio no tiene una GPU adecuada?** Prepararemos Google Colab y comprobaremos los recursos de su sesión remota.
+En los siguientes capítulos prepararemos Google Colab y utilizaremos este código para descargar los datos y entrenar el modelo.
 
 [Anterior](13-que-es-roboflow.md) · [Índice](../README.md) · [Siguiente: Colab](15-colab-gpu-ultralytics.md)
